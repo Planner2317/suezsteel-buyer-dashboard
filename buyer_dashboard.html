@@ -6417,9 +6417,10 @@ function openL4Modal() {
     return;
   }
   
-  const activeL4Tasks = (typeof L4_TASKS !== 'undefined') ? L4_TASKS.filter(t => isAllDeptsSelected() || selectedDeptsSet.has(t.department)) : [];
+  const activeL4Tasks = getFilteredL4Tasks();
   const totalL4Lines = activeL4Tasks.length;
-  const uniquePRs = new Set(activeL4Tasks.map(t => t.pr_no)).size;
+  const uniquePrNumbers = new Set(activeL4Tasks.map(t => t.pr_no));
+  const uniquePRs = uniquePrNumbers.size;
   const zeroStockLines = activeL4Tasks.filter(t => t.is_zero_stock).length;
   const zeroStockPct = totalL4Lines ? ((zeroStockLines / totalL4Lines) * 100).toFixed(1) : 0;
   const totalUnits = activeL4Tasks.reduce((sum, t) => sum + (t.qty || 0), 0);
@@ -6429,7 +6430,8 @@ function openL4Modal() {
   }
 
   // 1. Generate Requisition (PR) Summary Rows
-  let prRowsHtml = (typeof L4_PRS_SUMMARY !== 'undefined' ? L4_PRS_SUMMARY : []).map((p, idx) => {
+  const activePrSummaries = (typeof L4_PRS_SUMMARY !== 'undefined' ? L4_PRS_SUMMARY : []).filter(p => uniquePrNumbers.has(p.pr_no));
+  let prRowsHtml = activePrSummaries.length > 0 ? activePrSummaries.map((p, idx) => {
     const zeroBadge = p.zero_lines > 0
       ? `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.75rem; white-space:nowrap;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>${p.zero_lines} Zero-Stock (${((p.zero_lines / p.total_lines)*100).toFixed(0)}%)</span>`
       : `<span style="background:rgba(52,211,153,0.22); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.75rem; white-space:nowrap;">All in Stock</span>`;
@@ -6456,10 +6458,10 @@ function openL4Modal() {
         </td>
       </tr>
     `;
-  }).join('');
+  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control PRs match the active Department / Project filters.</td></tr>`;
 
   // 2. Generate Flat Lines Rows
-  let linesRowsHtml = L4_TASKS.map((t, idx) => {
+  let linesRowsHtml = activeL4Tasks.length > 0 ? activeL4Tasks.map((t, idx) => {
     const stockBadge = t.is_zero_stock
       ? `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem;"><i class="fa-solid fa-triangle-exclamation"></i> Stock: 0</span>`
       : (t.stock !== null && t.stock <= 3
@@ -6482,7 +6484,7 @@ function openL4Modal() {
         <td style="padding:8px; text-align:center;"><span style="background:rgba(168,85,247,0.22); color:#e9d5ff; border:1px solid rgba(168,85,247,0.5); padding:2px 7px; border-radius:6px; font-size:0.7rem; font-weight:700;">Pending L4</span></td>
       </tr>
     `;
-  }).join('');
+  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control item lines match the active Department / Project filters.</td></tr>`;
 
   modalContent.innerHTML = `
     <!-- Top 3 KPI Cards for L4 -->
@@ -6591,21 +6593,30 @@ function renderDelayModalView() {
   const isAllB = isAllBuyersSelected();
   const isAllP = isAllProjectsSelected();
 
-  allStageTasks = allStageTasks.filter(t => {
-    const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-    const matchP = isAllP || selectedProjectsSet.has(t.project);
-    const matchD = isAllDeptsSelected() || selectedDeptsSet.has(t.department);
-    const matchPRPO = matchPrPo(t);
-    const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-    const matchO = matchOrderType(t);
-    const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-    return matchB && matchP && matchY && matchPRPO && matchO && matchZero;
-  });
+  const isAllD = isAllDeptsSelected();
 
   if (stageName === "Unassigned PRs") {
-    allStageTasks = allStageTasks.filter(t => (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs");
+    allStageTasks = allStageTasks.filter(t => {
+      const isUnass = (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs";
+      const matchP = isAllP || selectedProjectsSet.has(t.project);
+      const matchD = isAllD || selectedDeptsSet.has(t.department);
+      const matchPRPO = matchPrPo(t);
+      const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+      const matchO = matchOrderType(t);
+      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero;
+    });
   } else {
-    allStageTasks = allStageTasks.filter(t => t.task_stage === stageName);
+    allStageTasks = allStageTasks.filter(t => {
+      const matchB = isAllB || selectedBuyersSet.has(t.buyer);
+      const matchP = isAllP || selectedProjectsSet.has(t.project);
+      const matchD = isAllD || selectedDeptsSet.has(t.department);
+      const matchPRPO = matchPrPo(t);
+      const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+      const matchO = matchOrderType(t);
+      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && t.task_stage === stageName;
+    });
   }
 
   const totalStageCount = allStageTasks.length;
