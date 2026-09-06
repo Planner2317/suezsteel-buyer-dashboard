@@ -1,2 +1,2 @@
-# suezsteel-buyer-dashboard
-Suez Steel Co. - Buyer Operational Workspace Dashboard
+# Suez Steel Co. — Enterprise Buyer Dashboard
+Automated procurement follow-up portal.
