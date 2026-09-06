@@ -2283,7 +2283,7 @@
       <!-- Left: Level 4 Stock Control Pre-Commercial Quick-Card -->
       <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Click to inspect PRs awaiting Level 4 Stock Control confirmation">
         <span class="l4-dot"></span>
-        <span><strong style="color:#ffffff;">5 PRs (46 Lines)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> <span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>32 Zero-Stock</span></span>
+        <span><strong style="color:#ffffff;">0 PRs (0 Lines)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> <span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>0 Zero-Stock</span></span>
         <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect L4</span>
       </div>
 
@@ -2348,7 +2348,7 @@
           <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Click to filter dashboard to Zero-Stock items only">
             <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
             <span>Zero-Stock Only</span>
-            <span class="zero-toggle-chip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10484 Lines</span>
+            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10484 Lines</span>
           </button>
 
           <!-- 2. Zero-Stock Direct Excel Export Button -->
@@ -5494,8 +5494,9 @@ function renderLifecycleCards() {
 
     const d = getCombinedBuyerLifecycle();
 
-  // ── UPDATE LEVEL 4 STOCK CONTROL QUICK-CARD DYNAMICALLY ──────────────────
+  // ── UPDATE LEVEL 4 STOCK CONTROL & ZERO-STOCK BADGES DYNAMICALLY ────────
   updateL4QuickCard();
+  updateZeroStockToggleChip();
 
   // ── UNASSIGNED QUICK-CARD (ALWAYS PERMANENTLY VISIBLE) ──────────────────
   const unassCard = document.getElementById("unassignedQuickCard");
@@ -6247,44 +6248,135 @@ function taskHasZeroStock(t) {
   return Boolean(t.is_zero_stock || t.stock === 0);
 }
 
+function getFilteredZeroStockCount() {
+  const isAllB = isAllBuyersSelected();
+  const isAllP = isAllProjectsSelected();
+  const isAllD = isAllDeptsSelected();
+  const selB = selectedBuyersSet;
+  const selP = selectedProjectsSet;
+  const selD = selectedDeptsSet;
+
+  let totalZeroLines = 0;
+  ALL_TASKS.forEach(t => {
+    const isUnass = (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs";
+    if (isUnass) return;
+    const matchB = isAllB || selB.has(t.buyer);
+    const matchP = isAllP || selP.has(t.project);
+    const matchD = isAllD || selD.has(t.department);
+    const matchPRPO = matchPrPo(t);
+    const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+    const matchO = matchOrderType(t);
+    const matchStage = (selectedStage === 'ALL') ? true : (selectedStage === 'PARTIAL' ? t.is_partial : t.task_stage === selectedStage);
+    
+    if (matchB && matchP && matchD && matchPRPO && matchY && matchO && matchStage) {
+      (t.lines || []).forEach(l => {
+        if (l.is_zero_stock || l.stock === 0) totalZeroLines++;
+      });
+    }
+  });
+  return totalZeroLines;
+}
+
+function updateZeroStockToggleChip() {
+  const chip = document.getElementById("zeroStockToggleCountChip");
+  const btn = document.getElementById("btnZeroStockToggle");
+  if (!chip) return;
+  const count = getFilteredZeroStockCount();
+
+  if (isZeroStockFilterActive) {
+    if (btn) btn.classList.add("active-zero-filter");
+    chip.style.background = "#ef4444";
+    chip.style.color = "#ffffff";
+    chip.textContent = `${count} Lines (Active)`;
+  } else {
+    if (btn) btn.classList.remove("active-zero-filter");
+    chip.style.background = "rgba(239,68,68,0.25)";
+    chip.style.color = "#fca5a5";
+    chip.textContent = `${count} Lines`;
+  }
+}
+
 function toggleZeroStockFilter() {
   isZeroStockFilterActive = !isZeroStockFilterActive;
   const btn = document.getElementById("btnZeroStockToggle");
   if (btn) {
     if (isZeroStockFilterActive) {
       btn.classList.add("active-zero-filter");
-      btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>Zero-Stock Only: <strong>ACTIVE</strong></span> <span class="zero-toggle-chip" style="background:#ef4444; color:#ffffff; padding:1px 6px; border-radius:4px; font-weight:900; font-size:0.68rem; margin-left:3px;">FILTERED</span>`;
       showToast("Filtered dashboard: Displaying ZERO-STOCK tasks only");
     } else {
       btn.classList.remove("active-zero-filter");
-      btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> <span>Zero-Stock Only</span> <span class="zero-toggle-chip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">309 Lines</span>`;
       showToast("Reset zero-stock filter (Displaying all tasks)");
     }
   }
+  updateZeroStockToggleChip();
   renderLifecycleCards();
   renderStatusChart();
 }
 
 async function exportZeroStockMatrix() {
+  const isAllB = isAllBuyersSelected();
+  const isAllP = isAllProjectsSelected();
   const isAllD = isAllDeptsSelected();
+  const selB = selectedBuyersSet;
+  const selP = selectedProjectsSet;
+  const selD = selectedDeptsSet;
+
+  // 1. Filter commercial tasks strictly by all active dimensions
   const zeroTasks = ALL_TASKS.filter(t => {
     const isUnass = (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs";
     if (isUnass) return false;
-    const matchB = isAllBuyersSelected() || selectedBuyersSet.has(t.buyer);
-    const matchP = isAllProjectsSelected() || selectedProjectsSet.has(t.project);
-    const matchD = isAllD || selectedDeptsSet.has(t.department);
+    const matchB = isAllB || selB.has(t.buyer);
+    const matchP = isAllP || selP.has(t.project);
+    const matchD = isAllD || selD.has(t.department);
+    const matchPRPO = matchPrPo(t);
     const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
     const matchO = matchOrderType(t);
-    return matchB && matchP && matchD && matchY && matchO && taskHasZeroStock(t);
+    const matchStage = (selectedStage === 'ALL') ? true : (selectedStage === 'PARTIAL' ? t.is_partial : t.task_stage === selectedStage);
+    return matchB && matchP && matchD && matchPRPO && matchY && matchO && matchStage && taskHasZeroStock(t);
   });
 
-  if (!zeroTasks.length) {
+  // 2. Filter Level 4 pre-commercial zero-stock tasks matching active filters
+  const zeroL4Tasks = (typeof L4_TASKS !== 'undefined') ? L4_TASKS.filter(t => {
+    const matchD = isAllD || selD.has(t.department);
+    const matchP = isAllP || selP.has(t.project);
+    const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+    const isZero = t.is_zero_stock || t.stock === 0;
+    return matchD && matchP && matchY && isZero;
+  }) : [];
+
+  if (!zeroTasks.length && !zeroL4Tasks.length) {
     alert("No zero-stock records match the current filter.");
     return;
   }
 
+  // Construct descriptive dynamic filename reflecting active filter
+  let scopeTag = 'Enterprise';
+  if (!isAllD) {
+    if (selD.size === 1) {
+      scopeTag = Array.from(selD)[0].replace(/[^a-zA-Z0-9]/g, '_');
+    } else {
+      scopeTag = `${selD.size}_Depts`;
+    }
+  } else if (!isAllP) {
+    if (selP.size === 1) {
+      scopeTag = Array.from(selP)[0].replace(/[^a-zA-Z0-9]/g, '_');
+    } else {
+      scopeTag = `${selP.size}_Plants`;
+    }
+  }
+  if (selectedStage && selectedStage !== 'ALL') {
+    scopeTag += `_${selectedStage.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  }
+
   const todayStr = new Date().toISOString().split('T')[0];
-  const fileName = `SuezSteel_SMP1_Zero_Stock_Critical_Spares_${todayStr}.xlsx`;
+  const fileName = `SuezSteel_${scopeTag}_Zero_Stock_${todayStr}.xlsx`;
+
+  // Construct active filter description
+  const activeDeptStr = isAllD ? 'All Departments' : Array.from(selD).join(', ');
+  const activeProjStr = isAllP ? 'All Projects' : Array.from(selP).join(', ');
+  const activeBuyerStr = isAllB ? 'All Buyers' : Array.from(selB).join(', ');
+  const activeStageStr = selectedStage === 'ALL' ? 'All Stages' : selectedStage;
+  const filterSummary = `Scope: Dept: [${activeDeptStr}] | Plant: [${activeProjStr}] | Buyer: [${activeBuyerStr}] | Stage: [${activeStageStr}] | Year: [${selectedYear}]`;
 
   if (typeof ExcelJS !== "undefined") {
     try {
@@ -6294,53 +6386,69 @@ async function exportZeroStockMatrix() {
 
       // Sheet 1: Zero-Stock Commercial Documents
       const ws1 = wb.addWorksheet('Zero-Stock Documents', { views: [{ showGridLines: true }] });
-      ws1.mergeCells('A1:L1');
+      ws1.mergeCells('A1:M1');
       const ws1Title = ws1.getCell('A1');
-      ws1Title.value = `SUEZ STEEL CO. — ZERO-STOCK CRITICAL SPARES ACTION MATRIX (${zeroTasks.length} TASKS)`;
-      ws1Title.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+      ws1Title.value = `SUEZ STEEL CO. — ZERO-STOCK ACTION MATRIX (${zeroTasks.length} Tasks)`;
+      ws1Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
       ws1Title.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF991B1B' } };
       ws1Title.alignment = { vertical: 'middle', horizontal: 'center' };
-      ws1.getRow(1).height = 26;
+      ws1.getRow(1).height = 24;
 
-      const ws1Headers = ['Buyer', 'Project', 'Task Stage', 'PR No.', 'PO No.', 'Order Type', 'Supplier', 'Required Action', 'PR Date', 'Promised Delivery', 'Supplier Overdue (d)', 'Primary Bottleneck'];
+      ws1.mergeCells('A2:M2');
+      const ws1Sub = ws1.getCell('A2');
+      ws1Sub.value = filterSummary;
+      ws1Sub.font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFCBD5E1' } };
+      ws1Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+      ws1Sub.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws1.getRow(2).height = 18;
+
+      const ws1Headers = ['Department', 'Buyer', 'Project', 'Task Stage', 'PR No.', 'PO No.', 'Order Type', 'Supplier', 'Required Action', 'PR Date', 'Promised Delivery', 'Supplier Overdue (d)', 'Primary Bottleneck'];
       const ws1HRow = ws1.addRow(ws1Headers);
-      ws1HRow.height = 24;
+      ws1HRow.height = 22;
       ws1HRow.eachCell(cell => {
         cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF334155' } };
         cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       });
 
       zeroTasks.forEach(t => {
         const row = ws1.addRow([
-          t.buyer, t.project, t.task_stage, t.pr_no, t.po_no || '-', t.order_type,
+          t.department || '-', t.buyer, t.project, t.task_stage, t.pr_no, t.po_no || '-', t.order_type,
           t.supplier || '-', t.action_text, t.pr_date, t.promised_date || '-',
           t.overdue_days || 0, t.primary_bottleneck || '-'
         ]);
         row.height = 20;
       });
       ws1.columns = [
-        { width: 22 }, { width: 14 }, { width: 26 }, { width: 12 }, { width: 14 },
+        { width: 24 }, { width: 22 }, { width: 16 }, { width: 26 }, { width: 12 }, { width: 14 },
         { width: 13 }, { width: 28 }, { width: 45 }, { width: 13 }, { width: 14 },
         { width: 14 }, { width: 32 }
       ];
 
       // Sheet 2: Zero-Stock Line Items Detailed Audit
       const ws2 = wb.addWorksheet('Zero-Stock Line Items', { views: [{ showGridLines: true }] });
-      ws2.mergeCells('A1:I1');
+      ws2.mergeCells('A1:J1');
       const ws2Title = ws2.getCell('A1');
       ws2Title.value = 'ZERO-STOCK PHYSICAL INVENTORY SPARES (STOCK = 0)';
-      ws2Title.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+      ws2Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
       ws2Title.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFB91C1C' } };
       ws2Title.alignment = { vertical: 'middle', horizontal: 'center' };
-      ws2.getRow(1).height = 26;
+      ws2.getRow(1).height = 24;
 
-      const ws2Headers = ['Buyer', 'Project', 'PR No.', 'PO No.', 'Item Code', 'Item Description', 'Warehouse Stock', 'Pending Balance Qty', 'Task Stage'];
+      ws2.mergeCells('A2:J2');
+      const ws2Sub = ws2.getCell('A2');
+      ws2Sub.value = filterSummary;
+      ws2Sub.font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFCBD5E1' } };
+      ws2Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+      ws2Sub.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws2.getRow(2).height = 18;
+
+      const ws2Headers = ['Department', 'Buyer', 'Project', 'PR No.', 'PO No.', 'Item Code', 'Item Description', 'Warehouse Stock', 'Pending Balance Qty', 'Task Stage'];
       const ws2HRow = ws2.addRow(ws2Headers);
-      ws2HRow.height = 24;
+      ws2HRow.height = 22;
       ws2HRow.eachCell(cell => {
         cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF334155' } };
         cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       });
 
@@ -6348,7 +6456,7 @@ async function exportZeroStockMatrix() {
         (t.lines || []).forEach(l => {
           if (l.is_zero_stock || l.stock === 0) {
             const lRow = ws2.addRow([
-              t.buyer, t.project, t.pr_no, t.po_no || '-', l.item_code, l.item_desc,
+              t.department || '-', t.buyer, t.project, t.pr_no, t.po_no || '-', l.item_code, l.item_desc,
               0, l.bal_qty || 0, t.task_stage
             ]);
             lRow.height = 20;
@@ -6356,9 +6464,50 @@ async function exportZeroStockMatrix() {
         });
       });
       ws2.columns = [
-        { width: 22 }, { width: 14 }, { width: 12 }, { width: 14 }, { width: 18 },
+        { width: 24 }, { width: 22 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 18 },
         { width: 45 }, { width: 16 }, { width: 18 }, { width: 26 }
       ];
+
+      // Sheet 3: Level 4 Pre-Commercial Zero-Stock Spares
+      if (zeroL4Tasks.length > 0) {
+        const ws3 = wb.addWorksheet('L4 Pre-Commercial Spares', { views: [{ showGridLines: true }] });
+        ws3.mergeCells('A1:I1');
+        const ws3Title = ws3.getCell('A1');
+        ws3Title.value = `PENDING LEVEL 4 ZERO-STOCK SPARES (${zeroL4Tasks.length} Lines Awaiting SC Confirmation)`;
+        ws3Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
+        ws3Title.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF7C3AED' } };
+        ws3Title.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws3.getRow(1).height = 24;
+
+        ws3.mergeCells('A2:I2');
+        const ws3Sub = ws3.getCell('A2');
+        ws3Sub.value = filterSummary;
+        ws3Sub.font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFCBD5E1' } };
+        ws3Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+        ws3Sub.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws3.getRow(2).height = 18;
+
+        const ws3Headers = ['Department', 'Project', 'PR No.', 'Line', 'Item Code', 'Item Description', 'Req Qty', 'Unit', 'Requisitioner'];
+        const ws3HRow = ws3.addRow(ws3Headers);
+        ws3HRow.height = 22;
+        ws3HRow.eachCell(cell => {
+          cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF334155' } };
+          cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        });
+
+        zeroL4Tasks.forEach(t => {
+          const lRow = ws3.addRow([
+            t.department || '-', t.project, t.pr_no, t.line_no || '1', t.item_code, t.desc,
+            t.qty || 0, t.unit || 'PC', t.requested_by || '-'
+          ]);
+          lRow.height = 20;
+        });
+        ws3.columns = [
+          { width: 24 }, { width: 16 }, { width: 12 }, { width: 8 }, { width: 18 },
+          { width: 45 }, { width: 12 }, { width: 8 }, { width: 24 }
+        ];
+      }
 
       const buffer = await wb.xlsx.writeBuffer();
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -6448,9 +6597,9 @@ function sortDelayModal(key) {
 }
 
 
-const L4_TASKS = [{"pr_no": "167546", "line_no": "9", "item_code": "S.4730.0000.1365", "desc": "Elbow  3/4 INCH  Threaded 90\u00b0  SS304  Female  NPT  Class 150  ASME B16.14.", "qty": 50.0, "bal_qty": 50.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 3.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "10", "item_code": "S.4730.0000.1969", "desc": "ELBOW  8 INCH  90 DEGREE  LR   SCH. 10  SS304.  SEAMLESS", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "19", "item_code": "S.4730.0000.2034", "desc": "HYDRAULIC NIPPLE MALE ENDS M26*1.5  WITH NUT AND COCK (L18)", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "20", "item_code": "S.4730.12AF.0002", "desc": "HYDRAULIC NIPPLE ONE SIDE 1.25 INCH OTHER SIDE M52 X2 mm", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "16", "item_code": "S.4730.F000.0167", "desc": "NIPPLE  1 INCH  CLASS  150  C.ST", "qty": 5.0, "bal_qty": 5.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 1.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "22", "item_code": "S.4730.S100.0013", "desc": "NIPPLE  2 INCH  ST.ST 316", "qty": 25.0, "bal_qty": 25.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "11", "item_code": "S.4730.S100.0084", "desc": "NIPPLE FOR CUTTING TORCH AS DRAWING  200668", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": null, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "12", "item_code": "S.4730.S104.0018", "desc": "BANJO  1/4 INCH  M14*1.5  TUBE DIA. 8 MM  (ROTATING ELBOW)", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 6.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "13", "item_code": "S.4730.S104.0062", "desc": "ELBOW  HYDRAULIC  M24*1.5  MALE/MALE  WITH ORING  NUT SW36  WITH WELD COCK FROM TWO SIDES", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "14", "item_code": "S.4730.S113.0013", "desc": "NIPPLE  1/2 INCH  WORKING PRESSURE 400 BAR  ONE SIDE NUT M24*1.5  HYD", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "15", "item_code": "S.4730.S204.0031", "desc": "GREASE NIPPLE  1/4 INCH  FLAT  M16*1.5  TAPPER", "qty": 15.0, "bal_qty": 15.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 1.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "24", "item_code": "S.0000.PP01.0032", "desc": "1/4  INCH BSP   ( MS With Low Melting Alloy Below Of Temp ( 130? C \u00b15?C) Fusible plug", "qty": 5.0, "bal_qty": 5.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 14.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "1", "item_code": "S.3419.0000.0037", "desc": "GREASE NIPPLE  8 MM  ELBOW 90 DEG", "qty": 30.0, "bal_qty": 30.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "17", "item_code": "S.4720.S113.0007", "desc": "NIPPLE  M52*2  MALE WELDED  M52*2  HYD", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 2.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "18", "item_code": "S.4720.S113.0011", "desc": "Hydraulic Nipple m30*2/ OUTER THREAD  1/2  INCH", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "2", "item_code": "S.4730.0000.0012", "desc": "COUPLER  1/8 INCH  INTERNAL THREAD  FOR STANDARD GREASE FITTING", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 1.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "3", "item_code": "S.4730.0000.0287", "desc": "UNION  3/4''  SCH 40", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "21", "item_code": "S.4730.0000.0342", "desc": "PLUG  3/4 INCH  STAINLESS ALLEN HEAD", "qty": 20.0, "bal_qty": 20.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "23", "item_code": "S.4730.0000.0396", "desc": "NIPPLE  3/8 INCH  M18 * 1.5  HYD", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 1.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "4", "item_code": "S.4730.0000.0410", "desc": "Hex Threaded Nipple  1/2 INCH  SS304  ASTM A312  Seamless  NPT  Sch 40.", "qty": 50.0, "bal_qty": 50.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "5", "item_code": "S.4730.0000.0515", "desc": "HYDRAULIC BANJO CONNECTION  1/4 INCH/M16*1.5  MALE/MALE", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "6", "item_code": "S.4730.0000.0516", "desc": "Hydraulic Banjo Connection  3/8 INCH / M18 x 1.5  SS304  with Copper Washers & O-Ring.", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "7", "item_code": "S.4730.0000.1151", "desc": "ELBOW  1.5 INCH  90 DEG  ST.ST", "qty": 70.0, "bal_qty": 70.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 16.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167546", "line_no": "8", "item_code": "S.4730.0000.1160", "desc": "ELBOW  8 INCH  45 DEG  C.ST", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 2.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "4", "item_code": "S.4720.S100.0024", "desc": "HOSE  SS  WATER  1/4 INCH  55 CM  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  M14 X 1.5", "qty": 95.0, "bal_qty": 95.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "5", "item_code": "S.4720.S101.0001", "desc": "HOSE  SS  WATER  1/4 INCH  1.8 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  M16 X 1.5", "qty": 25.0, "bal_qty": 25.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "6", "item_code": "S.4720.S102.0014", "desc": "HOSE  SS  WATER  1 INCH  1.8 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  1 INCH", "qty": 22.0, "bal_qty": 22.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "7", "item_code": "S.4720.S102.0041", "desc": "HOSE  ST.ST. 316  DIM.1/2 INCH  L=90CM  BOTH ENDS FEMALE M24 X 1.5", "qty": 20.0, "bal_qty": 20.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "15", "item_code": "S.4720.S200.0200", "desc": "HOSE  SS  WATER  1 INCH  1 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  1 INCH", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "9", "item_code": "S.4720.S102.0106", "desc": "HOSE  SS  2 INCH  1 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "10", "item_code": "S.4720.S102.0109", "desc": "HOSE  SS  3/4 INCH  1.3 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "11", "item_code": "S.4720.S102.0110", "desc": "HOSE  SS  1 INCH  1 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "qty": 25.0, "bal_qty": 25.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "12", "item_code": "S.4720.S102.0111", "desc": "HOSE  SS  1.5 INCH  1.8 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "13", "item_code": "S.4720.S102.0171", "desc": "HOSE  SS  WATER  3/4 INCH  200 CM  20 BAR  SS BRAIDED  FITTINGS  CAMLOCK (D)", "qty": 15.0, "bal_qty": 15.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "14", "item_code": "S.4720.S102.0172", "desc": "HOSE  SS  WATER  3/4 INCH  80 CM  20 BAR  SS BRAIDED  FITTINGS  CAMLOCK (D)", "qty": 35.0, "bal_qty": 35.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "16", "item_code": "S.4720.S104.0017", "desc": "HOSE  SS  WATER  1/4 INCH  1 M  20 BAR  SS BRAIDED  FITTINGS  STR. NUT  M14 X 1.5", "qty": 95.0, "bal_qty": 95.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "17", "item_code": "S.4720.S104.0030", "desc": "HOSE SS  3/4 INCH  5.6 M 20 BAR NUT 3/4 INCH", "qty": 16.0, "bal_qty": 16.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "18", "item_code": "S.4720.S112.0008", "desc": "HOSE  SS  WATER  3/4 INCH  7 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  3/4 INCH", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "3", "item_code": "S.4720.0000.0484", "desc": "HOSE S.S  16 BAR  1.25 INCH LENGTH 60CM  END NIPPLE 1.25  INCH", "qty": 10.0, "bal_qty": 10.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "2", "item_code": "S.4720.0000.0352", "desc": "HOSE  SS  WATER  1 1/2 INCH  1.1 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NIPPLE  1 1/2 INCH", "qty": 4.0, "bal_qty": 4.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 3.0, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "1", "item_code": "S.4720.0000.0227", "desc": "HOSE  SS  WATER  2 INCH  20 BAR  SS BRAIDED", "qty": 3.0, "bal_qty": 3.0, "unit": "M", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": null, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167626", "line_no": "8", "item_code": "S.4720.S102.0105", "desc": "HOSE  SS  2 INCH  1.3 M  20 BAR SS BRAIDED  ELBOW AND CAMLOCK (D) BOTH SIDES", "qty": 8.0, "bal_qty": 8.0, "unit": "PC", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167673", "line_no": "2", "item_code": "S.1200.1020.0488", "desc": "Seal   O-Ring   Media  Water   Mat  NBR 70   ID 72mm   OD 84mm   Thk 5mm", "qty": 15.0, "bal_qty": 15.0, "unit": "PC", "pr_date": "2026-08-31", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167673", "line_no": "1", "item_code": "S.5330.S109.0020", "desc": "Metal Case Double wiper seal 40*50*7/10 Polyurethane for the cylinder of bag filter compartment  gate", "qty": 20.0, "bal_qty": 20.0, "unit": "PC", "pr_date": "2026-08-31", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167712", "line_no": "1", "item_code": "V0700000009", "desc": "maintenance machinery", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-09-01", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": null, "is_zero_stock": false, "task_stage": "Pending Stock Control L4"}, {"pr_no": "167715", "line_no": "1", "item_code": "S.1200.1720.0070", "desc": "Valve Components   Hyd block for tundish nozzle changing device    OEM  VOESTALPINE   PN SUE.CK.881-HH182   DWG  SUE.CK8", "qty": 2.0, "bal_qty": 2.0, "unit": "PC", "pr_date": "2026-09-01", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "stock": 0.0, "is_zero_stock": true, "task_stage": "Pending Stock Control L4"}];
-const L4_PRS_SUMMARY = [{"pr_no": "167546", "pr_date": "2026-08-24", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "total_lines": 24, "zero_lines": 13, "total_units": 388.0, "unit": "PC"}, {"pr_no": "167626", "pr_date": "2026-08-30", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "total_lines": 18, "zero_lines": 16, "total_units": 415.0, "unit": "PC"}, {"pr_no": "167673", "pr_date": "2026-08-31", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "total_lines": 2, "zero_lines": 2, "total_units": 35.0, "unit": "PC"}, {"pr_no": "167712", "pr_date": "2026-09-01", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "total_lines": 1, "zero_lines": 0, "total_units": 2.0, "unit": "PC"}, {"pr_no": "167715", "pr_date": "2026-09-01", "pr_year": "2026", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "project": "OP02-SMP1", "department": "SMP1 - Mechanical", "total_lines": 1, "zero_lines": 1, "total_units": 2.0, "unit": "PC"}];
-const L4_TASKS_BY_PR = {"167546": {"pr_no": "167546", "po_no": "", "has_po": false, "buyer": "Stock Control Level 4", "project": "OP02-SMP1", "task_stage": "Pending Stock Control L4", "stage_order": 0, "macro_class": "Pre-Commercial", "status_display": "Pending Level 4 Budget Approval", "order_type": "TBD", "action_text": "Awaiting Stock Control Level 4 Budget & Spares Release", "pr_date": "2026-08-24", "pr_conf_date": "2026-08-24", "po_date": "", "promised_date": "Pending Approval", "overdue_days": 0, "stage_delay": 5, "primary_bottleneck": "Internal: Stock Control Level 4 Approval", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "remarks": "Requisitioned by \u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646 - Awaiting Level 4 Confirmation", "supplier": "Not Awarded (Pre-Commercial)", "d1": 2, "d2": 7, "d3": 0, "d4": 0, "d5": 0, "d6": 0, "d7": 0, "d8": 0, "d9": 0, "is_partial": false, "total_bal_qty": 388.0, "total_pr_qty": 388.0, "total_po_qty": 0.0, "total_srv_qty": 0.0, "zero_lines_cnt": 13, "total_lines_cnt": 24, "lines": [{"item_code": "S.4730.0000.1365", "item_desc": "Elbow  3/4 INCH  Threaded 90\u00b0  SS304  Female  NPT  Class 150  ASME B16.14.", "pr_qty": 50.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 50.0, "unit": "PC", "stock": 3.0, "is_zero_stock": false}, {"item_code": "S.4730.0000.1969", "item_desc": "ELBOW  8 INCH  90 DEGREE  LR   SCH. 10  SS304.  SEAMLESS", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.2034", "item_desc": "HYDRAULIC NIPPLE MALE ENDS M26*1.5  WITH NUT AND COCK (L18)", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.12AF.0002", "item_desc": "HYDRAULIC NIPPLE ONE SIDE 1.25 INCH OTHER SIDE M52 X2 mm", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.F000.0167", "item_desc": "NIPPLE  1 INCH  CLASS  150  C.ST", "pr_qty": 5.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 5.0, "unit": "PC", "stock": 1.0, "is_zero_stock": false}, {"item_code": "S.4730.S100.0013", "item_desc": "NIPPLE  2 INCH  ST.ST 316", "pr_qty": 25.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 25.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.S100.0084", "item_desc": "NIPPLE FOR CUTTING TORCH AS DRAWING  200668", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": null, "is_zero_stock": false}, {"item_code": "S.4730.S104.0018", "item_desc": "BANJO  1/4 INCH  M14*1.5  TUBE DIA. 8 MM  (ROTATING ELBOW)", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 6.0, "is_zero_stock": false}, {"item_code": "S.4730.S104.0062", "item_desc": "ELBOW  HYDRAULIC  M24*1.5  MALE/MALE  WITH ORING  NUT SW36  WITH WELD COCK FROM TWO SIDES", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.S113.0013", "item_desc": "NIPPLE  1/2 INCH  WORKING PRESSURE 400 BAR  ONE SIDE NUT M24*1.5  HYD", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.S204.0031", "item_desc": "GREASE NIPPLE  1/4 INCH  FLAT  M16*1.5  TAPPER", "pr_qty": 15.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 15.0, "unit": "PC", "stock": 1.0, "is_zero_stock": false}, {"item_code": "S.0000.PP01.0032", "item_desc": "1/4  INCH BSP   ( MS With Low Melting Alloy Below Of Temp ( 130? C \u00b15?C) Fusible plug", "pr_qty": 5.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 5.0, "unit": "PC", "stock": 14.0, "is_zero_stock": false}, {"item_code": "S.3419.0000.0037", "item_desc": "GREASE NIPPLE  8 MM  ELBOW 90 DEG", "pr_qty": 30.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 30.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S113.0007", "item_desc": "NIPPLE  M52*2  MALE WELDED  M52*2  HYD", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 2.0, "is_zero_stock": false}, {"item_code": "S.4720.S113.0011", "item_desc": "Hydraulic Nipple m30*2/ OUTER THREAD  1/2  INCH", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.0012", "item_desc": "COUPLER  1/8 INCH  INTERNAL THREAD  FOR STANDARD GREASE FITTING", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 1.0, "is_zero_stock": false}, {"item_code": "S.4730.0000.0287", "item_desc": "UNION  3/4''  SCH 40", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.0342", "item_desc": "PLUG  3/4 INCH  STAINLESS ALLEN HEAD", "pr_qty": 20.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 20.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.0396", "item_desc": "NIPPLE  3/8 INCH  M18 * 1.5  HYD", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 1.0, "is_zero_stock": false}, {"item_code": "S.4730.0000.0410", "item_desc": "Hex Threaded Nipple  1/2 INCH  SS304  ASTM A312  Seamless  NPT  Sch 40.", "pr_qty": 50.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 50.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.0515", "item_desc": "HYDRAULIC BANJO CONNECTION  1/4 INCH/M16*1.5  MALE/MALE", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.0516", "item_desc": "Hydraulic Banjo Connection  3/8 INCH / M18 x 1.5  SS304  with Copper Washers & O-Ring.", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4730.0000.1151", "item_desc": "ELBOW  1.5 INCH  90 DEG  ST.ST", "pr_qty": 70.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 70.0, "unit": "PC", "stock": 16.0, "is_zero_stock": false}, {"item_code": "S.4730.0000.1160", "item_desc": "ELBOW  8 INCH  45 DEG  C.ST", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 2.0, "is_zero_stock": false}]}, "167626": {"pr_no": "167626", "po_no": "", "has_po": false, "buyer": "Stock Control Level 4", "project": "OP02-SMP1", "task_stage": "Pending Stock Control L4", "stage_order": 0, "macro_class": "Pre-Commercial", "status_display": "Pending Level 4 Budget Approval", "order_type": "TBD", "action_text": "Awaiting Stock Control Level 4 Budget & Spares Release", "pr_date": "2026-08-30", "pr_conf_date": "2026-08-30", "po_date": "", "promised_date": "Pending Approval", "overdue_days": 0, "stage_delay": 5, "primary_bottleneck": "Internal: Stock Control Level 4 Approval", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "remarks": "Requisitioned by \u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646 - Awaiting Level 4 Confirmation", "supplier": "Not Awarded (Pre-Commercial)", "d1": 2, "d2": 7, "d3": 0, "d4": 0, "d5": 0, "d6": 0, "d7": 0, "d8": 0, "d9": 0, "is_partial": false, "total_bal_qty": 415.0, "total_pr_qty": 415.0, "total_po_qty": 0.0, "total_srv_qty": 0.0, "zero_lines_cnt": 16, "total_lines_cnt": 18, "lines": [{"item_code": "S.4720.S100.0024", "item_desc": "HOSE  SS  WATER  1/4 INCH  55 CM  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  M14 X 1.5", "pr_qty": 95.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 95.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S101.0001", "item_desc": "HOSE  SS  WATER  1/4 INCH  1.8 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  M16 X 1.5", "pr_qty": 25.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 25.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0014", "item_desc": "HOSE  SS  WATER  1 INCH  1.8 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  1 INCH", "pr_qty": 22.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 22.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0041", "item_desc": "HOSE  ST.ST. 316  DIM.1/2 INCH  L=90CM  BOTH ENDS FEMALE M24 X 1.5", "pr_qty": 20.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 20.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S200.0200", "item_desc": "HOSE  SS  WATER  1 INCH  1 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  1 INCH", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0106", "item_desc": "HOSE  SS  2 INCH  1 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0109", "item_desc": "HOSE  SS  3/4 INCH  1.3 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0110", "item_desc": "HOSE  SS  1 INCH  1 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "pr_qty": 25.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 25.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0111", "item_desc": "HOSE  SS  1.5 INCH  1.8 M  20 BAR SS BRAIDED  CAMLOCK (D) BOTH SIDES", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0171", "item_desc": "HOSE  SS  WATER  3/4 INCH  200 CM  20 BAR  SS BRAIDED  FITTINGS  CAMLOCK (D)", "pr_qty": 15.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 15.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S102.0172", "item_desc": "HOSE  SS  WATER  3/4 INCH  80 CM  20 BAR  SS BRAIDED  FITTINGS  CAMLOCK (D)", "pr_qty": 35.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 35.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S104.0017", "item_desc": "HOSE  SS  WATER  1/4 INCH  1 M  20 BAR  SS BRAIDED  FITTINGS  STR. NUT  M14 X 1.5", "pr_qty": 95.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 95.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S104.0030", "item_desc": "HOSE SS  3/4 INCH  5.6 M 20 BAR NUT 3/4 INCH", "pr_qty": 16.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 16.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.S112.0008", "item_desc": "HOSE  SS  WATER  3/4 INCH  7 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NUT  3/4 INCH", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.0000.0484", "item_desc": "HOSE S.S  16 BAR  1.25 INCH LENGTH 60CM  END NIPPLE 1.25  INCH", "pr_qty": 10.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 10.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.4720.0000.0352", "item_desc": "HOSE  SS  WATER  1 1/2 INCH  1.1 M  20 BAR  SS BRAIDED  FITTINGS  STR. SS NIPPLE  1 1/2 INCH", "pr_qty": 4.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 4.0, "unit": "PC", "stock": 3.0, "is_zero_stock": false}, {"item_code": "S.4720.0000.0227", "item_desc": "HOSE  SS  WATER  2 INCH  20 BAR  SS BRAIDED", "pr_qty": 3.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 3.0, "unit": "M", "stock": null, "is_zero_stock": false}, {"item_code": "S.4720.S102.0105", "item_desc": "HOSE  SS  2 INCH  1.3 M  20 BAR SS BRAIDED  ELBOW AND CAMLOCK (D) BOTH SIDES", "pr_qty": 8.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 8.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}]}, "167673": {"pr_no": "167673", "po_no": "", "has_po": false, "buyer": "Stock Control Level 4", "project": "OP02-SMP1", "task_stage": "Pending Stock Control L4", "stage_order": 0, "macro_class": "Pre-Commercial", "status_display": "Pending Level 4 Budget Approval", "order_type": "TBD", "action_text": "Awaiting Stock Control Level 4 Budget & Spares Release", "pr_date": "2026-08-31", "pr_conf_date": "2026-08-31", "po_date": "", "promised_date": "Pending Approval", "overdue_days": 0, "stage_delay": 5, "primary_bottleneck": "Internal: Stock Control Level 4 Approval", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "remarks": "Requisitioned by \u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646 - Awaiting Level 4 Confirmation", "supplier": "Not Awarded (Pre-Commercial)", "d1": 2, "d2": 7, "d3": 0, "d4": 0, "d5": 0, "d6": 0, "d7": 0, "d8": 0, "d9": 0, "is_partial": false, "total_bal_qty": 35.0, "total_pr_qty": 35.0, "total_po_qty": 0.0, "total_srv_qty": 0.0, "zero_lines_cnt": 2, "total_lines_cnt": 2, "lines": [{"item_code": "S.1200.1020.0488", "item_desc": "Seal   O-Ring   Media  Water   Mat  NBR 70   ID 72mm   OD 84mm   Thk 5mm", "pr_qty": 15.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 15.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}, {"item_code": "S.5330.S109.0020", "item_desc": "Metal Case Double wiper seal 40*50*7/10 Polyurethane for the cylinder of bag filter compartment  gate", "pr_qty": 20.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 20.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}]}, "167712": {"pr_no": "167712", "po_no": "", "has_po": false, "buyer": "Stock Control Level 4", "project": "OP02-SMP1", "task_stage": "Pending Stock Control L4", "stage_order": 0, "macro_class": "Pre-Commercial", "status_display": "Pending Level 4 Budget Approval", "order_type": "TBD", "action_text": "Awaiting Stock Control Level 4 Budget & Spares Release", "pr_date": "2026-09-01", "pr_conf_date": "2026-09-01", "po_date": "", "promised_date": "Pending Approval", "overdue_days": 0, "stage_delay": 5, "primary_bottleneck": "Internal: Stock Control Level 4 Approval", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "remarks": "Requisitioned by \u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646 - Awaiting Level 4 Confirmation", "supplier": "Not Awarded (Pre-Commercial)", "d1": 2, "d2": 7, "d3": 0, "d4": 0, "d5": 0, "d6": 0, "d7": 0, "d8": 0, "d9": 0, "is_partial": false, "total_bal_qty": 2.0, "total_pr_qty": 2.0, "total_po_qty": 0.0, "total_srv_qty": 0.0, "zero_lines_cnt": 0, "total_lines_cnt": 1, "lines": [{"item_code": "V0700000009", "item_desc": "maintenance machinery", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": null, "is_zero_stock": false}]}, "167715": {"pr_no": "167715", "po_no": "", "has_po": false, "buyer": "Stock Control Level 4", "project": "OP02-SMP1", "task_stage": "Pending Stock Control L4", "stage_order": 0, "macro_class": "Pre-Commercial", "status_display": "Pending Level 4 Budget Approval", "order_type": "TBD", "action_text": "Awaiting Stock Control Level 4 Budget & Spares Release", "pr_date": "2026-09-01", "pr_conf_date": "2026-09-01", "po_date": "", "promised_date": "Pending Approval", "overdue_days": 0, "stage_delay": 5, "primary_bottleneck": "Internal: Stock Control Level 4 Approval", "requested_by": "\u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646", "remarks": "Requisitioned by \u0645\u062d\u0645\u062f \u0639\u0632\u062a \u0627\u062d\u0645\u062f \u062d\u0633\u0646 - Awaiting Level 4 Confirmation", "supplier": "Not Awarded (Pre-Commercial)", "d1": 2, "d2": 7, "d3": 0, "d4": 0, "d5": 0, "d6": 0, "d7": 0, "d8": 0, "d9": 0, "is_partial": false, "total_bal_qty": 2.0, "total_pr_qty": 2.0, "total_po_qty": 0.0, "total_srv_qty": 0.0, "zero_lines_cnt": 1, "total_lines_cnt": 1, "lines": [{"item_code": "S.1200.1720.0070", "item_desc": "Valve Components   Hyd block for tundish nozzle changing device    OEM  VOESTALPINE   PN SUE.CK.881-HH182   DWG  SUE.CK8", "pr_qty": 2.0, "po_qty": 0.0, "srv_qty": 0.0, "bal_qty": 2.0, "unit": "PC", "stock": 0.0, "is_zero_stock": true}]}};
+const L4_TASKS = [];
+const L4_PRS_SUMMARY = [];
+const L4_TASKS_BY_PR = {};
 
 function switchL4View(viewName) {
   const prBtn = document.getElementById("l4ViewPrBtn");
