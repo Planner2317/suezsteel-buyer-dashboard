@@ -2267,14 +2267,31 @@
         </div>
       </div>
 
-      <!-- UP-RIGHT SYSTEM UTILITY (OFF-CONTEXT) -->
-      <div class="view-mode-bar">
-        <button class="btn-mode active" id="btnModeFit" onclick="setDashboardViewMode('fit')" title="Adaptive Responsive Screen View">
-          <i class="fa-solid fa-laptop"></i> View
-        </button>
-        <button class="btn-mode btn-mode-fs" onclick="toggleFullScreen()" title="Toggle Fullscreen Mode">
-          <i class="fa-solid fa-expand"></i>
-        </button>
+      <!-- UP-RIGHT SYSTEM UTILITY & ZERO-STOCK ACTIONS -->
+      <div class="header-top-right-controls" style="display:inline-flex; align-items:center; gap:8px;">
+        <div id="headerCustomActionSlot" style="display:inline-flex; align-items:center; gap:8px;">
+          <!-- 1. Zero-Stock Filter Toggle Button -->
+          <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Click to filter dashboard to Zero-Stock items only">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
+            <span>Zero-Stock Only</span>
+            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10484 Lines</span>
+          </button>
+
+          <!-- 2. Zero-Stock Direct Excel Export Button -->
+          <button id="btnZeroStockExport" onclick="exportZeroStockMatrix()" class="btn-zero-stock-export" title="Click to download dedicated Excel report of all Zero-Stock critical spares">
+            <i class="fa-solid fa-file-excel" style="color:#34d399;"></i>
+            <span>Export Zero-Stock</span>
+          </button>
+        </div>
+
+        <div class="view-mode-bar">
+          <button class="btn-mode active" id="btnModeFit" onclick="setDashboardViewMode('fit')" title="Adaptive Responsive Screen View">
+            <i class="fa-solid fa-laptop"></i> View
+          </button>
+          <button class="btn-mode btn-mode-fs" onclick="toggleFullScreen()" title="Toggle Fullscreen Mode">
+            <i class="fa-solid fa-expand"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -2340,24 +2357,8 @@
         </div>
       </div>
 
-      <!-- Right: Action Controls (New Button Slot + PR Year Selector) -->
+      <!-- Right: Action Controls (PR Year Selector) -->
       <div class="header-actions-right">
-        <!-- Dedicated slot for upcoming function button -->
-        <div id="headerCustomActionSlot" style="display:inline-flex; align-items:center; gap:8px;">
-          <!-- 1. Zero-Stock Filter Toggle Button -->
-          <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Click to filter dashboard to Zero-Stock items only">
-            <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
-            <span>Zero-Stock Only</span>
-            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10484 Lines</span>
-          </button>
-
-          <!-- 2. Zero-Stock Direct Excel Export Button -->
-          <button id="btnZeroStockExport" onclick="exportZeroStockMatrix()" class="btn-zero-stock-export" title="Click to download dedicated Excel report of all Zero-Stock critical spares">
-            <i class="fa-solid fa-file-excel" style="color:#34d399;"></i>
-            <span>Export Zero-Stock</span>
-          </button>
-        </div>
-
         <!-- REQUISITION YEAR DROPDOWN SELECTOR -->
         <div class="header-year-select-wrap">
           <label for="yearSelector" class="year-select-label">
