@@ -2288,7 +2288,7 @@
           <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Click to filter dashboard to Zero-Stock items only">
             <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
             <span>Zero-Stock Only</span>
-            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10324 Lines</span>
+            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">10511 Lines</span>
           </button>
 
           <!-- 2. Zero-Stock Direct Excel Export Button -->
@@ -2314,7 +2314,7 @@
       <!-- Left: Level 4 Stock Control Pre-Commercial Quick-Card -->
       <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Click to inspect PRs awaiting Level 4 Stock Control confirmation">
         <span class="l4-dot"></span>
-        <span><strong style="color:#ffffff;">117 PRs (556 Lines)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> <span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>397 Zero-Stock</span></span>
+        <span><strong style="color:#ffffff;">106 PRs (426 Lines)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> <span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>316 Zero-Stock</span></span>
         <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect L4</span>
       </div>
 
@@ -2380,7 +2380,7 @@
             <span>PR Year:</span>
           </label>
           <select id="yearSelector" class="year-select-dropdown" onchange="onYearFilterChange(this.value)" title="Filter entire dashboard by PR Creation Year">
-            <option value="ALL">🌟 All Years (3769 Tasks)</option><option value="2026">📅 2026 (2548 Tasks)</option><option value="2025">📅 2025 (1064 Tasks)</option><option value="2024">📅 2024 (157 Tasks)</option>
+            <option value="ALL">🌟 All Years (3828 Tasks)</option><option value="2026">📅 2026 (2612 Tasks)</option><option value="2025">📅 2025 (1060 Tasks)</option><option value="2024">📅 2024 (156 Tasks)</option>
           </select>
         </div>
       </div>
@@ -2632,7 +2632,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 235 Selected</span>
+                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 238 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllEnteredBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -2685,7 +2685,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 267 Selected</span>
+                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 269 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllRequestedBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -2747,7 +2747,7 @@
                 🔴 TS Confirmed (Ready to Issue PO)
               </div>
               <div id="st1-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="718 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 718 Zero-Stock Lines (175 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="755 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 755 Zero-Stock Lines (197 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2782,7 +2782,7 @@
                 🟣 Sourcing / RFQ (No Offers)
               </div>
               <div id="st2-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2527 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2527 Zero-Stock Lines (794 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2583 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2583 Zero-Stock Lines (810 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2817,7 +2817,7 @@
                 🟡 Offers Under Plant Evaluation
               </div>
               <div id="st3-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="809 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 809 Zero-Stock Lines (163 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="751 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 751 Zero-Stock Lines (146 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2853,7 +2853,7 @@
         <div style="position:absolute; top:10px; left:12px; z-index:20;">
           <div id="unassignedQuickCard" class="unassigned-quick-card" onclick="openDelayModal('Unassigned PRs')" title="Click to inspect unassigned requisitions" style="margin:0;">
             <span class="unassigned-dot"></span>
-            <span><strong style="color:#ffffff;">66 Unassigned PRs</strong> &bull; All PRs Assigned</span>
+            <span><strong style="color:#ffffff;">57 Unassigned PRs</strong> &bull; All PRs Assigned</span>
             <span class="unassigned-btn"><i class="fa-solid fa-circle-check"></i> Clean</span>
           </div>
         </div>
@@ -2878,7 +2878,7 @@
                 🔵 PO not Confirmed
               </div>
               <div id="st4-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1185 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1185 Zero-Stock Lines (379 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1160 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1160 Zero-Stock Lines (375 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2913,7 +2913,7 @@
                 🟠 Overdue Delivery
               </div>
               <div id="st5-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2963 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2963 Zero-Stock Lines (689 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2977 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2977 Zero-Stock Lines (695 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -2957,7 +2957,7 @@
                 🟢 On-Track Delivery
               </div>
               <div id="st6-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1967 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1967 Zero-Stock Lines (581 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2149 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2149 Zero-Stock Lines (610 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
