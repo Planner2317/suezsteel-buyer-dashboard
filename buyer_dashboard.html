@@ -8434,6 +8434,8 @@ function renderDelayModalView() {
 
   if (currentDelayModalDeliveryFilter === 'OVERDUE') {
     displayTasks = displayTasks.filter(t => !t.is_under_inspection);
+  } else if (currentDelayModalDeliveryFilter === 'UNDELIVERED') {
+    displayTasks = displayTasks.filter(t => !t.is_partial && !t.has_rejection && !t.is_under_inspection);
   } else if (currentDelayModalDeliveryFilter === 'INSPECTION') {
     displayTasks = displayTasks.filter(t => t.is_under_inspection);
   } else if (currentDelayModalDeliveryFilter === 'REJECTED') {
