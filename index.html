@@ -2553,7 +2553,7 @@
         <i class="fa-solid fa-user-tie"></i>
         <h1>
           <span>Suez Steel Co. — ENTERPRISE PR & PO FOLLOW-UP</span>
-          <span class="header-live-badge"><span class="live-dot"></span> <span id="headerTotalTasksCount">3841</span> Tasks</span>
+          <span class="header-live-badge" id="headerLiveBadge" title="3,696 Unique Orders (1,342 PRs + 2,354 POs) generating 3,777 Buyer Action Tasks (+ 64 Unassigned PRs)"><span class="live-dot"></span> <span id="headerTotalOrdersCount">3,696</span> Orders <span id="headerTotalTasksCount" style="opacity:0.65; font-size:0.75rem; font-weight:600; margin-left:3px;">(3,777 Tasks)</span></span>
         </h1>
       </div>
 
@@ -3438,15 +3438,19 @@ const sunburstPlugin = {
       const currData = getCombinedBuyerLifecycle();
       if (currData.tot_tasks === 0) {
         ctx.fillStyle = '#64748b';
-        ctx.fillText(`0 Tasks`, centerX, centerY - 9 * baseScale);
+        ctx.fillText(`0 Orders`, centerX, centerY - 9 * baseScale);
         ctx.fillStyle = '#475569';
         ctx.font = `600 ${subFontSize}px Outfit, Inter, sans-serif`;
         ctx.fillText(`No Scope Selected`, centerX, centerY + 13 * baseScale);
       } else {
-        ctx.fillText(`${currData.tot_tasks} Tasks`, centerX, centerY - 9 * baseScale);
+        const orderCntStr = (currData.tot_orders !== undefined ? currData.tot_orders : (currData.prepo_prs + currData.openpo_pos)).toLocaleString();
+        ctx.fillText(`${orderCntStr} Orders`, centerX, centerY - 10 * baseScale);
         ctx.fillStyle = '#94a3b8';
         ctx.font = `700 ${subFontSize}px Outfit, Inter, sans-serif`;
-        ctx.fillText(`${currData.prepo_prs} PRs  •  ${currData.openpo_pos} POs`, centerX, centerY + 13 * baseScale);
+        ctx.fillText(`${currData.prepo_prs.toLocaleString()} PRs  •  ${currData.openpo_pos.toLocaleString()} POs`, centerX, centerY + 7 * baseScale);
+        ctx.fillStyle = '#64748b';
+        ctx.font = `600 ${Math.round(9.5 * baseScale)}px Outfit, Inter, sans-serif`;
+        ctx.fillText(`(${currData.tot_tasks.toLocaleString()} Action Tasks)`, centerX, centerY + 22 * baseScale);
       }
       ctx.restore();
 
@@ -6440,7 +6444,9 @@ function getCombinedBuyerLifecycle() {
   if (selectedBuyersSet.size === 0 || selectedProjectsSet.size === 0 || selectedDeptsSet.size === 0) {
     return {
       buyer_name: 'No Selection',
+      tot_orders: 0,
       tot_tasks: 0,
+      multi_pr_diff: 0,
       tot_prs: 0,
       tot_pos: 0,
       prepo_prs: 0,
@@ -6585,9 +6591,14 @@ function getCombinedBuyerLifecycle() {
   const st5_zero = getZeroStockStats(st5, true);
   const st6_zero = getZeroStockStats(st6, true);
 
+  const tot_orders = prepo_prs + openpo_pos;
+  const multi_pr_diff = b_tasks.length - tot_orders;
+
   return {
     buyer_name: `${selBuyers.size} Buyers / ${selProjects.size} Projects`,
+    tot_orders,
     tot_tasks: b_tasks.length,
+    multi_pr_diff,
     tot_prs: prepo_prs,
     tot_pos: openpo_pos,
     prepo_prs,
@@ -6768,6 +6779,17 @@ function renderLifecycleCards() {
   // ── COLUMN HEADER BANNERS ────────────────────────────────────────────────
   document.getElementById("leftColPrCount").innerHTML = `${d.prepo_prs} PRs`;
   document.getElementById("rightColPoCount").innerHTML = `${d.openpo_pos} POs &nbsp;&nbsp;&bull;&nbsp;&nbsp; ${d.openpo_foreign} Foreign &nbsp;&nbsp;&bull;&nbsp;&nbsp; ${d.openpo_local} Local`;
+
+  // ── TOP HEADER DYNAMIC SYNC ──────────────────────────────────────────────
+  const elOrders = document.getElementById("headerTotalOrdersCount");
+  const elTasks = document.getElementById("headerTotalTasksCount");
+  if (elOrders) {
+    const totOrders = (d.tot_orders !== undefined) ? d.tot_orders : (d.prepo_prs + d.openpo_pos);
+    elOrders.textContent = totOrders.toLocaleString();
+  }
+  if (elTasks) {
+    elTasks.textContent = `(${d.tot_tasks.toLocaleString()} Tasks)`;
+  }
 
   // ── STAGE CARDS METRICS ─────────────────────────────────────────────────
   function renderZeroBadge(elId, zeroLines, zeroDocs, docType) {
