@@ -8702,7 +8702,7 @@ function renderDelayModalView() {
           <input type="text" id="stageModalSearchInput" value="${currentDelayModalSearch || ''}" placeholder="Filter stage orders..." oninput="onDelayModalSearch(this.value)" style="background:transparent; border:none; outline:none; color:#ffffff; font-size:0.75rem; width:190px;">
           ${currentDelayModalSearch ? `<button onclick="onDelayModalSearch('')" style="background:transparent; border:none; color:#94a3b8; cursor:pointer; font-size:0.85rem; padding:0 2px; line-height:1;" title="Clear filter">&times;</button>` : ''}
         </div>
-        <button class="btn-action" style="padding:6px 14px; font-size:0.75rem;" onclick="exportStageDirect('${stageName}')">
+        <button class="btn-action" style="padding:6px 14px; font-size:0.75rem;" onclick="exportStageDirect('${stageName}', currentDelayModalTier, currentDelayModalDeliveryFilter, currentDelayModalSearch)" title="Export active stage view with active delivery and SLA filters to Excel">
           <i class="fa-solid fa-file-excel"></i> Export Stage to Excel
         </button>
       </div>
@@ -8794,19 +8794,103 @@ function downloadOriginalMasterExcel() {
 }
 
 // ── 2. Export Filtered Scope directly with Stage ──
-function exportStageDirect(stageName) {
+function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword) {
   selectedStage = stageName;
-  exportStyledFilteredExcel();
+  let tasksToExport = null;
+
+  if (typeof stageName === 'string' && stageName) {
+    let stageTasks = ALL_TASKS;
+    const isAllB = isAllBuyersSelected();
+    const isAllP = isAllProjectsSelected();
+    const isAllD = isAllDeptsSelected();
+
+    if (stageName === "Unassigned PRs") {
+      stageTasks = stageTasks.filter(t => {
+        const isUnass = (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs";
+        const matchP = isAllP || selectedProjectsSet.has(t.project);
+        const matchD = isAllD || selectedDeptsSet.has(t.department);
+        const matchPRPO = matchPrPo(t);
+        const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+        const matchO = matchOrderType(t);
+        const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+        const matchEnt = matchEnteredBy(t);
+        const matchReq = matchRequestedBy(t);
+        return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+      });
+    } else {
+      stageTasks = stageTasks.filter(t => {
+        const matchB = isAllB || selectedBuyersSet.has(t.buyer);
+        const matchP = isAllP || selectedProjectsSet.has(t.project);
+        const matchD = isAllD || selectedDeptsSet.has(t.department);
+        const matchPRPO = matchPrPo(t);
+        const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
+        const matchO = matchOrderType(t);
+        const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+        const matchEnt = matchEnteredBy(t);
+        const matchReq = matchRequestedBy(t);
+        return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && t.task_stage === stageName;
+      });
+    }
+
+    // Filter by tier
+    const tier = filterTier || 'ALL';
+    if (tier === 'CRITICAL') {
+      if (stageName === 'Supplier Overdue') stageTasks = stageTasks.filter(t => (t.stage_delay || 0) > 90);
+      else if (stageName === 'On-Track Delivery') stageTasks = [];
+      else stageTasks = stageTasks.filter(t => (t.stage_delay || 0) > 14);
+    } else if (tier === 'WARNING') {
+      if (stageName === 'Supplier Overdue') stageTasks = stageTasks.filter(t => (t.stage_delay || 0) > 30 && (t.stage_delay || 0) <= 90);
+      else if (stageName === 'On-Track Delivery') stageTasks = [];
+      else stageTasks = stageTasks.filter(t => (t.stage_delay || 0) > 7 && (t.stage_delay || 0) <= 14);
+    } else if (tier === 'ONTRACK') {
+      if (stageName === 'Supplier Overdue') stageTasks = stageTasks.filter(t => (t.stage_delay || 0) <= 30);
+      else if (stageName === 'On-Track Delivery') { /* all on track */ }
+      else stageTasks = stageTasks.filter(t => (t.stage_delay || 0) <= 7);
+    }
+
+    // Filter by delivery status
+    const deliv = deliveryFilter || 'ALL';
+    if (deliv === 'UNDELIVERED') {
+      stageTasks = stageTasks.filter(t => !t.is_partial);
+    } else if (deliv === 'PARTIAL') {
+      stageTasks = stageTasks.filter(t => t.is_partial);
+    }
+
+    // Filter by search keyword
+    if (searchKeyword && searchKeyword.trim()) {
+      const q = searchKeyword.trim().toLowerCase();
+      stageTasks = stageTasks.filter(t => {
+        const prStr = String(t.pr_no || '').toLowerCase();
+        const poStr = String(t.po_no || '').toLowerCase();
+        const buyerStr = String(t.buyer || '').toLowerCase();
+        const suppStr = String(t.supplier || t.remarks || '').toLowerCase();
+        const entStr = String(t.entered_by || '').toLowerCase();
+        const reqStr = String(t.requested_by || '').toLowerCase();
+        const botStr = String(t.primary_bottleneck || t.action_text || '').toLowerCase();
+        return prStr.includes(q) || poStr.includes(q) || buyerStr.includes(q) || suppStr.includes(q) || entStr.includes(q) || reqStr.includes(q) || botStr.includes(q);
+      });
+    }
+
+    tasksToExport = stageTasks;
+  }
+
+  exportStyledFilteredExcel(tasksToExport, {
+    stageName: stageName,
+    tier: filterTier,
+    deliveryFilter: deliveryFilter,
+    search: searchKeyword
+  });
 }
 
 // ── 3. Multi-Sheet Styled Excel Export with ExcelJS & Fallback to SheetJS ───
-async function exportStyledFilteredExcel() {
-  const tasks = getFilteredTaskList();
+async function exportStyledFilteredExcel(customTasks, filterContext) {
+  const tasks = customTasks || getFilteredTaskList();
   if(!tasks.length) {
     alert("No records match the current filter to export.");
     return;
   }
 
+  const ctx = filterContext || {};
   const isAllB = isAllBuyersSelected();
   const isAllP = isAllProjectsSelected();
 
@@ -8824,7 +8908,7 @@ async function exportStyledFilteredExcel() {
     baseScopeName = "SuezSteel_Enterprise";
   }
 
-  // Plant modifier (only if single specific plant filtered and not in baseScopeName)
+  // Plant modifier
   let projModifier = "";
   if (!isAllP && selectedProjectsSet.size === 1) {
     const pKey = Array.from(selectedProjectsSet)[0];
@@ -8834,11 +8918,14 @@ async function exportStyledFilteredExcel() {
     }
   }
 
-  // Stage name mapping to clean business terminology
+  // Stage name mapping
+  const currentStageTarget = ctx.stageName || selectedStage;
   let stageModifier = "Master_Action_Matrix";
   let stageTitleText = "Master Action Matrix";
-  if (selectedStage && selectedStage !== "ALL") {
-    const sLow = selectedStage.toLowerCase();
+  let isDeliveryStage = false;
+
+  if (currentStageTarget && currentStageTarget !== "ALL") {
+    const sLow = currentStageTarget.toLowerCase();
     if (sLow.includes("stage 1") || sLow.includes("ts confirmed") || sLow.includes("pending po")) {
       stageModifier = "Pending_POs";
       stageTitleText = "Stage 1: Pending PO Release";
@@ -8854,152 +8941,395 @@ async function exportStyledFilteredExcel() {
     } else if (sLow.includes("stage 5") || sLow.includes("overdue")) {
       stageModifier = "Overdue_POs";
       stageTitleText = "Stage 5: Supplier Overdue POs";
+      isDeliveryStage = true;
     } else if (sLow.includes("stage 6") || sLow.includes("on-track") || sLow.includes("on track")) {
       stageModifier = "OnTrack_POs";
       stageTitleText = "Stage 6: On-Track Delivery POs";
+      isDeliveryStage = true;
     } else if (sLow.includes("unassigned")) {
       stageModifier = "Unassigned_PRs";
       stageTitleText = "Unassigned PRs Queue";
     } else {
-      stageModifier = selectedStage.replace(/[^a-zA-Z0-9]/g, '_');
-      stageTitleText = selectedStage;
+      stageModifier = currentStageTarget.replace(/[^a-zA-Z0-9]/g, '_');
+      stageTitleText = currentStageTarget;
     }
   }
 
-  // Order type modifier (only if explicitly filtered to Local or Foreign)
+  // Delivery filter modifier in filename & title
+  let deliveryModifier = "";
+  let deliveryTitleSuffix = "";
+  if (ctx.deliveryFilter === 'UNDELIVERED') {
+    deliveryModifier = "_0pct_Undelivered";
+    deliveryTitleSuffix = " — [0% UNDELIVERED]";
+  } else if (ctx.deliveryFilter === 'PARTIAL') {
+    deliveryModifier = "_Partially_Delivered";
+    deliveryTitleSuffix = " — [PARTIALLY DELIVERED]";
+  }
+
+  // Tier modifier
+  let tierModifier = "";
+  let tierTitleSuffix = "";
+  if (ctx.tier && ctx.tier !== 'ALL') {
+    tierModifier = `_${ctx.tier}`;
+    tierTitleSuffix = ` — [${ctx.tier}]`;
+  }
+
+  // Order type modifier
   let typeModifier = "";
   if (selectedOrderTypeKey === "Local") typeModifier = "_Local";
   else if (selectedOrderTypeKey === "Foreign") typeModifier = "_Foreign";
 
   const dateStr = new Date().toISOString().split('T')[0];
-  const fileName = `${baseScopeName}${projModifier}_${stageModifier}${typeModifier}_${dateStr}.xlsx`;
+  const fileName = `${baseScopeName}${projModifier}_${stageModifier}${deliveryModifier}${tierModifier}${typeModifier}_${dateStr}.xlsx`;
 
-  // Try ExcelJS with full corporate styling first
+  // Pre-calculate summary statistics
+  const totPoQty = tasks.reduce((sum, t) => sum + (Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0))), 0);
+  const totSrvQty = tasks.reduce((sum, t) => sum + Number(t.total_srv_qty || 0), 0);
+  const totBalQty = tasks.reduce((sum, t) => sum + Number(t.total_bal_qty || 0), 0);
+  const pctTot = totPoQty > 0 ? ((totSrvQty / totPoQty) * 100).toFixed(1) : '0.0';
+  const displayScopeTitle = window.SCOPE_TITLE ? window.SCOPE_TITLE.replace(/^Suez Steel Co\. ? /, '') : baseScopeName;
+
+  // Try ExcelJS with full corporate styling
   if (typeof ExcelJS !== 'undefined') {
     try {
       const wb = new ExcelJS.Workbook();
       wb.creator = 'Suez Steel Co. - Procurement Intelligence System';
       wb.created = new Date();
 
-      // SHEET 1: Master Action Matrix
-      const ws1 = wb.addWorksheet('Master Buyer Action Matrix', { views: [{ showGridLines: true }] });
-      
-      // Title Banner Row
-      ws1.mergeCells('A1:Y1');
-      const titleCell = ws1.getCell('A1');
-      const displayScopeTitle = window.SCOPE_TITLE ? window.SCOPE_TITLE.replace(/^Suez Steel Co\. — /, '') : baseScopeName;
-      titleCell.value = `SUEZ STEEL CO. — ${displayScopeTitle.toUpperCase()} (${stageTitleText.toUpperCase()})`;
-      titleCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
-      titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B132B' } };
-      titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-      ws1.getRow(1).height = 30;
+      if (isDeliveryStage) {
+        // ══════════════════════════════════════════════════════════════════
+        // SHEET 1 (DELIVERY TAILORED): Delivery Action Matrix
+        // ══════════════════════════════════════════════════════════════════
+        const ws1 = wb.addWorksheet('Delivery Action Matrix', { views: [{ state: 'frozen', ySplit: 3, showGridLines: true }] });
+        
+        // Title Banner Row (A1:S1)
+        ws1.mergeCells('A1:S1');
+        const titleCell = ws1.getCell('A1');
+        titleCell.value = `SUEZ STEEL CO. — ${displayScopeTitle.toUpperCase()} (${stageTitleText.toUpperCase()}${deliveryTitleSuffix}${tierTitleSuffix})`;
+        titleCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+        titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B132B' } };
+        titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws1.getRow(1).height = 30;
 
-      // Summary Sub-Banner Row
-      ws1.mergeCells('A2:Y2');
-      const subCell = ws1.getCell('A2');
-      subCell.value = `Exported Scope: ${tasks.length} Tasks | Total Pending Balance: ${tasks.reduce((a,b)=>a+b.total_bal_qty,0).toLocaleString()} Units | Generated: ${new Date().toLocaleDateString()}`;
-      subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF38BDF8' } };
-      subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
-      subCell.alignment = { vertical: 'middle', horizontal: 'center' };
-      ws1.getRow(2).height = 20;
+        // Summary Sub-Banner Row (A2:S2)
+        ws1.mergeCells('A2:S2');
+        const subCell = ws1.getCell('A2');
+        subCell.value = `Exported Scope: ${tasks.length} Orders | Total Order Qty: ${totPoQty.toLocaleString()} Units | Received SRVs: ${totSrvQty.toLocaleString()} Units (${pctTot}%) | Pending Balance: ${totBalQty.toLocaleString()} Units | Generated: ${new Date().toLocaleDateString()}`;
+        subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF38BDF8' } };
+        subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+        subCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws1.getRow(2).height = 22;
 
-      // Table Headers Row (Row 3)
-      const headers = [
-        'Buyer / Group', 'Task Stage', 'Classification', 'PR No.', 'PO No.', 'TS Number / Structure', 'Remarks', 'Status', 'Local / Foreign', 
-        'Supplier Name', 'Required / Pending Action', 'PR Date', 'PO Issue Date', 'Promised Delivery', 
-        'Total PR Lead Time (d)', 'Total Internal Lead Time (d)', 'Active Supplier Lead Time (d)', 
-        'Time to Confirm PR (Plant Mgr)', 'Time to Confirm PR (Stock Control L4)', 'Time to Assign Buyer', 
-        'Time to Source & Prep TS', 'Time to Confirm TS (L2)', 'Time to Confirm TS (L3 Plant Mgr)', 
-        'Time to Issue PO', 'Time to Confirm PO (SC)', 'Supplier Overdue Days', 'Primary Delaying Bottleneck'
-      ];
-      
-      const headerRow = ws1.addRow(headers);
-      headerRow.height = 25;
-      headerRow.eachCell((cell) => {
-        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };
-        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-        cell.border = {
-          top: { style: 'thin', color: { argb: 'FF38BDF8' } },
-          bottom: { style: 'medium', color: { argb: 'FF22D3EE' } },
-          left: { style: 'thin', color: { argb: 'FF1E293B' } },
-          right: { style: 'thin', color: { argb: 'FF1E293B' } }
-        };
-      });
-
-      // Populate Data Rows
-      tasks.forEach((t, idx) => {
-        const tsVal = (t.multi_ts_indicator && !t.multi_ts_indicator.includes('No TS')) ? t.multi_ts_indicator : '—';
-        const row = ws1.addRow([
-          t.buyer, t.task_stage, t.macro_class, t.pr_no, t.po_no, tsVal, t.remarks, t.status_display, t.order_type,
-          t.supplier, t.action_text, t.pr_date, t.po_date, t.promised_date,
-          t.pr_lead, t.internal_lead, t.overdue_days,
-          t.d1, t.d2, t.d3, t.d4, t.d5, t.d6, t.d7, t.d8, t.d9, t.primary_bottleneck
-        ]);
-        row.height = 20;
-
-        const isEven = idx % 2 === 0;
-        const bgHex = isEven ? 'FFFFFFFF' : 'FFF8FAFC';
-
-        row.eachCell((cell, colNum) => {
-          cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgHex } };
+        // Table Headers (Row 3)
+        const headers = [
+          '#', 'PO No.', 'PR No.', 'Plant / Project', 'Buyer Name', 'Supplier Name',
+          'Delivery Situation', 'Total Order Qty', 'Received SRV Qty', 'Pending Balance Qty', 'Fulfillment %',
+          'PO Issue Date', 'Promised Delivery', 'Overdue / Remaining (d)', 'SLA Severity',
+          'Origin', 'Planner (Entered By)', 'Requestor (Requested By)', 'Primary Delay Bottleneck / Notes'
+        ];
+        
+        const headerRow = ws1.addRow(headers);
+        headerRow.height = 26;
+        headerRow.eachCell((cell) => {
+          cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };
+          cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
           cell.border = {
-            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
-            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+            top: { style: 'thin', color: { argb: 'FF38BDF8' } },
+            bottom: { style: 'medium', color: { argb: 'FF22D3EE' } },
+            left: { style: 'thin', color: { argb: 'FF1E293B' } },
+            right: { style: 'thin', color: { argb: 'FF1E293B' } }
           };
-          if ([4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26].includes(colNum)) {
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
-          } else {
-            cell.alignment = { vertical: 'middle', horizontal: 'left' };
-          }
         });
-      });
 
-      // Auto-fit Columns
-      ws1.columns = [
-        { width: 22 }, { width: 22 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 25 }, { width: 28 }, 
-        { width: 18 }, { width: 14 }, { width: 30 }, { width: 45 }, { width: 12 }, 
-        { width: 13 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, 
-        { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, 
-        { width: 12 }, { width: 12 }, { width: 12 }, { width: 14 }, { width: 32 }
-      ];
+        // Data Rows
+        tasks.forEach((t, idx) => {
+          const poQtyVal = Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0));
+          const srvQtyVal = Number(t.total_srv_qty || 0);
+          const balQtyVal = Number(t.total_bal_qty || 0);
+          const pctVal = poQtyVal > 0 ? (srvQtyVal / poQtyVal) : 0;
+          const situationStr = t.is_partial ? 'Partially Delivered' : '0% Undelivered';
 
-      // SHEET 2: Requisition Line Items Breakdown
-      const ws2 = wb.addWorksheet('Requisition Line Items', { views: [{ showGridLines: true }] });
-      ws2.mergeCells('A1:I1');
+          let severityStr = 'On SLA';
+          if (t.task_stage === 'Supplier Overdue') {
+            if ((t.stage_delay || 0) > 90) severityStr = 'Critical (>90d)';
+            else if ((t.stage_delay || 0) > 30) severityStr = 'Warning (31-90d)';
+            else severityStr = 'On SLA (1-30d)';
+          } else if (t.task_stage === 'On-Track Delivery') {
+            severityStr = 'On Track (Compliant)';
+          }
+
+          const originStr = t.order_type || (t.is_foreign ? 'Foreign PO' : 'Local PO');
+
+          const row = ws1.addRow([
+            idx + 1,
+            t.has_po ? `PO #${t.po_no}` : '—',
+            `PR #${t.pr_no}`,
+            t.project || '—',
+            t.buyer || '—',
+            t.supplier || t.remarks || '—',
+            situationStr,
+            poQtyVal,
+            srvQtyVal,
+            balQtyVal,
+            pctVal,
+            t.po_date && t.po_date !== '—' ? t.po_date : '—',
+            t.promised_date && t.promised_date !== '—' ? t.promised_date : '—',
+            t.overdue_days || (t.stage_delay || 0),
+            severityStr,
+            originStr,
+            t.entered_by || '—',
+            t.requested_by || '—',
+            t.primary_bottleneck || t.action_text || '—'
+          ]);
+          row.height = 22;
+
+          const isEven = idx % 2 === 0;
+          const bgHex = isEven ? 'FFFFFFFF' : 'FFF8FAFC';
+
+          row.eachCell((cell, colNum) => {
+            cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgHex } };
+            cell.border = {
+              top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+            };
+
+            // Col 7: Delivery Situation High-Contrast Styling
+            if (colNum === 7) {
+              if (t.is_partial) {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF92400E' } };
+              } else {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF991B1B' } };
+              }
+            }
+
+            // Number formatting
+            if (colNum === 8 || colNum === 9 || colNum === 10) {
+              cell.numFmt = '#,##0.0';
+              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            } else if (colNum === 11) {
+              cell.numFmt = '0.0%';
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            } else if ([1, 2, 3, 4, 12, 13, 14, 15, 16].includes(colNum)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            } else {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            }
+          });
+        });
+
+        // Column widths
+        ws1.columns = [
+          { width: 6 },  { width: 16 }, { width: 14 }, { width: 18 }, { width: 22 }, 
+          { width: 35 }, { width: 22 }, { width: 16 }, { width: 16 }, { width: 16 }, 
+          { width: 14 }, { width: 14 }, { width: 16 }, { width: 15 }, { width: 18 }, 
+          { width: 14 }, { width: 24 }, { width: 24 }, { width: 40 }
+        ];
+
+      } else {
+        // ══════════════════════════════════════════════════════════════════
+        // SHEET 1 (STANDARD MATRIX): For Pre-PO Stages (1, 2, 3, 4, Unassigned)
+        // ══════════════════════════════════════════════════════════════════
+        const ws1 = wb.addWorksheet('Master Buyer Action Matrix', { views: [{ state: 'frozen', ySplit: 3, showGridLines: true }] });
+        
+        ws1.mergeCells('A1:AA1');
+        const titleCell = ws1.getCell('A1');
+        titleCell.value = `SUEZ STEEL CO. — ${displayScopeTitle.toUpperCase()} (${stageTitleText.toUpperCase()}${tierTitleSuffix})`;
+        titleCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
+        titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B132B' } };
+        titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws1.getRow(1).height = 30;
+
+        ws1.mergeCells('A2:AA2');
+        const subCell = ws1.getCell('A2');
+        subCell.value = `Exported Scope: ${tasks.length} Tasks | Total Pending Balance: ${totBalQty.toLocaleString()} Units | Generated: ${new Date().toLocaleDateString()}`;
+        subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF38BDF8' } };
+        subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+        subCell.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws1.getRow(2).height = 20;
+
+        const headers = [
+          '#', 'Plant / Project', 'Buyer / Group', 'Task Stage', 'Classification', 'PR No.', 'PO No.', 'TS Structure', 'Remarks', 'Status', 'Local / Foreign', 
+          'Supplier Name', 'Required / Pending Action', 'PR Date', 'PO Issue Date', 'Promised Delivery', 
+          'Total PR Lead (d)', 'Internal Lead (d)', 'Overdue Days', 
+          'Time to Confirm PR (Plant Mgr)', 'Time to Confirm PR (Stock Control L4)', 'Time to Assign Buyer', 
+          'Time to Source & Prep TS', 'Time to Confirm TS (L2)', 'Time to Confirm TS (L3)', 
+          'Time to Issue PO', 'Time to Confirm PO (SC)', 'Planner (Entered By)', 'Requestor (Requested By)', 'Primary Delaying Bottleneck'
+        ];
+        
+        const headerRow = ws1.addRow(headers);
+        headerRow.height = 25;
+        headerRow.eachCell((cell) => {
+          cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };
+          cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FF38BDF8' } },
+            bottom: { style: 'medium', color: { argb: 'FF22D3EE' } },
+            left: { style: 'thin', color: { argb: 'FF1E293B' } },
+            right: { style: 'thin', color: { argb: 'FF1E293B' } }
+          };
+        });
+
+        tasks.forEach((t, idx) => {
+          const tsVal = (t.multi_ts_indicator && !t.multi_ts_indicator.includes('No TS')) ? t.multi_ts_indicator : '—';
+          const row = ws1.addRow([
+            idx + 1, t.project || '—', t.buyer, t.task_stage, t.macro_class, t.pr_no, t.po_no, tsVal, t.remarks, t.status_display, t.order_type,
+            t.supplier, t.action_text, t.pr_date, t.po_date, t.promised_date,
+            t.pr_lead, t.internal_lead, t.overdue_days,
+            t.d1, t.d2, t.d3, t.d4, t.d5, t.d6, t.d7, t.d8, t.entered_by || '—', t.requested_by || '—', t.primary_bottleneck
+          ]);
+          row.height = 20;
+
+          const isEven = idx % 2 === 0;
+          const bgHex = isEven ? 'FFFFFFFF' : 'FFF8FAFC';
+
+          row.eachCell((cell, colNum) => {
+            cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF0F172A' } };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgHex } };
+            cell.border = {
+              top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+              right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+            };
+            if ([1, 2, 4, 5, 6, 7, 8, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27].includes(colNum)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            } else {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            }
+          });
+        });
+
+        ws1.columns = [
+          { width: 6 }, { width: 18 }, { width: 22 }, { width: 22 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 22 }, 
+          { width: 25 }, { width: 16 }, { width: 14 }, { width: 30 }, { width: 40 }, { width: 12 }, 
+          { width: 13 }, { width: 14 }, { width: 14 }, { width: 14 }, { width: 14 }, 
+          { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, { width: 12 }, 
+          { width: 12 }, { width: 12 }, { width: 12 }, { width: 22 }, { width: 22 }, { width: 35 }
+        ];
+      }
+
+      // ══════════════════════════════════════════════════════════════════
+      // SHEET 2: Line Items Breakdown & Fulfillment Audit
+      // ══════════════════════════════════════════════════════════════════
+      const ws2 = wb.addWorksheet('Line Items Breakdown', { views: [{ state: 'frozen', ySplit: 3, showGridLines: true }] });
+      ws2.mergeCells('A1:T1');
       const ws2Title = ws2.getCell('A1');
-      ws2Title.value = 'REQUISITION LINE ITEMS BREAKDOWN & FULFILLMENT';
+      ws2Title.value = `SUEZ STEEL CO. — DETAILED LINE ITEMS AUDIT & INVENTORY FULFILLMENT (${stageTitleText.toUpperCase()})`;
       ws2Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
       ws2Title.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B132B' } };
       ws2Title.alignment = { vertical: 'middle', horizontal: 'center' };
-      ws2.getRow(1).height = 25;
+      ws2.getRow(1).height = 28;
 
-      const ws2Headers = ['Buyer', 'PR No.', 'PO No.', 'TS Number / Structure', 'Item Code', 'Item Description', 'PR Qty', 'PO Qty', 'Balance Pending'];
+      // Sub-banner
+      ws2.mergeCells('A2:T2');
+      const ws2Sub = ws2.getCell('A2');
+      ws2Sub.value = `Item-Level Breakdown | Requisitions & Purchase Orders Audited | Exported: ${dateStr}`;
+      ws2Sub.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: 'FF38BDF8' } };
+      ws2Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
+      ws2Sub.alignment = { vertical: 'middle', horizontal: 'center' };
+      ws2.getRow(2).height = 20;
+
+      const ws2Headers = [
+        '#', 'PO No.', 'PR No.', 'Line #', 'Plant / Cost Center', 'Buyer Name',
+        'Item Code', 'Technical Description', 'Unit', 'PR Qty', 'PO Qty', 'Received SRV Qty', 'Pending Balance', 'Fulfillment %',
+        'Warehouse Stock', 'Zero-Stock Alert', 'Supplier Name', 'Promised Delivery', 'Planner (Entered By)', 'Requestor (Requested By)'
+      ];
       const ws2HRow = ws2.addRow(ws2Headers);
-      ws2HRow.height = 22;
+      ws2HRow.height = 24;
       ws2HRow.eachCell(cell => {
-        cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+        cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFFFFFFF' } };
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0284C7' } };
-        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF38BDF8' } },
+          bottom: { style: 'medium', color: { argb: 'FF0369A1' } }
+        };
       });
 
+      let lineSeq = 1;
       tasks.forEach(t => {
-        const tsVal = (t.multi_ts_indicator && !t.multi_ts_indicator.includes('No TS')) ? t.multi_ts_indicator : '—';
-        t.lines.forEach(l => {
+        const linesList = (t.lines && t.lines.length) ? t.lines : [{
+          line_no: 1, item_code: '—', item_desc: t.remarks || '—', unit: 'EA',
+          pr_qty: t.total_pr_qty || 0, po_qty: t.total_po_qty || 0,
+          srv_qty: t.total_srv_qty || 0, bal_qty: t.total_bal_qty || 0,
+          stock: t.stock, is_zero_stock: t.is_zero_stock
+        }];
+
+        linesList.forEach(l => {
+          const lPrQ = Number(l.pr_qty || 0);
+          const lPoQ = Number(l.po_qty || 0);
+          const lSrvQ = Number(l.srv_qty || 0);
+          const lBalQ = Number(l.bal_qty || 0);
+          const lBaseQ = lPoQ > 0 ? lPoQ : lPrQ;
+          const lPct = lBaseQ > 0 ? (lSrvQ / lBaseQ) : 0;
+          const isZeroStock = Boolean(l.is_zero_stock || l.stock === 0);
+          const zeroStockText = isZeroStock ? 'ZERO STOCK' : (l.stock !== null && l.stock !== undefined ? 'In Stock' : '—');
+
           const lRow = ws2.addRow([
-            t.buyer, t.pr_no, t.po_no, tsVal, l.item_code, l.item_desc, l.pr_qty, l.po_qty, l.bal_qty
+            lineSeq++,
+            t.has_po ? `PO #${t.po_no}` : '—',
+            `PR #${t.pr_no}`,
+            l.line_no || 1,
+            t.project || '—',
+            t.buyer || '—',
+            l.item_code || '—',
+            l.item_desc || '—',
+            l.unit || 'EA',
+            lPrQ,
+            lPoQ,
+            lSrvQ,
+            lBalQ,
+            lPct,
+            l.stock !== null && l.stock !== undefined ? l.stock : '—',
+            zeroStockText,
+            t.supplier || t.remarks || '—',
+            t.promised_date || '—',
+            t.entered_by || '—',
+            t.requested_by || '—'
           ]);
+          lRow.height = 20;
+
           lRow.eachCell((cell, cIdx) => {
-            cell.font = { name: 'Calibri', size: 9.5 };
+            cell.font = { name: 'Calibri', size: 9 };
             cell.border = { top: { style: 'thin', color: { argb: 'FFE2E8F0' } }, bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } };
-            if ([2, 3, 4, 5, 7, 8, 9].includes(cIdx)) cell.alignment = { horizontal: 'center' };
+            
+            // Format numbers
+            if ([10, 11, 12, 13].includes(cIdx)) {
+              cell.numFmt = '#,##0.0';
+              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            } else if (cIdx === 14) {
+              cell.numFmt = '0.0%';
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            } else if (cIdx === 15) {
+              cell.alignment = { vertical: 'middle', horizontal: 'right' };
+            } else if (cIdx === 16) {
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+              if (isZeroStock) {
+                cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FFDC2626' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+              }
+            } else if ([1, 2, 3, 4, 5, 7, 9, 18].includes(cIdx)) {
+              cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            } else {
+              cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            }
           });
         });
       });
-      ws2.columns = [{ width: 22 }, { width: 12 }, { width: 14 }, { width: 22 }, { width: 16 }, { width: 45 }, { width: 12 }, { width: 12 }, { width: 14 }];
+
+      ws2.columns = [
+        { width: 6 },  { width: 16 }, { width: 14 }, { width: 8 },  { width: 18 }, 
+        { width: 22 }, { width: 16 }, { width: 45 }, { width: 8 },  { width: 14 }, 
+        { width: 14 }, { width: 16 }, { width: 16 }, { width: 14 }, { width: 16 }, 
+        { width: 16 }, { width: 30 }, { width: 16 }, { width: 22 }, { width: 22 }
+      ];
 
       // Download buffer
       const buffer = await wb.xlsx.writeBuffer();
@@ -9010,7 +9340,7 @@ async function exportStyledFilteredExcel() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast(`Exported styled workbook: ${fileName}`);
+      showToast(`Exported 2-sheet audit workbook: ${fileName}`);
       return;
     } catch (err) {
       console.warn("ExcelJS export failed, falling back to SheetJS:", err);
@@ -9021,31 +9351,58 @@ async function exportStyledFilteredExcel() {
   try {
     const exportData = [];
     tasks.forEach(t => {
-      exportData.push({
-        "Buyer / Group": t.buyer,
-        "Task Stage": t.task_stage,
-        "Classification": t.macro_class,
-        "PR No": t.pr_no,
-        "PO No": t.po_no,
-        "TS Number / Structure": (t.multi_ts_indicator && !t.multi_ts_indicator.includes('No TS')) ? t.multi_ts_indicator : '—',
-        "Remarks": t.remarks,
-        "Status": t.status_display,
-        "Order Type": t.order_type,
-        "Supplier": t.supplier,
-        "Required Action": t.action_text,
-        "PR Date": t.pr_date,
-        "PO Date": t.po_date,
-        "Promised Delivery": t.promised_date,
-        "PR Lead Time (d)": t.pr_lead,
-        "Internal Lead Time (d)": t.internal_lead,
-        "Supplier Overdue Days": t.overdue_days,
-        "Primary Bottleneck": t.primary_bottleneck
-      });
+      const poQtyVal = Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0));
+      const srvQtyVal = Number(t.total_srv_qty || 0);
+      const balQtyVal = Number(t.total_bal_qty || 0);
+      const pctVal = poQtyVal > 0 ? ((srvQtyVal / poQtyVal) * 100).toFixed(1) + '%' : '0.0%';
+
+      if (isDeliveryStage) {
+        exportData.push({
+          "PO No": t.po_no ? `PO #${t.po_no}` : '—',
+          "PR No": `PR #${t.pr_no}`,
+          "Plant / Project": t.project || '—',
+          "Buyer": t.buyer,
+          "Supplier Name": t.supplier || t.remarks || '—',
+          "Delivery Situation": t.is_partial ? 'Partially Delivered' : '0% Undelivered',
+          "Total Order Qty": poQtyVal,
+          "Received SRV Qty": srvQtyVal,
+          "Pending Balance Qty": balQtyVal,
+          "Fulfillment %": pctVal,
+          "PO Date": t.po_date,
+          "Promised Delivery": t.promised_date,
+          "Overdue Days": t.overdue_days || (t.stage_delay || 0),
+          "Origin": t.order_type || (t.is_foreign ? 'Foreign PO' : 'Local PO'),
+          "Planner (Entered By)": t.entered_by || '—',
+          "Requestor (Requested By)": t.requested_by || '—',
+          "Bottleneck / Notes": t.primary_bottleneck || t.action_text || '—'
+        });
+      } else {
+        exportData.push({
+          "Plant": t.project || '—',
+          "Buyer / Group": t.buyer,
+          "Task Stage": t.task_stage,
+          "Classification": t.macro_class,
+          "PR No": t.pr_no,
+          "PO No": t.po_no,
+          "TS Structure": (t.multi_ts_indicator && !t.multi_ts_indicator.includes('No TS')) ? t.multi_ts_indicator : '—',
+          "Remarks": t.remarks,
+          "Status": t.status_display,
+          "Order Type": t.order_type,
+          "Supplier": t.supplier,
+          "Required Action": t.action_text,
+          "PR Date": t.pr_date,
+          "PO Date": t.po_date,
+          "Promised Delivery": t.promised_date,
+          "Planner (Entered By)": t.entered_by || '—',
+          "Requestor (Requested By)": t.requested_by || '—',
+          "Primary Bottleneck": t.primary_bottleneck
+        });
+      }
     });
 
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Master Buyer Action Matrix");
+    XLSX.utils.book_append_sheet(wb, ws, isDeliveryStage ? "Delivery Action Matrix" : "Master Buyer Action Matrix");
     XLSX.writeFile(wb, fileName);
     showToast(`Exported workbook: ${fileName}`);
   } catch(e) {
@@ -9053,11 +9410,6 @@ async function exportStyledFilteredExcel() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════════════
-// 10. 2-TIER COMMAND BAR JAVASCRIPT SYSTEM
-// ════════════════════════════════════════════════════════════════════════
-
-// "More Filters" Drawer Toggle & Close
 function toggleMoreFiltersDrawer(e) {
   if (e) e.stopPropagation();
   const drawer = document.getElementById('moreFiltersPanel');
