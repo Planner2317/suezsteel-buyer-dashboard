@@ -8156,10 +8156,17 @@ function openL4Modal() {
   modalEl.style.display = "flex";
 }
 let currentDelayModalSearch = '';
+let currentDelayModalDeliveryFilter = 'ALL';
 
-function openDelayModal(stageName, filterTier) {
+function setDelayModalDeliveryFilter(filterVal) {
+  currentDelayModalDeliveryFilter = filterVal;
+  renderDelayModalView();
+}
+
+function openDelayModal(stageName, filterTier, deliveryFilter) {
   currentDelayModalStage = stageName;
   currentDelayModalTier = filterTier || 'ALL';
+  currentDelayModalDeliveryFilter = deliveryFilter || 'ALL';
   currentDelayModalSearch = '';
   selectedStage = stageName;
 
@@ -8300,6 +8307,12 @@ function renderDelayModalView() {
     }
   }
 
+  if (currentDelayModalDeliveryFilter === 'UNDELIVERED') {
+    displayTasks = displayTasks.filter(t => !t.is_partial);
+  } else if (currentDelayModalDeliveryFilter === 'PARTIAL') {
+    displayTasks = displayTasks.filter(t => t.is_partial);
+  }
+
   if (currentDelayModalSearch && currentDelayModalSearch.trim()) {
     const q = currentDelayModalSearch.trim().toLowerCase();
     displayTasks = displayTasks.filter(t => {
@@ -8383,6 +8396,9 @@ function renderDelayModalView() {
   titleEl.innerHTML = `<i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Stage Inspection: <span style="color:#ffffff;">${displayStageTitle}</span> (${totalStageCount} Tasks)`;
 
   const totSeg = (totalStageCount || 1);
+  const isDeliveryStage = (stageName === 'Supplier Overdue' || stageName === 'On-Track Delivery');
+  const stageUndeliveredCount = allStageTasks.filter(t => !t.is_partial).length;
+  const stagePartialCount = allStageTasks.filter(t => t.is_partial).length;
   const greenPct = ((onTrackCount / totSeg) * 100).toFixed(1);
   const yellowPct = ((warningCount / totSeg) * 100).toFixed(1);
   const redPct = ((criticalCount / totSeg) * 100).toFixed(1);
@@ -8567,6 +8583,20 @@ function renderDelayModalView() {
         </tr>
       `;
     } else {
+      let deliveryBadgeHtml = '';
+      if (t.has_po && t.po_no && t.po_no !== '—') {
+        if (t.is_partial) {
+          const srvQ = Number(t.total_srv_qty || 0);
+          const balQ = Number(t.total_bal_qty || 0);
+          const totQ = Number(t.total_po_qty || 0) || (srvQ + balQ);
+          const pct = totQ > 0 ? Math.min(100, Math.round((srvQ / totQ) * 100)) : 0;
+          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Received: ${srvQ.toLocaleString()} units, Pending: ${balQ.toLocaleString()} units (${pct}% delivered)"><i class="fa-solid fa-truck-ramp-box"></i> Partial (${pct}% Recv &bull; ${balQ.toLocaleString()} Bal)</span></div>`;
+        } else {
+          const balQ = Number(t.total_bal_qty || 0);
+          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.35); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="0 units received yet. Entire order pending: ${balQ.toLocaleString()} units"><i class="fa-solid fa-box-open"></i> 0% Undelivered</span></div>`;
+        }
+      }
+
       return `
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
@@ -8574,7 +8604,10 @@ function renderDelayModalView() {
             <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
             ${snipBadge}
           </td>
-          <td style="font-weight:700; padding:10px 8px;">${t.has_po ? 'PO #' + t.po_no : '—'}</td>
+          <td style="font-weight:700; padding:10px 8px;">
+            <span style="color:#ffffff;">${t.has_po ? 'PO #' + t.po_no : '—'}</span>
+            ${deliveryBadgeHtml}
+          </td>
           <td style="font-weight:700; color:#ffffff; padding:10px 8px;">
             <div>${t.buyer}</div>
             <div style="font-size:0.68rem; color:#c084fc; font-weight:500; margin-top:2px;" dir="auto" title="Entered By (Planner)"><i class="fa-solid fa-user-pen" style="margin-right:3px;"></i>${escapeHtml(t.entered_by || '—')}</div>
@@ -8656,12 +8689,12 @@ function renderDelayModalView() {
     </div>
 
     <!-- Severity Filter Tabs, In-Modal Search & Export -->
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.8rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:0.6rem;">
       <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-        <button class="btn-mode ${currentDelayModalTier === 'ALL' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'ALL')" style="font-size:0.7rem; padding:4px 10px;">All (${totalStageCount})</button>
-        <button class="btn-mode ${currentDelayModalTier === 'CRITICAL' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'CRITICAL')" style="font-size:0.7rem; padding:4px 10px; color:#fca5a5;">🔴 Critical (${criticalCount})</button>
-        <button class="btn-mode ${currentDelayModalTier === 'WARNING' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'WARNING')" style="font-size:0.7rem; padding:4px 10px; color:#fde047;">🟡 Warning (${warningCount})</button>
-        <button class="btn-mode ${currentDelayModalTier === 'ONTRACK' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'ONTRACK')" style="font-size:0.7rem; padding:4px 10px; color:#6ee7b7;">🟢 On SLA (${onTrackCount})</button>
+        <button class="btn-mode ${currentDelayModalTier === 'ALL' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'ALL', currentDelayModalDeliveryFilter)" style="font-size:0.7rem; padding:4px 10px;">All (${totalStageCount})</button>
+        <button class="btn-mode ${currentDelayModalTier === 'CRITICAL' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'CRITICAL', currentDelayModalDeliveryFilter)" style="font-size:0.7rem; padding:4px 10px; color:#fca5a5;">🔴 Critical (${criticalCount})</button>
+        <button class="btn-mode ${currentDelayModalTier === 'WARNING' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'WARNING', currentDelayModalDeliveryFilter)" style="font-size:0.7rem; padding:4px 10px; color:#fde047;">🟡 Warning (${warningCount})</button>
+        <button class="btn-mode ${currentDelayModalTier === 'ONTRACK' ? 'active' : ''}" onclick="openDelayModal('${stageName}', 'ONTRACK', currentDelayModalDeliveryFilter)" style="font-size:0.7rem; padding:4px 10px; color:#6ee7b7;">🟢 On SLA (${onTrackCount})</button>
       </div>
       <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
         <div style="display:flex; align-items:center; background:rgba(15,23,42,0.85); border:1px solid rgba(56,189,248,0.3); border-radius:8px; padding:3px 10px; gap:6px;">
@@ -8674,6 +8707,24 @@ function renderDelayModalView() {
         </button>
       </div>
     </div>
+
+    ${isDeliveryStage ? `
+    <!-- Dual Filter Bar: Delivery Status Toggle -->
+    <div style="display:flex; align-items:center; gap:8px; background:rgba(15,23,42,0.75); border:1px solid rgba(56,189,248,0.25); border-radius:8px; padding:6px 12px; margin-bottom:0.8rem; flex-wrap:wrap;">
+      <span style="font-size:0.7rem; color:var(--text-sub); font-weight:800; text-transform:uppercase; letter-spacing:0.4px; display:inline-flex; align-items:center; gap:5px;">
+        <i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-cyan);"></i> Delivery Status:
+      </span>
+      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'ALL' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('ALL')" style="font-size:0.7rem; padding:3px 10px;">
+        All Deliveries (${totalStageCount})
+      </button>
+      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'UNDELIVERED' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('UNDELIVERED')" style="font-size:0.7rem; padding:3px 10px; color:#fca5a5;">
+        <i class="fa-solid fa-box-open" style="margin-right:4px;"></i> 0% Undelivered (${stageUndeliveredCount})
+      </button>
+      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'PARTIAL' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('PARTIAL')" style="font-size:0.7rem; padding:3px 10px; color:#fde047;">
+        <i class="fa-solid fa-truck" style="margin-right:4px;"></i> Partially Delivered (${stagePartialCount})
+      </button>
+    </div>
+    ` : ''}
 
     <div style="overflow-x:auto; max-height:calc(90vh - 240px); border-radius:10px; border:1px solid rgba(255,255,255,0.08); flex:1; min-height:360px;">
       <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.78rem; min-width:1100px;">
@@ -8715,6 +8766,7 @@ function closeModalDirect() {
     if (icon) icon.className = 'fa-solid fa-expand';
   }
   currentDelayModalSearch = '';
+  currentDelayModalDeliveryFilter = 'ALL';
 }
 
 // ── 1. 100% Reliable Native Download of Original Styled 5-Sheet Master Excel ──
