@@ -2264,6 +2264,349 @@
       box-shadow: 0 6px 18px rgba(244, 63, 94, 0.25);
     }
 
+
+    /* ══════════════════════════════════════════════════════════
+       HIGH-DENSITY 2-TIER COMMAND BAR & OMNI-SEARCH STYLING
+    ══════════════════════════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(9, 13, 22, 0.92) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 6px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .header-tier-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-title-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-title-cluster i {
+      font-size: 1.1rem;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .header-title-cluster h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .header-live-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 1px 7px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 6px #38bdf8;
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* ── Global Omni-Search Bar ── */
+    .omni-search-wrapper {
+      flex: 1 1 320px;
+      max-width: 440px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .omni-search-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      padding: 3px 12px;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .omni-search-box:focus-within {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 1px 2px rgba(0,0,0,0.4);
+      background: rgba(15, 23, 42, 0.98);
+    }
+
+    .omni-search-icon {
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+    }
+
+    .omni-search-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.76rem;
+      width: 100%;
+    }
+
+    .omni-search-input::placeholder {
+      color: #64748b;
+      font-size: 0.74rem;
+    }
+
+    .omni-search-clear {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+    }
+
+    .omni-search-clear:hover { color: #f8fafc; }
+
+    .omni-search-kbd {
+      font-size: 0.62rem;
+      color: #64748b;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 1px 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      margin-left: 2px;
+    }
+
+    /* ── Tier 2: Streamlined Filter Toolbar ── */
+    .header-tier-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
+      padding-top: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .primary-filters-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1 1 auto;
+      flex-wrap: wrap;
+    }
+
+    /* Compact combobox triggers for 34px height */
+    .primary-filters-row .buyer-combobox-trigger {
+      padding: 3px 10px !important;
+      min-height: 32px !important;
+      border-radius: 8px !important;
+      font-size: 0.74rem !important;
+    }
+    .primary-filters-row .combobox-lead-tag {
+      font-size: 0.7rem !important;
+      padding: 1px 5px !important;
+    }
+    .primary-filters-row .combobox-current-val strong {
+      font-size: 0.74rem !important;
+    }
+    .primary-filters-row .combobox-tag-badge {
+      display: none !important;
+    }
+
+    /* PR Year Dropdown Pill */
+    .header-year-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 3px 10px;
+      min-height: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .header-year-pill label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .header-year-dropdown {
+      background: transparent;
+      border: none;
+      color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
+    }
+    .header-year-dropdown option {
+      background: #0f172a;
+      color: #f8fafc;
+    }
+
+    /* "More Filters" Drawer Button */
+    .btn-more-filters {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 4px 11px;
+      min-height: 32px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: 'Outfit', sans-serif;
+    }
+    .btn-more-filters:hover {
+      background: rgba(51, 65, 85, 0.8);
+      border-color: #94a3b8;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .btn-more-filters.drawer-open {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: var(--accent-cyan) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+    .more-filters-active-chip {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    /* "Reset All" Button */
+    .btn-reset-all-filters {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 4px 11px;
+      min-height: 32px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: 'Outfit', sans-serif;
+    }
+    .btn-reset-all-filters:hover {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: #ef4444;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    /* "More Filters" Popover Drawer */
+    .more-filters-drawer {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 14px;
+      right: 14px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      backdrop-filter: blur(24px);
+      animation: drawerSlide 0.2s ease forwards;
+    }
+    @keyframes drawerSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .more-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .more-filters-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+    .btn-more-filters-done {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 3px 12px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-more-filters-done:hover { background: #0369a1; }
+
   </style>
 </head>
 <body>
@@ -2271,58 +2614,76 @@
 <div class="dashboard-container">
 
     <!-- HEADER (2-TIER BALANCED ARCHITECTURE) -->
+  <!-- ══════════════════════════════════════════════════════════
+       HIGH-DENSITY 2-TIER COMMAND CENTER (REVISED EXECUTIVE UI)
+  ══════════════════════════════════════════════════════════ -->
   <header>
-    <!-- TIER 1: BRAND TITLE & UP-RIGHT UTILITY CONTROLS -->
+    <!-- TIER 1: BRAND + OMNI-SEARCH + ACTION UTILITIES (Height ~44px) -->
     <div class="header-tier-top">
-      <div class="header-title">
+      <div class="header-title-cluster">
         <i class="fa-solid fa-user-tie"></i>
-        <div>
-          <h1>Suez Steel Co. — ENTERPRISE PR & PO FOLLOW-UP</h1>
+        <h1>
+          <span>Suez Steel Co. — ENTERPRISE PR & PO FOLLOW-UP</span>
+          <span class="header-live-badge"><span class="live-dot"></span> <span id="headerTotalTasksCount">445</span> Tasks</span>
+        </h1>
+      </div>
+
+      <!-- CENTER: GLOBAL OMNI-SEARCH INPUT (Ctrl+K) -->
+      <div class="omni-search-wrapper">
+        <div class="omni-search-box">
+          <i class="fa-solid fa-magnifying-glass omni-search-icon"></i>
+          <input type="text" id="omniSearchInput" class="omni-search-input" placeholder="Quick Search PR#, PO#, buyer, supplier, item... (Ctrl+K)" autocomplete="off" oninput="handleOmniSearch(this.value)">
+          <button class="omni-search-clear" id="omniSearchClearBtn" onclick="clearOmniSearch()" style="display:none;" title="Clear search">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </button>
+          <span class="omni-search-kbd"><kbd>Ctrl</kbd><kbd>K</kbd></span>
         </div>
       </div>
 
-      <!-- UP-RIGHT SYSTEM UTILITY & ZERO-STOCK ACTIONS -->
-      <div class="header-top-right-controls" style="display:inline-flex; align-items:center; gap:8px;">
-        <div id="headerCustomActionSlot" style="display:inline-flex; align-items:center; gap:8px;">
-          <!-- 1. Zero-Stock Filter Toggle Button -->
-          <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Click to filter dashboard to Zero-Stock items only">
-            <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
-            <span>Zero-Stock Only</span>
-            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:3px;">1025 Lines</span>
-          </button>
+      <!-- UP-RIGHT: CRITICAL ACTIONS & VIEW MODES -->
+      <div style="display:inline-flex; align-items:center; gap:8px;">
+        <!-- Zero-Stock Filter Toggle -->
+        <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Filter to Zero-Stock critical items only">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
+          <span>Zero-Stock</span>
+          <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">1025</span>
+        </button>
 
-          <!-- 2. Zero-Stock Direct Excel Export Button -->
-          <button id="btnZeroStockExport" onclick="exportZeroStockMatrix()" class="btn-zero-stock-export" title="Click to download dedicated Excel report of all Zero-Stock critical spares">
-            <i class="fa-solid fa-file-excel" style="color:#34d399;"></i>
-            <span>Export Zero-Stock</span>
-          </button>
+        <!-- Zero-Stock Excel Export -->
+        <button id="btnZeroStockExport" onclick="exportZeroStockMatrix()" class="btn-zero-stock-export" title="Export Zero-Stock spares matrix">
+          <i class="fa-solid fa-file-excel" style="color:#34d399;"></i>
+          <span>Export Zero</span>
+        </button>
+
+        <!-- L4 Stock Control Quick Card -->
+        <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Inspect PRs awaiting Level 4 Stock Control">
+          <span class="l4-dot"></span>
+          <span><strong style="color:#ffffff;">12 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
+          <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect</span>
         </div>
 
+        <!-- Operations Guide Link -->
+        <a href="../../Run_Files_Guide.html" target="_blank" class="btn-mode" title="Open Interactive Operations Guide" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+          <i class="fa-solid fa-book-open" style="color:var(--accent-cyan);"></i> Guide
+        </a>
+
+        <!-- View Mode & Fullscreen -->
         <div class="view-mode-bar">
-          <a href="../../Run_Files_Guide.html" target="_blank" class="btn-mode" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:4px 9px; border-radius:6px; font-weight:700;" title="Open interactive operations guide for all run files and automated robots">
-            <i class="fa-solid fa-book"></i> Run Guide
-          </a>
-          <button class="btn-mode active" id="btnModeFit" onclick="setDashboardViewMode('fit')" title="Adaptive Responsive Screen View">
+          <button class="btn-mode active" id="btnModeFit" onclick="setDashboardViewMode('fit')" title="Adaptive Screen View">
             <i class="fa-solid fa-laptop"></i> View
           </button>
-          <button class="btn-mode btn-mode-fs" onclick="toggleFullScreen()" title="Toggle Fullscreen Mode">
+          <button class="btn-mode btn-mode-fs" onclick="toggleFullScreen()" title="Fullscreen">
             <i class="fa-solid fa-expand"></i>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- TIER 2: OPERATIONAL INTAKE & ACTION CONTROLS -->
+    <!-- TIER 2: STREAMLINED FILTER TOOLBAR (Height ~38px) -->
     <div class="header-tier-bottom">
-      <!-- Left: Level 4 Stock Control Pre-Commercial Quick-Card -->
-      <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Click to inspect PRs awaiting Level 4 Stock Control confirmation">
-        <span class="l4-dot"></span>
-        <span><strong style="color:#ffffff;">12 PRs (36 Lines)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> <span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>22 Zero-Stock</span></span>
-        <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect L4</span>
-      </div>
-
-      <!-- Center: DEPARTMENT / TARGET TEAM SCOPE MULTI-SELECT COMBOBOX -->
-      <div class="buyer-combobox-wrapper header-dept-combobox" id="deptComboboxContainer">
+      <div class="primary-filters-row">
+        <!-- 1. DEPARTMENT COMBOBOX -->
+        <div class="buyer-combobox-wrapper header-dept-combobox" id="deptComboboxContainer">
         <div class="buyer-combobox-trigger" id="deptComboboxTrigger" onclick="toggleDeptCombobox(event)" title="Filter dashboard by Department / Target Team Scope">
           <div class="combobox-trigger-left">
             <span class="combobox-lead-tag" style="color:#c084fc;"><i class="fa-solid fa-sitemap"></i> Dept:</span>
@@ -2374,78 +2735,7 @@
         </div>
       </div>
 
-      <!-- Right: Action Controls (PR Year Selector) -->
-      <div class="header-actions-right">
-        <!-- REQUISITION YEAR DROPDOWN SELECTOR -->
-        <div class="header-year-select-wrap">
-          <label for="yearSelector" class="year-select-label">
-            <i class="fa-regular fa-calendar-days" style="color:var(--accent-cyan); font-size:0.85rem;"></i>
-            <span>PR Year:</span>
-          </label>
-          <select id="yearSelector" class="year-select-dropdown" onchange="onYearFilterChange(this.value)" title="Filter entire dashboard by PR Creation Year">
-            <option value="ALL">🌟 All Years (445 Tasks)</option><option value="2026">📅 2026 (293 Tasks)</option><option value="2025">📅 2025 (141 Tasks)</option><option value="2024">📅 2024 (11 Tasks)</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="main-section">
-    <div class="section-header">
-      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; width:100%;">
-        <!-- 1. PROJECT MULTI-SELECT COMBOBOX -->
-        <div class="buyer-combobox-wrapper" id="projectComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
-          <div class="buyer-combobox-trigger" id="projectComboboxTrigger" onclick="toggleProjectCombobox(event)">
-            <div class="combobox-trigger-left">
-              <span class="combobox-lead-tag"><i class="fa-solid fa-building"></i> Project:</span>
-              <span class="combobox-current-val" id="projectComboboxCurrentVal">
-                <span>🌟</span>
-                <strong style="color:#ffffff;">ALL PROJECTS</strong>
-                <span class="combobox-tag-badge">All Plants</span>
-              </span>
-            </div>
-            <div class="combobox-trigger-right">
-              <button class="combobox-clear-btn" id="projectComboboxResetBtn" onclick="selectProjectOption('ALL', event)" title="Reset to All Projects" style="display:none;">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-              <span class="combobox-kbd-shortcut" title="Press P to search projects"><kbd>P</kbd></span>
-              <i class="fa-solid fa-chevron-down combobox-chevron" id="projectComboboxChevron"></i>
-            </div>
-          </div>
-
-          <!-- Floating Popover Dropdown -->
-          <div class="buyer-combobox-popover" id="projectComboboxPopover">
-            <div class="combobox-search-box">
-              <i class="fa-solid fa-magnifying-glass combobox-search-icon"></i>
-              <input type="text" id="projectSearchInput" class="combobox-search-input" placeholder="Search project (e.g. OP14, IP99, Rolling Mill)..." autocomplete="off" oninput="filterProjectOptions(this.value)" onkeydown="handleProjectComboboxKeydown(event)">
-              <button class="combobox-search-clear" id="projectComboboxInputClearBtn" onclick="clearProjectSearchInput()" style="display:none;">
-                <i class="fa-solid fa-circle-xmark"></i>
-              </button>
-            </div>
-
-            <!-- Multi-Select Action Toolbar -->
-            <div class="combobox-multiselect-bar">
-              <div class="combo-multi-stats">
-                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 3 Projects Selected</span>
-              </div>
-              <div class="combo-multi-actions">
-                <button class="btn-multi-action" onclick="selectAllProjects(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
-                <button class="btn-multi-action" onclick="selectAllProjects(false, event)"><i class="fa-solid fa-xmark"></i> Clear</button>
-              </div>
-            </div>
-
-            <!-- Scrollable Options List -->
-            <div class="combobox-options-list" id="projectComboboxOptions">
-              <!-- Rendered via JS with checkboxes -->
-            </div>
-
-            <div class="combobox-footer">
-              <span style="font-size:0.68rem; color:var(--text-sub);"><kbd>Click</kbd> to select &bull; <kbd>Enter</kbd> to apply</span>
-              <button class="btn-combobox-done" onclick="doneProjectCombobox()"><i class="fa-solid fa-check"></i> Done</button>
-            </div>
-          </div>
-        </div>
-
+        <!-- 2. BUYER COMBOBOX -->
         <!-- 2. BUYER MULTI-SELECT COMBOBOX -->
         <div class="buyer-combobox-wrapper" id="buyerComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
           <div class="buyer-combobox-trigger" id="buyerComboboxTrigger" onclick="toggleBuyerCombobox(event)">
@@ -2504,7 +2794,8 @@
             <option value="Ehab Bakr">Ehab Bakr</option><option value="PGR1- Moustafa Ali">PGR1- Moustafa Ali</option><option value="PGR11- Ahmed Essam">PGR11- Ahmed Essam</option><option value="PGR12- Haitham Rady">PGR12- Haitham Rady</option><option value="PGR13- Ahmed Mohamed Ibrahim">PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR3- Ahmed mashal">PGR3- Ahmed mashal</option><option value="PGR6- Mohamed Fawaz">PGR6- Mohamed Fawaz</option><option value="PGR8- Nourhan Hassan">PGR8- Nourhan Hassan</option><option value="T103- Dalia Haraz">T103- Dalia Haraz</option><option value="T104- Mahmoud Hamdy">T104- Mahmoud Hamdy</option><option value="T105- Mohamed Shaban">T105- Mohamed Shaban</option><option value="T107- Karim Osama">T107- Karim Osama</option><option value="T11- Amr Adel">T11- Amr Adel</option><option value="T14- Ahmed Elsayed">T14- Ahmed Elsayed</option><option value="T32- Ahmed Ali">T32- Ahmed Ali</option><option value="T33- Marwan Ellithy">T33- Marwan Ellithy</option><option value="T42- Ahmed Farag">T42- Ahmed Farag</option><option value="T43- Ahmed Elbadry">T43- Ahmed Elbadry</option><option value="T61- Amr Youssef">T61- Amr Youssef</option><option value="T62- Mohamed Samir">T62- Mohamed Samir</option><option value="T64- Ali Moussa">T64- Ali Moussa</option><option value="T74- Ahmed Karam">T74- Ahmed Karam</option><option value="T88- Mohamed Abdelmonem">T88- Mohamed Abdelmonem</option><option value="T89- Hanaa Hamidi">T89- Hanaa Hamidi</option><option value="T91- Ahmed Emad">T91- Ahmed Emad</option><option value="T92- Fathi Mohamed">T92- Fathi Mohamed</option><option value="T94- Mostafa Hamdy">T94- Mostafa Hamdy</option><option value="T96- Mahmoud Ibrahim">T96- Mahmoud Ibrahim</option><option value="T98- Mabrouk Younis">T98- Mabrouk Younis</option><option value="أمير جمال عبد الباسط محمد">أمير جمال عبد الباسط محمد</option>
           </select>
         </div>
-        
+
+        <!-- 3. ORIGIN COMBOBOX -->
         <!-- 4. ORDER TYPE / ORIGIN COMBOBOX (FOREIGN VS LOCAL) -->
         <div class="buyer-combobox-wrapper" id="orderTypeComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
           <div class="buyer-combobox-trigger" id="orderTypeComboboxTrigger" onclick="toggleOrderTypeCombobox(event)">
@@ -2547,35 +2838,65 @@
           </div>
         </div>
 
-        <!-- LINE BREAK: Ensures clean 2-row layout matching reference -->
-        <div style="flex-basis: 100%; height: 0; margin: 0;"></div>
+        <!-- 4. PR YEAR SELECTOR -->
+                <!-- PR YEAR SELECTOR -->
+        <div class="header-year-pill" id="yearSelectorWrap" title="Filter entire dashboard by PR Creation Year">
+          <label for="yearSelector">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span>Year:</span>
+          </label>
+          <select id="yearSelector" class="header-year-dropdown" onchange="onYearFilterChange(this.value)">
+            <option value="ALL">🌟 All Years (445 Tasks)</option><option value="2026">📅 2026 (293 Tasks)</option><option value="2025">📅 2025 (141 Tasks)</option><option value="2024">📅 2024 (11 Tasks)</option>
+          </select>
+        </div>
+      </div>
 
-        <!-- 3. PR / PO LINKED COMBOBOX (HANDLES 1-TO-MANY PO SPLITS) -->
-        <div class="buyer-combobox-wrapper" id="prpoComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
-          <div class="buyer-combobox-trigger" id="prpoComboboxTrigger" onclick="togglePrPoCombobox(event)">
+      <!-- RIGHT FILTER ACTIONS: MORE FILTERS + RESET ALL -->
+      <div style="display:inline-flex; align-items:center; gap:8px; flex-shrink:0;">
+        <button id="btnMoreFiltersToggle" class="btn-more-filters" onclick="toggleMoreFiltersDrawer(event)" title="Show Secondary Filters (Plant, Planners, Requestors, PR/PO)">
+          <i class="fa-solid fa-sliders"></i>
+          <span>More Filters</span>
+          <span id="moreFiltersActiveBadge" class="more-filters-active-chip" style="display:none;">0</span>
+          <i class="fa-solid fa-chevron-down" id="moreFiltersChevron" style="font-size:0.65rem; transition:transform 0.2s ease;"></i>
+        </button>
+
+        <button id="btnResetAllFilters" class="btn-reset-all-filters" onclick="resetAllFilters()" title="Reset all filters to default full view" style="display:none;">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Reset All</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- EXPANDABLE SECONDARY FILTERS DRAWER (COLLAPSED BY DEFAULT TO SAVE VERTICAL SPACE) -->
+    <div id="moreFiltersPanel" class="more-filters-drawer" style="display:none;">
+      <div class="more-filters-grid">
+        <!-- Secondary 1: Project (Plant) -->
+        <!-- 1. PROJECT MULTI-SELECT COMBOBOX -->
+        <div class="buyer-combobox-wrapper" id="projectComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
+          <div class="buyer-combobox-trigger" id="projectComboboxTrigger" onclick="toggleProjectCombobox(event)">
             <div class="combobox-trigger-left">
-              <span class="combobox-lead-tag" style="background:rgba(234,179,8,0.18); color:#fde047; border-color:rgba(234,179,8,0.35);"><i class="fa-solid fa-file-invoice"></i> PR / PO:</span>
-              <span class="combobox-current-val" id="prpoComboboxCurrentVal">
+              <span class="combobox-lead-tag"><i class="fa-solid fa-building"></i> Project:</span>
+              <span class="combobox-current-val" id="projectComboboxCurrentVal">
                 <span>🌟</span>
-                <strong style="color:#ffffff;">ALL PRs &amp; POs</strong>
-                <span class="combobox-tag-badge">All Scope</span>
+                <strong style="color:#ffffff;">ALL PROJECTS</strong>
+                <span class="combobox-tag-badge">All Plants</span>
               </span>
             </div>
             <div class="combobox-trigger-right">
-              <button class="combobox-clear-btn" id="prpoComboboxResetBtn" onclick="selectPrPoSingle('ALL', event)" title="Reset to All PRs &amp; POs" style="display:none;">
+              <button class="combobox-clear-btn" id="projectComboboxResetBtn" onclick="selectProjectOption('ALL', event)" title="Reset to All Projects" style="display:none;">
                 <i class="fa-solid fa-xmark"></i>
               </button>
-              <span class="combobox-kbd-shortcut" title="Press R to search PRs / POs"><kbd>R</kbd></span>
-              <i class="fa-solid fa-chevron-down combobox-chevron" id="prpoComboboxChevron"></i>
+              <span class="combobox-kbd-shortcut" title="Press P to search projects"><kbd>P</kbd></span>
+              <i class="fa-solid fa-chevron-down combobox-chevron" id="projectComboboxChevron"></i>
             </div>
           </div>
 
           <!-- Floating Popover Dropdown -->
-          <div class="buyer-combobox-popover" id="prpoComboboxPopover" style="min-width:500px; max-width:580px;">
+          <div class="buyer-combobox-popover" id="projectComboboxPopover">
             <div class="combobox-search-box">
               <i class="fa-solid fa-magnifying-glass combobox-search-icon"></i>
-              <input type="text" id="prpoSearchInput" class="combobox-search-input" placeholder="Search item desc, code, PR #, PO #, supplier..." autocomplete="off" oninput="filterPrPoOptions(this.value)" onkeydown="handlePrPoComboboxKeydown(event)">
-              <button class="combobox-search-clear" id="prpoComboboxInputClearBtn" onclick="clearPrPoSearchInput()" style="display:none;">
+              <input type="text" id="projectSearchInput" class="combobox-search-input" placeholder="Search project (e.g. OP14, IP99, Rolling Mill)..." autocomplete="off" oninput="filterProjectOptions(this.value)" onkeydown="handleProjectComboboxKeydown(event)">
+              <button class="combobox-search-clear" id="projectComboboxInputClearBtn" onclick="clearProjectSearchInput()" style="display:none;">
                 <i class="fa-solid fa-circle-xmark"></i>
               </button>
             </div>
@@ -2583,25 +2904,27 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-bolt" style="color:#fde047;"></i> <span id="prpoSelectedCountText">All PRs &amp; POs Active</span>
+                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 3 Projects Selected</span>
               </div>
               <div class="combo-multi-actions">
-                <button class="btn-multi-action" onclick="selectPrPoSingle('ALL', event)"><i class="fa-solid fa-rotate-left"></i> Reset All</button>
+                <button class="btn-multi-action" onclick="selectAllProjects(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
+                <button class="btn-multi-action" onclick="selectAllProjects(false, event)"><i class="fa-solid fa-xmark"></i> Clear</button>
               </div>
             </div>
 
             <!-- Scrollable Options List -->
-            <div class="combobox-options-list" id="prpoComboboxOptions" style="max-height:360px;">
-              <!-- Rendered via JS -->
+            <div class="combobox-options-list" id="projectComboboxOptions">
+              <!-- Rendered via JS with checkboxes -->
             </div>
 
             <div class="combobox-footer">
-              <span style="font-size:0.68rem; color:var(--text-sub);"><kbd>Click</kbd> to inspect &bull; <kbd>Enter</kbd> to apply</span>
-              <button class="btn-combobox-done" onclick="donePrPoCombobox()"><i class="fa-solid fa-check"></i> Done</button>
+              <span style="font-size:0.68rem; color:var(--text-sub);"><kbd>Click</kbd> to select &bull; <kbd>Enter</kbd> to apply</span>
+              <button class="btn-combobox-done" onclick="doneProjectCombobox()"><i class="fa-solid fa-check"></i> Done</button>
             </div>
           </div>
         </div>
 
+        <!-- Secondary 2: Entered By (Planner) -->
         <!-- 5. ENTERED BY MULTI-SELECT COMBOBOX -->
         <div class="buyer-combobox-wrapper" id="enteredByComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
           <div class="buyer-combobox-trigger" id="enteredByComboboxTrigger" onclick="toggleEnteredByCombobox(event)">
@@ -2655,6 +2978,7 @@
           </div>
         </div>
 
+        <!-- Secondary 3: Requested By -->
         <!-- 6. REQUESTED BY MULTI-SELECT COMBOBOX -->
         <div class="buyer-combobox-wrapper" id="requestedByComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
           <div class="buyer-combobox-trigger" id="requestedByComboboxTrigger" onclick="toggleRequestedByCombobox(event)">
@@ -2707,10 +3031,68 @@
             </div>
           </div>
         </div>
-        
+
+        <!-- Secondary 4: PR / PO Search -->
+        <!-- 3. PR / PO LINKED COMBOBOX (HANDLES 1-TO-MANY PO SPLITS) -->
+        <div class="buyer-combobox-wrapper" id="prpoComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
+          <div class="buyer-combobox-trigger" id="prpoComboboxTrigger" onclick="togglePrPoCombobox(event)">
+            <div class="combobox-trigger-left">
+              <span class="combobox-lead-tag" style="background:rgba(234,179,8,0.18); color:#fde047; border-color:rgba(234,179,8,0.35);"><i class="fa-solid fa-file-invoice"></i> PR / PO:</span>
+              <span class="combobox-current-val" id="prpoComboboxCurrentVal">
+                <span>🌟</span>
+                <strong style="color:#ffffff;">ALL PRs &amp; POs</strong>
+                <span class="combobox-tag-badge">All Scope</span>
+              </span>
+            </div>
+            <div class="combobox-trigger-right">
+              <button class="combobox-clear-btn" id="prpoComboboxResetBtn" onclick="selectPrPoSingle('ALL', event)" title="Reset to All PRs &amp; POs" style="display:none;">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <span class="combobox-kbd-shortcut" title="Press R to search PRs / POs"><kbd>R</kbd></span>
+              <i class="fa-solid fa-chevron-down combobox-chevron" id="prpoComboboxChevron"></i>
+            </div>
+          </div>
+
+          <!-- Floating Popover Dropdown -->
+          <div class="buyer-combobox-popover" id="prpoComboboxPopover" style="min-width:500px; max-width:580px;">
+            <div class="combobox-search-box">
+              <i class="fa-solid fa-magnifying-glass combobox-search-icon"></i>
+              <input type="text" id="prpoSearchInput" class="combobox-search-input" placeholder="Search item desc, code, PR #, PO #, supplier..." autocomplete="off" oninput="filterPrPoOptions(this.value)" onkeydown="handlePrPoComboboxKeydown(event)">
+              <button class="combobox-search-clear" id="prpoComboboxInputClearBtn" onclick="clearPrPoSearchInput()" style="display:none;">
+                <i class="fa-solid fa-circle-xmark"></i>
+              </button>
+            </div>
+
+            <!-- Multi-Select Action Toolbar -->
+            <div class="combobox-multiselect-bar">
+              <div class="combo-multi-stats">
+                <i class="fa-solid fa-bolt" style="color:#fde047;"></i> <span id="prpoSelectedCountText">All PRs &amp; POs Active</span>
+              </div>
+              <div class="combo-multi-actions">
+                <button class="btn-multi-action" onclick="selectPrPoSingle('ALL', event)"><i class="fa-solid fa-rotate-left"></i> Reset All</button>
+              </div>
+            </div>
+
+            <!-- Scrollable Options List -->
+            <div class="combobox-options-list" id="prpoComboboxOptions" style="max-height:360px;">
+              <!-- Rendered via JS -->
+            </div>
+
+            <div class="combobox-footer">
+              <span style="font-size:0.68rem; color:var(--text-sub);"><kbd>Click</kbd> to inspect &bull; <kbd>Enter</kbd> to apply</span>
+              <button class="btn-combobox-done" onclick="donePrPoCombobox()"><i class="fa-solid fa-check"></i> Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="more-filters-footer">
+        <span><i class="fa-solid fa-info-circle" style="color:var(--accent-cyan); margin-right:4px;"></i> Secondary filters refine active scope without cluttering your main view.</span>
+        <button class="btn-more-filters-done" onclick="closeMoreFiltersDrawer()"><i class="fa-solid fa-check"></i> Close</button>
       </div>
     </div>
+  </header>
 
+  <section class="main-section">
     <!-- SPOTLIGHT ACTIVE BANNER -->
     <div id="searchSpotlightBanner" class="spotlight-banner-active" style="display:none; margin: 0 0 14px 0; background: linear-gradient(90deg, rgba(234,179,8,0.18) 0%, rgba(15,23,42,0.85) 100%); border: 1px solid rgba(234,179,8,0.45); border-left: 5px solid #eab308; border-radius: 12px; padding: 10px 18px; align-items: center; justify-content: space-between; box-shadow: 0 4px 25px rgba(0,0,0,0.35);">
       <div style="display:flex; align-items:center; gap:12px;">
@@ -3687,6 +4069,7 @@ function applyProjectSelection() {
   renderRequestedByComboboxOptions(currentRequestedByQuery);
   renderLifecycleCards();
   renderStatusChart();
+  if (typeof updateActiveFilterCounters === 'function') updateActiveFilterCounters();
 }
 
 function doneProjectCombobox() {
@@ -6176,7 +6559,8 @@ function getCombinedBuyerLifecycle() {
     const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+    const matchOmni = matchOmniSearch(t);
+    return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && matchOmni;
   });
 
   const st1 = b_tasks.filter(t => t.task_stage === "TS Confirmed (Pending PO)");
@@ -6389,7 +6773,8 @@ function getFilteredL4Tasks() {
     const matchZero = !isZeroStockFilterActive || t.is_zero_stock;
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    return matchD && matchP && matchY && matchZero && matchEnt && matchReq;
+    const matchOmni = matchOmniSearch(t);
+    return matchD && matchP && matchY && matchZero && matchEnt && matchReq && matchOmni;
   });
 }
 
@@ -6445,7 +6830,8 @@ function renderLifecycleCards() {
       const matchO = matchOrderType(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return isUnass && matchP && matchD && matchY && matchO && matchEnt && matchReq;
+      const matchOmni = matchOmniSearch(t);
+      return isUnass && matchP && matchD && matchY && matchO && matchEnt && matchReq && matchOmni;
     });
     const unassCount = new Set(unassTasks.map(t => t.pr_no)).size;
     if (unassCount > 0) {
@@ -8511,6 +8897,194 @@ async function exportStyledFilteredExcel() {
     alert("Export failed: " + e.message);
   }
 }
+
+// ════════════════════════════════════════════════════════════════════════
+// 10. GLOBAL OMNI-SEARCH & 2-TIER COMMAND BAR JAVASCRIPT SYSTEM
+// ════════════════════════════════════════════════════════════════════════
+let currentOmniQuery = '';
+
+function matchOmniSearch(t) {
+  if (!currentOmniQuery || !currentOmniQuery.trim()) return true;
+  const q = currentOmniQuery.trim().toLowerCase();
+
+  // Match PR#, PO#, Buyer, Supplier, Project, Department, Entered By, Requested By
+  if ((t.pr_no && String(t.pr_no).toLowerCase().includes(q)) ||
+      (t.po_no && String(t.po_no).toLowerCase().includes(q)) ||
+      (t.buyer && String(t.buyer).toLowerCase().includes(q)) ||
+      (t.supplier && String(t.supplier).toLowerCase().includes(q)) ||
+      (t.project && String(t.project).toLowerCase().includes(q)) ||
+      (t.department && String(t.department).toLowerCase().includes(q)) ||
+      (t.entered_by && String(t.entered_by).toLowerCase().includes(q)) ||
+      (t.requested_by && String(t.requested_by).toLowerCase().includes(q)) ||
+      (t.task_stage && String(t.task_stage).toLowerCase().includes(q))) {
+    return true;
+  }
+
+  // Match inside line items (item description, item code)
+  if (t.lines && t.lines.length) {
+    for (let i = 0; i < t.lines.length; i++) {
+      const l = t.lines[i];
+      if ((l.item_desc && String(l.item_desc).toLowerCase().includes(q)) ||
+          (l.item_code && String(l.item_code).toLowerCase().includes(q))) {
+        return true;
+      }
+    }
+  }
+
+  if (t.description && String(t.description).toLowerCase().includes(q)) return true;
+  return false;
+}
+
+let omniDebounceTimer = null;
+function handleOmniSearch(val) {
+  clearTimeout(omniDebounceTimer);
+  omniDebounceTimer = setTimeout(() => {
+    currentOmniQuery = val || '';
+    const clearBtn = document.getElementById('omniSearchClearBtn');
+    if (clearBtn) {
+      clearBtn.style.display = currentOmniQuery.trim() ? 'inline-flex' : 'none';
+    }
+    renderLifecycleCards();
+    renderStatusChart();
+    if (typeof updateActiveFilterCounters === 'function') updateActiveFilterCounters();
+  }, 120);
+}
+
+function clearOmniSearch() {
+  const inp = document.getElementById('omniSearchInput');
+  if (inp) {
+    inp.value = '';
+    inp.focus();
+  }
+  handleOmniSearch('');
+}
+
+// Global hotkey Ctrl+K / Cmd+K to focus search
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+    e.preventDefault();
+    const inp = document.getElementById('omniSearchInput');
+    if (inp) {
+      inp.focus();
+      inp.select();
+    }
+  }
+});
+
+// "More Filters" Drawer Toggle & Close
+function toggleMoreFiltersDrawer(e) {
+  if (e) e.stopPropagation();
+  const drawer = document.getElementById('moreFiltersPanel');
+  const btn = document.getElementById('btnMoreFiltersToggle');
+  const chev = document.getElementById('moreFiltersChevron');
+  if (!drawer) return;
+
+  const isOpen = drawer.style.display === 'block';
+  if (isOpen) {
+    drawer.style.display = 'none';
+    if (btn) btn.classList.remove('drawer-open');
+    if (chev) chev.style.transform = 'rotate(0deg)';
+  } else {
+    drawer.style.display = 'block';
+    if (btn) btn.classList.add('drawer-open');
+    if (chev) chev.style.transform = 'rotate(180deg)';
+  }
+}
+
+function closeMoreFiltersDrawer() {
+  const drawer = document.getElementById('moreFiltersPanel');
+  const btn = document.getElementById('btnMoreFiltersToggle');
+  const chev = document.getElementById('moreFiltersChevron');
+  if (drawer) drawer.style.display = 'none';
+  if (btn) btn.classList.remove('drawer-open');
+  if (chev) chev.style.transform = 'rotate(0deg)';
+}
+
+// Close drawer when clicking outside
+document.addEventListener('click', (e) => {
+  const drawer = document.getElementById('moreFiltersPanel');
+  const btn = document.getElementById('btnMoreFiltersToggle');
+  if (drawer && drawer.style.display === 'block') {
+    if (!drawer.contains(e.target) && (!btn || !btn.contains(e.target))) {
+      closeMoreFiltersDrawer();
+    }
+  }
+});
+
+// "Reset All Filters" Engine
+function resetAllFilters() {
+  selectedBuyersSet = new Set(BUYERS_LIST);
+  selectedProjectsSet = new Set(PROJECTS_LIST);
+  selectedDeptsSet = new Set(DEPTS_LIST);
+  selectedEnteredBySet = new Set(ENTERED_BY_LIST);
+  selectedRequestedBySet = new Set(REQUESTED_BY_LIST);
+  selectedOrderTypeKey = 'ALL';
+  selectedPrPoKey = 'ALL';
+  selectedYear = 'ALL';
+  isZeroStockFilterActive = false;
+  currentOmniQuery = '';
+
+  const omniInp = document.getElementById('omniSearchInput');
+  if (omniInp) omniInp.value = '';
+  const clearBtn = document.getElementById('omniSearchClearBtn');
+  if (clearBtn) clearBtn.style.display = 'none';
+
+  const yrSel = document.getElementById('yearSelector');
+  if (yrSel) yrSel.value = 'ALL';
+
+  updateDeptComboboxTriggerDisplay();
+  updateComboboxTriggerDisplay();
+  updateProjectComboboxTriggerDisplay();
+  updateOrderTypeComboboxTriggerDisplay();
+  updatePrPoComboboxTriggerDisplay();
+  updateEnteredByComboboxTriggerDisplay();
+  updateRequestedByComboboxTriggerDisplay();
+
+  renderLifecycleCards();
+  renderStatusChart();
+  if (typeof updateActiveFilterCounters === 'function') updateActiveFilterCounters();
+  showToast("All filters reset to full department view");
+}
+
+function updateActiveFilterCounters() {
+  const isAllP = isAllProjectsSelected();
+  const isAllEnt = (typeof isAllEnteredBySelected === 'function') ? isAllEnteredBySelected() : true;
+  const isAllReq = (typeof isAllRequestedBySelected === 'function') ? isAllRequestedBySelected() : true;
+  const isAllPrPo = (!selectedPrPoKey || selectedPrPoKey === 'ALL');
+
+  let secondaryActive = 0;
+  if (!isAllP) secondaryActive++;
+  if (!isAllEnt) secondaryActive++;
+  if (!isAllReq) secondaryActive++;
+  if (!isAllPrPo) secondaryActive++;
+
+  const secBadge = document.getElementById('moreFiltersActiveBadge');
+  const btnMore = document.getElementById('btnMoreFiltersToggle');
+  if (secBadge && btnMore) {
+    if (secondaryActive > 0) {
+      secBadge.textContent = String(secondaryActive);
+      secBadge.style.display = 'inline-block';
+      btnMore.classList.add('drawer-open');
+    } else {
+      secBadge.style.display = 'none';
+      btnMore.classList.remove('drawer-open');
+    }
+  }
+
+  const isAllB = isAllBuyersSelected();
+  const isAllD = isAllDeptsSelected();
+  const isAllO = (!selectedOrderTypeKey || selectedOrderTypeKey === 'ALL');
+  const isAllY = (selectedYear === 'ALL');
+  const isZero = isZeroStockFilterActive;
+  const isOmni = (currentOmniQuery && currentOmniQuery.trim().length > 0);
+
+  const anyActive = (!isAllB) || (!isAllD) || (!isAllO) || (!isAllY) || isZero || isOmni || (secondaryActive > 0);
+  const resetBtn = document.getElementById('btnResetAllFilters');
+  if (resetBtn) {
+    resetBtn.style.display = anyActive ? 'inline-flex' : 'none';
+  }
+}
+
 </script>
 
 </body>
