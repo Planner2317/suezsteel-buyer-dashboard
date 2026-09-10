@@ -7426,9 +7426,6 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <button class="dossier-btn-action escalate" onclick="openEscalationDraft('${t.pr_no}', '${t.po_no || ''}')" title="Generate customized follow-up message addressed to assigned buyer">
           <i class="fa-solid fa-paper-plane"></i> Draft Buyer Follow-Up
         </button>
-        <button class="dossier-btn-action spotlight" onclick="spotlightFromDossier('${t.pr_no}')" title="Isolate this PR across the entire dashboard">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Spotlight on Dashboard
-        </button>
       </div>
       <div style="font-size:0.72rem; color:#94a3b8;">
         <span>Total Line Items: <strong style="color:#ffffff;">${(t.lines || []).length}</strong></span> &bull; 
