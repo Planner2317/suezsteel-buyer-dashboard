@@ -2657,11 +2657,11 @@
       display: flex;
       justify-content: space-around;
       align-items: flex-end;
-      height: 165px;
-      padding: 16px 20px 0;
+      height: 135px;
+      padding: 8px 20px 0;
       position: relative;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-top: 1.4rem;
+      margin-top: 0.5rem;
     }
     .pillar-col {
       display: flex;
@@ -3567,7 +3567,7 @@
         <button class="modal-close-btn" onclick="closeItemIntelModalDirect()">&times;</button>
       </div>
     </div>
-    <div class="modal-body" id="itemIntelContent" style="gap:1rem;">
+    <div class="modal-body" id="itemIntelContent" style="gap:0.75rem; padding:0.9rem 1.4rem;">
       <!-- Populated dynamically via openItemIntelligence() -->
     </div>
   </div>
@@ -7974,11 +7974,11 @@ function openItemIntelligence(itemCode) {
   const maxC = Math.max(cY1, cY2, cY3, benchmarkVal, 1);
 
   // ── DYNAMIC YoY DELTAS & PILLAR VISUALS ──
-  const pillarMaxH = 82;
+  const pillarMaxH = 68;
   const hPillarY3 = Math.max(6, Math.round((cY3 / maxC) * pillarMaxH));
   const hPillarY2 = Math.max(6, Math.round((cY2 / maxC) * pillarMaxH));
   const hPillarY1 = Math.max(6, Math.round((cY1 / maxC) * pillarMaxH));
-  const wmaLineBottomPx = Math.min(105, Math.max(10, Math.round((benchmarkVal / maxC) * pillarMaxH)));
+  const wmaLineBottomPx = Math.min(85, Math.max(8, Math.round((benchmarkVal / maxC) * pillarMaxH)));
 
   // Year 1 (2023-2024) Baseline
   const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Baseline</span>';
@@ -8074,7 +8074,7 @@ function openItemIntelligence(itemCode) {
     runwayColor = '#94a3b8';
   }
 
-  // ── DYNAMIC TREND & ROP REPLENISHMENT STATUS ──
+  // ── DYNAMIC TREND BADGE ──
   let trendBadgeHtml = '';
   if (trend === 'declining' || trendLabel.includes('Fading') || trendLabel.includes('Dip')) {
     trendBadgeHtml = `<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${escapeHtml(trendLabel)}</span>`;
@@ -8084,55 +8084,33 @@ function openItemIntelligence(itemCode) {
     trendBadgeHtml = `<span style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-arrows-left-right"></i> ${escapeHtml(trendLabel)}</span>`;
   }
 
-  let ropStatusBadgeHtml = '';
-  let ropDiffHtml = '';
-  if (stkTot === 0) {
-    ropStatusBadgeHtml = `<span style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-circle-exclamation"></i> STOCK-OUT CRITICAL</span>`;
-    ropDiffHtml = `<span style="color:#f87171; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> Zero Stock Balance</span>`;
-  } else if (rop > 0) {
-    if (stkTot <= rop) {
-      const def = rop - stkTot;
-      ropStatusBadgeHtml = `<span style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-triangle-exclamation"></i> RE-ORDER TRIGGERED</span>`;
-      ropDiffHtml = `<span style="color:#f87171; font-weight:700;">Deficit: -${def.toLocaleString()} ${escapeHtml(uom)} Below ROP</span>`;
-    } else if (maxStock > 0 && stkTot > maxStock) {
-      ropStatusBadgeHtml = `<span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-boxes-packing"></i> OVERSTOCKED</span>`;
-      ropDiffHtml = `<span style="color:#fbbf24; font-weight:700;">Surplus: +${(stkTot - maxStock).toLocaleString()} ${escapeHtml(uom)} Above Max</span>`;
-    } else {
-      ropStatusBadgeHtml = `<span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-shield-check"></i> STOCK SAFE</span>`;
-      ropDiffHtml = `<span style="color:#34d399; font-weight:700;">Buffer: +${(stkTot - rop).toLocaleString()} ${escapeHtml(uom)} Above ROP</span>`;
-    }
-  } else {
-    ropStatusBadgeHtml = `<span style="background:rgba(148,163,184,0.15); color:#94a3b8; border:1px solid rgba(148,163,184,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">NO ROP SET</span>`;
-    ropDiffHtml = `<span style="color:#94a3b8;">Direct Issue / Non-Stock Item</span>`;
-  }
-
   let auditWarningHtml = '';
   if (prQty > 0) {
     if (wma > 0 && prQty >= (wma * 2.5)) {
       const ratio = (prQty / wma).toFixed(1);
       auditWarningHtml = `
-        <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); padding:7px 10px; border-radius:6px; margin-top:8px; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:0.95rem;"></i>
-          <span style="font-size:0.72rem; color:#fca5a5; font-weight:600;">
-            PR Qty (${prQty.toLocaleString()} ${uom}) is ${ratio}x higher than annual burn rate (${wma.toFixed(1)}/yr). Verify demand before placement.
+        <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:0.85rem;"></i>
+          <span style="font-size:0.7rem; color:#fca5a5; font-weight:600;">
+            PR Qty (${prQty.toLocaleString()} ${uom}) is ${ratio}x higher than annual burn (${wma.toFixed(1)}/yr).
           </span>
         </div>
       `;
     } else if (intel.c3y === 0 && prQty > 0) {
       auditWarningHtml = `
-        <div style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.35); padding:7px 10px; border-radius:6px; margin-top:8px; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; font-size:0.95rem;"></i>
-          <span style="font-size:0.72rem; color:#fde047; font-weight:600;">
-            Dead Stock Alert: PR requests ${prQty.toLocaleString()} ${uom}, but item had 0 consumption over past 3 years.
+        <div style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.35); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; font-size:0.85rem;"></i>
+          <span style="font-size:0.7rem; color:#fde047; font-weight:600;">
+            Dead Stock Alert: PR requests ${prQty.toLocaleString()} ${uom}, but 0 consumption over past 3 years.
           </span>
         </div>
       `;
     } else {
       auditWarningHtml = `
-        <div style="background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); padding:7px 10px; border-radius:6px; margin-top:8px; display:flex; align-items:center; gap:8px;">
-          <i class="fa-solid fa-circle-check" style="color:#34d399; font-size:0.95rem;"></i>
-          <span style="font-size:0.72rem; color:#6ee7b7; font-weight:600;">
-            Requisition Audit Passed: PR Qty (${prQty.toLocaleString()} ${uom}) aligns with historical burn rate (${wma.toFixed(1)}/yr).
+        <div style="background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-circle-check" style="color:#34d399; font-size:0.85rem;"></i>
+          <span style="font-size:0.7rem; color:#6ee7b7; font-weight:600;">
+            PR Qty (${prQty.toLocaleString()} ${uom}) aligns with annual burn (${wma.toFixed(1)}/yr).
           </span>
         </div>
       `;
@@ -8144,103 +8122,20 @@ function openItemIntelligence(itemCode) {
   document.getElementById("itemIntelSubtitle").textContent = `${wh && wh !== '—' ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${plantShort && plantShort !== '—' ? 'Main Plant: ' + plantShort : ''}`;
 
   document.getElementById("itemIntelContent").innerHTML = `
-    <!-- Item Header Description Banner -->
-    <div style="background:rgba(15,23,42,0.75); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:12px;">
-      <div style="width:32px; height:32px; border-radius:6px; background:rgba(56,189,248,0.12); color:#38bdf8; display:flex; align-items:center; justify-content:center; font-size:0.95rem; flex-shrink:0;">
-        <i class="fa-solid fa-cube"></i>
-      </div>
-      <div style="flex:1;">
-        <div style="font-size:0.85rem; color:#f8fafc; font-weight:700; line-height:1.35;">${escapeHtml(desc)}</div>
-      </div>
+    <!-- Item Header Description Banner (Ultra-Compact) -->
+    <div style="background:rgba(15,23,42,0.75); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px 12px; display:flex; align-items:center; gap:10px;">
+      <i class="fa-solid fa-cube" style="color:#38bdf8; font-size:0.85rem;"></i>
+      <span style="font-size:0.82rem; color:#f8fafc; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(desc)}">${escapeHtml(desc)}</span>
     </div>
 
-    <!-- Executive Intelligence Trio (Top 3 Non-Duplicated Decision Cards) -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
-      
-      <!-- Card 1: Stock Health & Runway -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid ${stkTot === 0 ? 'rgba(239,68,68,0.4)' : (stkTot <= rop && rop > 0 ? 'rgba(245,158,11,0.4)' : 'rgba(56,189,248,0.25)')}; border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:5px;">
-            <i class="fa-solid fa-boxes-stacked" style="color:#38bdf8;"></i> On-Hand Inventory
-          </span>
-          <span style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.06); padding:2px 7px; border-radius:4px; font-size:0.68rem; color:${runwayColor}; font-weight:800;">
-            ${runwayText}
-          </span>
-        </div>
-        <div>
-          <div style="display:flex; align-items:baseline; gap:6px;">
-            <span style="font-family:'Outfit',sans-serif; font-size:1.45rem; font-weight:900; color:${stkTot === 0 ? '#f87171' : (stkTot <= rop && rop > 0 ? '#fde047' : '#34d399')};">
-              ${stkTot.toLocaleString()}
-            </span>
-            <span style="font-size:0.8rem; font-weight:700; color:#94a3b8;">${escapeHtml(uom)}</span>
-          </div>
-          <div style="font-size:0.72rem; color:#cbd5e1; margin-top:3px;">
-            Condition: <strong style="color:#ffffff;">${stkNew.toLocaleString()} New</strong> &bull; <span style="color:#94a3b8;">${stkUsed.toLocaleString()} Used</span>
-          </div>
-        </div>
-        <div style="padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font-size:0.7rem; display:flex; align-items:center; justify-content:space-between;">
-          ${ropDiffHtml}
-        </div>
-      </div>
-
-      <!-- Card 2: Demand Velocity (Weighted Moving Average - WMA) -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#c084fc; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:5px;">
-            <i class="fa-solid fa-gauge-high"></i> Demand Velocity (WMA)
-          </span>
-          ${trendBadgeHtml}
-        </div>
-        <div>
-          <div style="display:flex; align-items:baseline; gap:6px;">
-            <span style="font-family:'Outfit',sans-serif; font-size:1.45rem; font-weight:900; color:#c084fc;">
-              ${wma.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})}
-            </span>
-            <span style="font-size:0.8rem; font-weight:700; color:#94a3b8;">${escapeHtml(uom)}/yr</span>
-          </div>
-          <div style="font-size:0.72rem; color:#cbd5e1; margin-top:3px;">
-            Monthly Burn: <strong style="color:#38bdf8;">${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/mo</strong>
-          </div>
-        </div>
-        <div style="padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font-size:0.68rem; color:#94a3b8; display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-calculator" style="color:#a78bfa;"></i> Weighted 3:2:1 (Recent Year 50% Weight)
-        </div>
-      </div>
-
-      <!-- Card 3: Replenishment Thresholds (ROP & Limits) -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(56,189,248,0.25); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:5px;">
-            <i class="fa-solid fa-sliders"></i> Replenishment Control
-          </span>
-          ${ropStatusBadgeHtml}
-        </div>
-        <div>
-          <div style="display:flex; align-items:baseline; gap:6px;">
-            <span style="font-family:'Outfit',sans-serif; font-size:1.45rem; font-weight:900; color:#ffffff;">
-              ${rop > 0 ? rop.toLocaleString() : '—'}
-            </span>
-            <span style="font-size:0.8rem; font-weight:700; color:#94a3b8;">ROP ${escapeHtml(uom)}</span>
-          </div>
-          <div style="font-size:0.72rem; color:#cbd5e1; margin-top:3px;">
-            Min Stock: <strong style="color:#ffffff;">${minStock > 0 ? minStock.toLocaleString() : '0'}</strong> &bull; Max Stock: <strong style="color:#ffffff;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</strong>
-          </div>
-        </div>
-        <div style="padding-top:6px; border-top:1px solid rgba(255,255,255,0.06); font-size:0.68rem; color:#94a3b8; display:flex; align-items:center; gap:4px;">
-          <i class="fa-solid fa-shield-halved" style="color:#38bdf8;"></i> Inventory Buffer & Re-Order Point
-        </div>
-      </div>
-
-    </div>
-
-    <!-- 3-Year Annual Plant Consumption Chart (Glassmorphic Pillars) -->
-    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.2rem; position:relative;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px;">
-        <span style="font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
+    <!-- 3-Year Consumption Trajectory Chart (Neon Pillars) -->
+    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:0.9rem 1.1rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
+        <span style="font-family:'Outfit',sans-serif; font-size:0.85rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
           <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Consumption Trajectory
         </span>
         ${benchmarkVal > 0 ? `
-        <span style="background:rgba(192,132,252,0.14); color:#c084fc; border:1px solid rgba(192,132,252,0.35); padding:3px 10px; border-radius:6px; font-size:0.72rem; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+        <span style="background:rgba(192,132,252,0.14); color:#c084fc; border:1px solid rgba(192,132,252,0.35); padding:2px 9px; border-radius:6px; font-size:0.7rem; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
           <i class="fa-solid fa-chart-line"></i> Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr
         </span>` : ''}
       </div>
@@ -8249,7 +8144,7 @@ function openItemIntelligence(itemCode) {
       <div class="pillar-chart">
         <!-- Average Benchmark Reference Line (Runs behind pillars, no overlapping badge) -->
         ${benchmarkVal > 0 ? `
-        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 42}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
+        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 38}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
         ` : ''}
 
         <!-- Pillar 1: 2023 - 2024 -->
@@ -8263,7 +8158,7 @@ function openItemIntelligence(itemCode) {
           <div class="pillar-footer">
             <div class="pillar-yr">2023 – 2024</div>
             <div class="pillar-date">Sep 2023 – Aug 2024</div>
-            <div style="margin-top:4px;">${tagY3}</div>
+            <div style="margin-top:3px;">${tagY3}</div>
           </div>
         </div>
 
@@ -8278,7 +8173,7 @@ function openItemIntelligence(itemCode) {
           <div class="pillar-footer">
             <div class="pillar-yr">2024 – 2025</div>
             <div class="pillar-date">Sep 2024 – Aug 2025</div>
-            <div style="margin-top:4px;">${tagY2}</div>
+            <div style="margin-top:3px;">${tagY2}</div>
           </div>
         </div>
 
@@ -8293,62 +8188,76 @@ function openItemIntelligence(itemCode) {
           <div class="pillar-footer">
             <div class="pillar-yr" style="color:#38bdf8;">2025 – 2026</div>
             <div class="pillar-date" style="color:#7dd3fc; font-weight:700;">Last 12 Months (Current)</div>
-            <div style="margin-top:4px;">${tagY1}</div>
+            <div style="margin-top:3px;">${tagY1}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Actionable Procurement & Sourcing Panels -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+    <!-- Actionable Procurement & Sourcing Panels (Zero-Scroll, Zero-Duplication) -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px;">
       
-      <!-- Panel A: Requisition Feasibility & Demand Audit -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <div style="font-family:'Outfit',sans-serif; font-size:0.85rem; font-weight:800; color:#38bdf8; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-clipboard-check"></i> Requisition Feasibility & Demand Audit
+      <!-- Panel A: Inventory Health & Requisition Feasibility -->
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; justify-content:space-between;">
+          <span style="display:inline-flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-boxes-stacked"></i> Inventory Health & Feasibility
+          </span>
+          <span style="background:rgba(0,0,0,0.3); padding:2px 7px; border-radius:4px; font-size:0.68rem; color:${runwayColor}; font-weight:800; border:1px solid rgba(255,255,255,0.06);">
+            ${runwayText}
+          </span>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;">On-Hand Stock Balance:</span>
+          <span style="font-weight:700;">
+            <strong style="color:${stkTot === 0 ? '#f87171' : '#34d399'}; font-size:0.88rem;">${stkTot.toLocaleString()}</strong> <span style="color:#94a3b8; font-size:0.72rem;">${escapeHtml(uom)}</span> <span style="color:#cbd5e1; font-size:0.72rem; margin-left:6px;">(${stkNew.toLocaleString()} New &bull; ${stkUsed.toLocaleString()} Used)</span>
+          </span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;">Safety Stock & Re-Order Point:</span>
+          <span style="font-weight:700; color:#ffffff;">
+            ROP: <strong style="color:#38bdf8;">${rop > 0 ? rop.toLocaleString() : '—'}</strong> &bull; Min: <span style="color:#cbd5e1;">${minStock > 0 ? minStock.toLocaleString() : '0'}</span> &bull; Max: <span style="color:#cbd5e1;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</span>
+          </span>
+        </div>
+
+        ${prQty > 0 ? `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:5px; border:1px solid rgba(255,255,255,0.06);">
+            <span style="color:#94a3b8; font-size:0.72rem;">Requested PR Qty:</span>
+            <strong style="color:#ffffff; font-size:0.82rem;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong>
           </div>
-          ${prQty > 0 ? `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); margin-bottom:8px;">
-              <span style="color:#94a3b8; font-size:0.75rem;">Requested Requisition (PR):</span>
-              <strong style="color:#ffffff; font-size:0.85rem;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong>
-            </div>
-            ${auditWarningHtml}
-          ` : `
-            <div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2); border-radius:8px; padding:10px; font-size:0.75rem; color:#cbd5e1; line-height:1.45;">
-              <div style="color:#38bdf8; font-weight:700; margin-bottom:3px;"><i class="fa-solid fa-circle-info" style="margin-right:4px;"></i> Feasibility Standard Active</div>
-              Requisitions for this item are automatically benchmarked against its <strong>${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/month</strong> consumption velocity to prevent over-purchasing and dead stock.
-            </div>
-          `}
-        </div>
-        <div style="margin-top:10px; font-size:0.68rem; color:#64748b;">
-          <i class="fa-solid fa-shield" style="margin-right:4px;"></i> Governed by Oracle APEX 3-Year Consumption Policy
-        </div>
+          ${auditWarningHtml}
+        ` : `
+          <div style="font-size:0.72rem; color:#94a3b8; display:flex; align-items:center; gap:5px;">
+            <i class="fa-solid fa-circle-check" style="color:#34d399;"></i>
+            <span>Feasibility Baseline: Verified against <strong>${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/mo</strong> demand velocity.</span>
+          </div>
+        `}
       </div>
 
-      <!-- Panel B: Commercial Sourcing Baseline (Last PO) -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <div style="font-family:'Outfit',sans-serif; font-size:0.85rem; font-weight:800; color:#a78bfa; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+      <!-- Panel B: Commercial Sourcing Baseline -->
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; display:flex; flex-direction:column; gap:6px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#a78bfa; display:flex; align-items:center; justify-content:space-between;">
+          <span style="display:inline-flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-handshake"></i> Commercial Sourcing Baseline
-          </div>
-          <div style="display:flex; flex-direction:column; gap:7px; font-size:0.78rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:5px; border-bottom:1px solid rgba(255,255,255,0.05);">
-              <span style="color:#94a3b8;"><i class="fa-solid fa-building" style="margin-right:5px; color:#64748b;"></i>Last Supplier:</span>
-              <span style="color:#38bdf8; font-weight:700; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:5px; border-bottom:1px solid rgba(255,255,255,0.05);">
-              <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:5px; color:#64748b;"></i>Last PO Unit Price:</span>
-              <span style="color:#34d399; font-weight:800;">${poPrice !== null && poPrice !== undefined && poPrice !== '' ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + escapeHtml(poCurr) : '—'}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-days" style="margin-right:5px; color:#64748b;"></i>Last Award Date:</span>
-              <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
-            </div>
-          </div>
+          </span>
+          ${trendBadgeHtml}
         </div>
-        <div style="margin-top:10px; font-size:0.68rem; color:#64748b;">
-          <i class="fa-solid fa-scale-balanced" style="margin-right:4px;"></i> Benchmark reference for upcoming RFQ/PO pricing negotiations
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-building" style="margin-right:4px; color:#64748b;"></i>Last Awarded Supplier:</span>
+          <span style="color:#38bdf8; font-weight:700; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:4px; color:#64748b;"></i>Last PO Unit Price:</span>
+          <span style="color:#34d399; font-weight:800;">${poPrice !== null && poPrice !== undefined && poPrice !== '' ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + escapeHtml(poCurr) : '—'}</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem;">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-days" style="margin-right:4px; color:#64748b;"></i>Last Purchase Date:</span>
+          <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
         </div>
       </div>
 
