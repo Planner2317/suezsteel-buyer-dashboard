@@ -3549,7 +3549,7 @@
 
 <!-- ITEM CONSUMPTION & TECHNICAL INTELLIGENCE MODAL -->
 <div class="dossier-overlay" id="itemIntelModal" style="z-index:10200;" onclick="closeItemIntelModal(event)">
-  <div class="dossier-card" style="max-width:880px;" onclick="event.stopPropagation()">
+  <div class="dossier-card" style="width:95vw; max-width:1420px; max-height:94vh;" onclick="event.stopPropagation()">
     <div class="modal-header" style="background:rgba(15,23,42,0.98); border-bottom:1px solid rgba(168,85,247,0.35);">
       <div style="display:flex; align-items:center; gap:12px;">
         <div style="width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,#8b5cf6 0%,#6366f1 100%); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:1.05rem; flex-shrink:0;">
@@ -3560,7 +3560,12 @@
           <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:4px; font-size:0.75rem; color:#94a3b8;" id="itemIntelSubtitle">Historical Consumption • Stock Coverage • Procurement Benchmarks</div>
         </div>
       </div>
-      <button class="modal-close-btn" onclick="closeItemIntelModalDirect()">&times;</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="modal-expand-btn" id="itemIntelModalExpandBtn" onclick="toggleModalMaximize('itemIntelModal')" title="Toggle Fullscreen (Maximize)">
+          <i class="fa-solid fa-expand" id="itemIntelModalExpandIcon"></i>
+        </button>
+        <button class="modal-close-btn" onclick="closeItemIntelModalDirect()">&times;</button>
+      </div>
     </div>
     <div class="modal-body" id="itemIntelContent" style="gap:1rem;">
       <!-- Populated dynamically via openItemIntelligence() -->
@@ -8355,11 +8360,18 @@ function openItemIntelligence(itemCode) {
 
 function closeItemIntelModal(e) {
   if (e) e.stopPropagation();
-  document.getElementById("itemIntelModal").style.display = "none";
+  closeItemIntelModalDirect();
 }
 
 function closeItemIntelModalDirect() {
-  document.getElementById("itemIntelModal").style.display = "none";
+  const modal = document.getElementById("itemIntelModal");
+  if (modal) {
+    modal.style.display = "none";
+    const card = modal.querySelector('.dossier-card');
+    if (card) card.classList.remove('is-maximized');
+    const icon = document.getElementById('itemIntelModalExpandIcon');
+    if (icon) icon.className = 'fa-solid fa-expand';
+  }
 }
 
 function spotlightFromDossier(prNo) {
