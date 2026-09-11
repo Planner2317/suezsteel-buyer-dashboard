@@ -2677,10 +2677,10 @@
       <!-- UP-RIGHT: CRITICAL ACTIONS & VIEW MODES -->
       <div style="display:inline-flex; align-items:center; gap:8px;">
         <!-- Zero-Stock Filter Toggle -->
-        <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="0 out of 0 total item lines (0.0%) currently have 0 stock in warehouse. Click to filter.">
+        <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="509 out of 620 total item lines (82.1%) currently have 0 stock in warehouse. Click to filter.">
           <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
           <span>Zero-Stock</span>
-          <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">0 Lines (0.0%)</span>
+          <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">509 Lines (82.1%)</span>
         </button>
 
         <!-- Zero-Stock Excel Export -->
@@ -2692,7 +2692,7 @@
         <!-- L4 Stock Control Quick Card -->
         <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Inspect PRs awaiting Level 4 Stock Control">
           <span class="l4-dot"></span>
-          <span><strong style="color:#ffffff;">107 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
+          <span><strong style="color:#ffffff;">55 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
           <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect</span>
         </div>
 
@@ -2799,7 +2799,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-users-viewfinder"></i> <span id="comboSelectedCountText">All 20 Buyers Selected</span>
+                <i class="fa-solid fa-users-viewfinder"></i> <span id="comboSelectedCountText">All 24 Buyers Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllBuyers(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -2821,7 +2821,7 @@
           <!-- Hidden Native Fallback Select -->
           <select id="buyerSelector" onchange="onBuyerChange(this.value)" style="display:none;">
             <option value="ALL">🌟 ALL BUYERS &amp; TEAM (Full Department View)</option>
-            <option value="PGR1- Moustafa Ali">PGR1- Moustafa Ali</option><option value="PGR12- Haitham Rady">PGR12- Haitham Rady</option><option value="PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim">PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR13- Ahmed Mohamed Ibrahim">PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR2- Mohamed Sabry">PGR2- Mohamed Sabry</option><option value="PGR6- Mohamed Fawaz">PGR6- Mohamed Fawaz</option><option value="PGR7- Emad Elalfy">PGR7- Emad Elalfy</option><option value="T100- Amr Abdelrahman">T100- Amr Abdelrahman</option><option value="T105- Mohamed Shaban">T105- Mohamed Shaban</option><option value="T107- Karim Osama">T107- Karim Osama</option><option value="T11- Amr Adel">T11- Amr Adel</option><option value="T33- Marwan Ellithy">T33- Marwan Ellithy</option><option value="T42- Ahmed Farag">T42- Ahmed Farag</option><option value="T62- Mohamed Samir">T62- Mohamed Samir</option><option value="T64- Ali Moussa">T64- Ali Moussa</option><option value="T71- Mohamed Galal">T71- Mohamed Galal</option><option value="T85- Abdelrahman Hafez">T85- Abdelrahman Hafez</option><option value="T88- Mohamed Abdelmonem">T88- Mohamed Abdelmonem</option><option value="T93- Abdallah Saad">T93- Abdallah Saad</option><option value="T96- Mahmoud Ibrahim">T96- Mahmoud Ibrahim</option>
+            <option value="Ahmed Mohamed Ibrahim">Ahmed Mohamed Ibrahim</option><option value="PGR1- Moustafa Ali">PGR1- Moustafa Ali</option><option value="PGR12- Haitham Rady">PGR12- Haitham Rady</option><option value="PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim">PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR13- Ahmed Mohamed Ibrahim">PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR2- Mohamed Sabry">PGR2- Mohamed Sabry</option><option value="PGR6- Mohamed Fawaz">PGR6- Mohamed Fawaz</option><option value="PGR7- Emad Elalfy">PGR7- Emad Elalfy</option><option value="T100- Amr Abdelrahman">T100- Amr Abdelrahman</option><option value="T105- Mohamed Shaban">T105- Mohamed Shaban</option><option value="T107- Karim Osama">T107- Karim Osama</option><option value="T11- Amr Adel">T11- Amr Adel</option><option value="T33- Marwan Ellithy">T33- Marwan Ellithy</option><option value="T42- Ahmed Farag">T42- Ahmed Farag</option><option value="T62- Mohamed Samir">T62- Mohamed Samir</option><option value="T64- Ali Moussa">T64- Ali Moussa</option><option value="T71- Mohamed Galal">T71- Mohamed Galal</option><option value="T83- Omar Ahmed Ragab">T83- Omar Ahmed Ragab</option><option value="T84- Amr Mossad Aly">T84- Amr Mossad Aly</option><option value="T85- Abdelrahman Hafez">T85- Abdelrahman Hafez</option><option value="T88- Mohamed Abdelmonem">T88- Mohamed Abdelmonem</option><option value="T92- Fathi Mohamed">T92- Fathi Mohamed</option><option value="T93- Abdallah Saad">T93- Abdallah Saad</option><option value="T96- Mahmoud Ibrahim">T96- Mahmoud Ibrahim</option>
           </select>
         </div>
 
@@ -2876,7 +2876,7 @@
             <span>Year:</span>
           </label>
           <select id="yearSelector" class="header-year-dropdown" onchange="onYearFilterChange(this.value)">
-            <option value="ALL">🌟 All Years (111 Tasks)</option><option value="2026">📅 2026 (111 Tasks)</option>
+            <option value="ALL">🌟 All Years (143 Tasks)</option><option value="2026">📅 2026 (143 Tasks)</option>
           </select>
         </div>
       </div>
@@ -2934,7 +2934,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 14 Projects Selected</span>
+                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 15 Projects Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllProjects(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -2988,7 +2988,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 45 Selected</span>
+                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 51 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllEnteredBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3042,7 +3042,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 64 Selected</span>
+                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 74 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllRequestedBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3197,7 +3197,7 @@
                 🟣 Sourcing / RFQ (No Offers)
               </div>
               <div id="st2-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check" style="color:#34d399;"></i> All in Stock</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="323 out of 378 item lines in this stage (85.4%) currently have 0 stock across 68 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 323 Zero-Stock Lines (85.4% &bull; 68 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3232,7 +3232,7 @@
                 🟡 Offers Under Plant Evaluation
               </div>
               <div id="st3-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check" style="color:#34d399;"></i> All in Stock</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="7 out of 7 item lines in this stage (100.0%) currently have 0 stock across 3 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 7 Zero-Stock Lines (100.0% &bull; 3 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3268,7 +3268,7 @@
         <div style="position:absolute; top:10px; left:12px; z-index:20;">
           <div id="unassignedQuickCard" class="unassigned-quick-card" onclick="openDelayModal('Unassigned PRs')" title="Click to inspect unassigned requisitions" style="margin:0;">
             <span class="unassigned-dot"></span>
-            <span><strong style="color:#ffffff;">29 Unassigned PRs</strong> &bull; All PRs Assigned</span>
+            <span><strong style="color:#ffffff;">49 Unassigned PRs</strong> &bull; All PRs Assigned</span>
             <span class="unassigned-btn"><i class="fa-solid fa-circle-check"></i> Clean</span>
           </div>
         </div>
@@ -3302,7 +3302,7 @@
                 🔵 PO not Confirmed
               </div>
               <div id="st4-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check" style="color:#34d399;"></i> All in Stock</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="89 out of 91 item lines in this stage (97.8%) currently have 0 stock across 4 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 89 Zero-Stock Lines (97.8% &bull; 4 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3381,7 +3381,7 @@
                 🟢 On-Track Delivery
               </div>
               <div id="st6-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check" style="color:#34d399;"></i> All in Stock</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="5 out of 7 item lines in this stage (71.4%) currently have 0 stock across 2 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 5 Zero-Stock Lines (71.4% &bull; 2 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
