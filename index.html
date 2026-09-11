@@ -8593,7 +8593,7 @@ function renderDelayModalView() {
           deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Received: ${srvQ.toLocaleString()} units, Pending: ${balQ.toLocaleString()} units (${pct}% delivered)"><i class="fa-solid fa-truck-ramp-box"></i> Partial (${pct}% Recv &bull; ${balQ.toLocaleString()} Bal)</span></div>`;
         } else {
           const balQ = Number(t.total_bal_qty || 0);
-          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.35); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="0 units received yet. Entire order pending: ${balQ.toLocaleString()} units"><i class="fa-solid fa-box-open"></i> 0% Undelivered</span></div>`;
+          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.35); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="0 units received yet. Entire order pending: ${balQ.toLocaleString()} units"><i class="fa-solid fa-box-open"></i> Undelivered (0% Recv)</span></div>`;
         }
       }
 
@@ -8718,7 +8718,7 @@ function renderDelayModalView() {
         All Deliveries (${totalStageCount})
       </button>
       <button class="btn-mode ${currentDelayModalDeliveryFilter === 'UNDELIVERED' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('UNDELIVERED')" style="font-size:0.7rem; padding:3px 10px; color:#fca5a5;">
-        <i class="fa-solid fa-box-open" style="margin-right:4px;"></i> 0% Undelivered (${stageUndeliveredCount})
+        <i class="fa-solid fa-box-open" style="margin-right:4px;"></i> Undelivered (0% Recv) (${stageUndeliveredCount})
       </button>
       <button class="btn-mode ${currentDelayModalDeliveryFilter === 'PARTIAL' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('PARTIAL')" style="font-size:0.7rem; padding:3px 10px; color:#fde047;">
         <i class="fa-solid fa-truck" style="margin-right:4px;"></i> Partially Delivered (${stagePartialCount})
@@ -8959,8 +8959,8 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
   let deliveryModifier = "";
   let deliveryTitleSuffix = "";
   if (ctx.deliveryFilter === 'UNDELIVERED') {
-    deliveryModifier = "_0pct_Undelivered";
-    deliveryTitleSuffix = " — [0% UNDELIVERED]";
+    deliveryModifier = "_Undelivered_0pct_Recv";
+    deliveryTitleSuffix = " — [UNDELIVERED (0% RECV)]";
   } else if (ctx.deliveryFilter === 'PARTIAL') {
     deliveryModifier = "_Partially_Delivered";
     deliveryTitleSuffix = " — [PARTIALLY DELIVERED]";
@@ -9048,7 +9048,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           const srvQtyVal = Number(t.total_srv_qty || 0);
           const balQtyVal = Number(t.total_bal_qty || 0);
           const pctVal = poQtyVal > 0 ? (srvQtyVal / poQtyVal) : 0;
-          const situationStr = t.is_partial ? 'Partially Delivered' : '0% Undelivered';
+          const situationStr = t.is_partial ? 'Partially Delivered' : 'Undelivered (0% Received)';
 
           let severityStr = 'On SLA';
           if (t.task_stage === 'Supplier Overdue') {
@@ -9363,7 +9363,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           "Plant / Project": t.project || '—',
           "Buyer": t.buyer,
           "Supplier Name": t.supplier || t.remarks || '—',
-          "Delivery Situation": t.is_partial ? 'Partially Delivered' : '0% Undelivered',
+          "Delivery Situation": t.is_partial ? 'Partially Delivered' : 'Undelivered (0% Received)',
           "Total Order Qty": poQtyVal,
           "Received SRV Qty": srvQtyVal,
           "Pending Balance Qty": balQtyVal,
