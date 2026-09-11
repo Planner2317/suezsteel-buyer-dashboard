@@ -8135,7 +8135,6 @@ function openItemIntelligence(itemCode) {
           <span style="font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
             <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Annual Plant Consumption
           </span>
-          <span style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;">Chronological SIV</span>
           ${avgConsAnnual > 0 ? `
           <span style="background:rgba(192,132,252,0.12); color:#c084fc; border:1px solid rgba(192,132,252,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">
             <i class="fa-solid fa-chart-line" style="margin-right:4px;"></i>3-Year Average: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr
@@ -8213,17 +8212,9 @@ function openItemIntelligence(itemCode) {
             <span style="color:#94a3b8;">Weighted Annual Run-Rate:</span>
             <span style="color:#c084fc; font-weight:700;">${wma.toFixed(1)} ${uom}/yr (${escapeHtml(trendLabel)})</span>
           </div>
-          <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="display:flex; justify-content:space-between;">
             <span style="color:#94a3b8;">3-Year Cumulative Consumption:</span>
             <span style="color:#ffffff; font-weight:700;">${c3y.toLocaleString()} ${uom}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-            <span style="color:#94a3b8;">3-Year Store Issues (SIV):</span>
-            <span style="color:#ffffff; font-weight:700;">${siv3y.toLocaleString()} ${uom}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between;">
-            <span style="color:#94a3b8;">3-Year Store Returns (RIS):</span>
-            <span style="color:#6ee7b7; font-weight:700;">${ris3y.toLocaleString()} ${uom}</span>
           </div>
         </div>
         ${auditWarningHtml}
@@ -8246,10 +8237,6 @@ function openItemIntelligence(itemCode) {
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">Last Purchase Date:</span>
             <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-            <span style="color:#94a3b8;">Average Lead Time:</span>
-            <span style="color:#ffffff; font-weight:700;">${leadTot.toFixed(1)} Wks (${leadInt.toFixed(1)} Int / ${leadExt.toFixed(1)} Ext)</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:#94a3b8;">Safety Stock & ROP:</span>
