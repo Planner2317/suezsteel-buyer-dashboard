@@ -503,6 +503,73 @@
       box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
     }
 
+    /* Priority Cluster & Pills */
+    .priority-cluster {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 2px 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-priority-pill {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: clamp(2px, 0.4vh, 4px) clamp(5px, 0.6vw, 8px);
+      border-radius: 6px;
+      font-size: clamp(0.65rem, 0.75vw, 0.72rem);
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-priority-pill:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f8fafc;
+    }
+    .btn-priority-pill .p-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .btn-priority-pill .dot-p1 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .btn-priority-pill .dot-p2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+    .btn-priority-pill .dot-p3 { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+    .btn-priority-pill .p-cnt {
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.64rem;
+      font-weight: 800;
+    }
+    .btn-priority-pill.p1 .p-cnt { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .btn-priority-pill.p2 .p-cnt { background: rgba(245, 158, 11, 0.2); color: #fde047; }
+    .btn-priority-pill.p3 .p-cnt { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
+
+    .btn-priority-pill.active-p1-filter {
+      background: rgba(239, 68, 68, 0.28) !important;
+      border-color: #ef4444 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+    }
+    .btn-priority-pill.active-p2-filter {
+      background: rgba(245, 158, 11, 0.28) !important;
+      border-color: #f59e0b !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+    }
+    .btn-priority-pill.active-p3-filter {
+      background: rgba(56, 189, 248, 0.28) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+    }
+
 .header-actions-right {
       display: flex;
       align-items: center;
@@ -2756,6 +2823,25 @@
           <span>Zero-Stock</span>
           <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">531 Lines (85.6%)</span>
         </button>
+
+        <!-- Consumption-Driven Priority Filter Cluster -->
+        <div class="priority-cluster" id="priorityFilterCluster">
+          <button id="btnPriorityP1" onclick="togglePriorityFilter('P1')" class="btn-priority-pill p1" title="72 item lines are Critical Stock-Out (Stock 0 with Surging/High Demand). Click to isolate.">
+            <span class="p-dot dot-p1"></span>
+            <span>P1 Critical</span>
+            <span class="p-cnt" id="p1CountChip">72</span>
+          </button>
+          <button id="btnPriorityP2" onclick="togglePriorityFilter('P2')" class="btn-priority-pill p2" title="49 item lines are Active Stock-Out (Stock 0 with Ongoing Regular Consumption). Click to isolate.">
+            <span class="p-dot dot-p2"></span>
+            <span>P2 Active</span>
+            <span class="p-cnt" id="p2CountChip">49</span>
+          </button>
+          <button id="btnPriorityP3" onclick="togglePriorityFilter('P3')" class="btn-priority-pill p3" title="30 item lines are Pre-Stockout (Stock below Re-Order Point). Click to isolate.">
+            <span class="p-dot dot-p3"></span>
+            <span>P3 Near-Zero</span>
+            <span class="p-cnt" id="p3CountChip">30</span>
+          </button>
+        </div>
 
         <!-- Zero-Stock Excel Export -->
         <button id="btnZeroStockExport" onclick="exportZeroStockMatrix()" class="btn-zero-stock-export" title="Export Zero-Stock spares matrix">
@@ -6715,9 +6801,10 @@ function getCombinedBuyerLifecycle() {
     const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
     const matchO = matchOrderType(t);
     const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+    const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+    return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq;
   });
 
   const st1 = b_tasks.filter(t => t.task_stage === "TS Confirmed (Pending PO)");
@@ -6996,9 +7083,11 @@ function renderLifecycleCards() {
       const matchD = isAllD || selectedDeptsSet.has(t.department);
       const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
       const matchO = matchOrderType(t);
+      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return isUnass && matchP && matchD && matchY && matchO && matchEnt && matchReq;
+      return isUnass && matchP && matchD && matchY && matchO && matchZero && matchPrio && matchEnt && matchReq;
     });
     const unassCount = new Set(unassTasks.map(t => t.pr_no)).size;
     if (unassCount > 0) {
@@ -7031,9 +7120,10 @@ function renderLifecycleCards() {
       const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
       const matchO = matchOrderType(t);
       const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return isInsp && matchB && matchP && matchD && matchY && matchO && matchZero && matchEnt && matchReq;
+      return isInsp && matchB && matchP && matchD && matchY && matchO && matchZero && matchPrio && matchEnt && matchReq;
     });
     const inspCount = new Set(inspTasks.map(t => t.po_no || t.pr_no)).size;
     if (inspCount > 0) {
@@ -7443,6 +7533,27 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     </span>`;
   }
 
+  let priorityPill = '';
+  if (t.priority === 'P1') {
+    priorityPill = `<span class="dossier-pill" style="border-color:rgba(239,68,68,0.5); background:rgba(239,68,68,0.18);" title="P1 Critical Stock-Out (Surging Demand)">
+      <span class="p-dot dot-p1"></span>
+      <span class="pill-lbl" style="color:#fca5a5;">Priority:</span>
+      <strong style="color:#f87171;">P1 Critical</strong>
+    </span>`;
+  } else if (t.priority === 'P2') {
+    priorityPill = `<span class="dossier-pill" style="border-color:rgba(249,115,22,0.5); background:rgba(249,115,22,0.18);" title="P2 Active Stock-Out (Steady Demand)">
+      <span class="p-dot dot-p2"></span>
+      <span class="pill-lbl" style="color:#fdba74;">Priority:</span>
+      <strong style="color:#fb923c;">P2 Active</strong>
+    </span>`;
+  } else if (t.priority === 'P3') {
+    priorityPill = `<span class="dossier-pill" style="border-color:rgba(234,179,8,0.5); background:rgba(234,179,8,0.18);" title="P3 Pre-Stockout Alert (Stock below ROP)">
+      <span class="p-dot dot-p3"></span>
+      <span class="pill-lbl" style="color:#fde047;">Priority:</span>
+      <strong style="color:#facc15;">P3 Near-Zero</strong>
+    </span>`;
+  }
+
   if (subEl) {
     subEl.innerHTML = `
       <span class="dossier-pill" style="border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.08);" title="Plant / Project">
@@ -7466,6 +7577,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <strong style="color:#fbcfe8;" dir="auto">${escapeHtml(t.requested_by || '—')}</strong>
       </span>
       ${originPill}
+      ${priorityPill}
       <span class="dossier-pill" style="border-color:rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);" title="Current Workflow Stage">
         <span class="pill-lbl" style="margin-right:2px;">Stage:</span>
         ${getStageBadge(t.task_stage, t.is_partial, t.is_under_inspection)}
@@ -7503,6 +7615,15 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       } else {
         stockBadgeHtml = `<span style="background:rgba(52,211,153,0.22); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem; white-space:nowrap;">Stock: ${stVal}</span>`;
       }
+    }
+
+    let linePrioBadgeHtml = '';
+    if (l.priority === 'P1') {
+      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P1 Critical: Zero Stock with Surging Demand"><span class="p-dot dot-p1" style="width:5px; height:5px;"></span> P1</span></div>`;
+    } else if (l.priority === 'P2') {
+      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(249,115,22,0.25); color:#fdba74; border:1px solid rgba(249,115,22,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P2 Active: Zero Stock with Steady Demand"><span class="p-dot dot-p2" style="width:5px; height:5px;"></span> P2</span></div>`;
+    } else if (l.priority === 'P3') {
+      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P3 Pre-Stockout: Stock below Re-Order Point"><span class="p-dot dot-p3" style="width:5px; height:5px;"></span> P3</span></div>`;
     }
 
     // Avg Consumption Column (Weighted 3-Year Annualized Average & Velocity Trend)
@@ -7600,7 +7721,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <td style="text-align:right; color:#34d399; font-weight:800; padding:9px 8px;">${srvQ > 0 ? srvQ.toLocaleString() : '—'}</td>
         <td style="text-align:right; color:#fda4af; font-weight:800; padding:9px 8px;">${balQ > 0 ? balQ.toLocaleString() : '0'}</td>
         <td style="text-align:center; padding:9px 8px;">${avgConsHtml}</td>
-        <td style="text-align:center; padding:9px 8px;">${stockBadgeHtml}</td>
+        <td style="text-align:center; padding:9px 8px;">${stockBadgeHtml}${linePrioBadgeHtml}</td>
         <td style="text-align:center; padding:9px 8px;">
           ${ordQ > 0 ? `
             <div style="display:inline-flex; align-items:center; gap:6px;">
@@ -8324,12 +8445,22 @@ function setSlaSegWidths(prefix, fresh, moderate, critical) {
 }
 
 let isZeroStockFilterActive = false;
+let activePriorityFilter = null;
 
 function taskHasZeroStock(t) {
   if (t.lines && t.lines.length) {
     return t.lines.some(l => l.is_zero_stock || l.stock === 0);
   }
   return Boolean(t.is_zero_stock || t.stock === 0);
+}
+
+function taskMatchesPriority(t) {
+  if (!activePriorityFilter) return true;
+  if (t.priority === activePriorityFilter) return true;
+  if (t.lines && t.lines.length) {
+    return t.lines.some(l => l.priority === activePriorityFilter);
+  }
+  return false;
 }
 
 function getFilteredZeroStockStats() {
@@ -8342,6 +8473,11 @@ function getFilteredZeroStockStats() {
 
   let totalZeroLines = 0;
   let totalAllLines = 0;
+  let totalP1Lines = 0;
+  let totalP2Lines = 0;
+  let totalP3Lines = 0;
+  let totalP4Lines = 0;
+
   ALL_TASKS.forEach(t => {
     const isUnass = (t.buyer && t.buyer.includes("Unassigned")) || t.task_stage === "Unassigned PRs";
     if (isUnass) return;
@@ -8357,35 +8493,88 @@ function getFilteredZeroStockStats() {
       (t.lines || []).forEach(l => {
         totalAllLines++;
         if (l.is_zero_stock || l.stock === 0) totalZeroLines++;
+        if (l.priority === 'P1') totalP1Lines++;
+        else if (l.priority === 'P2') totalP2Lines++;
+        else if (l.priority === 'P3') totalP3Lines++;
+        else if (l.priority === 'P4') totalP4Lines++;
       });
     }
   });
   const pct = totalAllLines > 0 ? ((totalZeroLines / totalAllLines) * 100).toFixed(1) : '0.0';
-  return { zeroLines: totalZeroLines, totalLines: totalAllLines, pct: pct };
+  return {
+    zeroLines: totalZeroLines,
+    totalLines: totalAllLines,
+    pct: pct,
+    p1Lines: totalP1Lines,
+    p2Lines: totalP2Lines,
+    p3Lines: totalP3Lines,
+    p4Lines: totalP4Lines
+  };
 }
 
 function updateZeroStockToggleChip() {
   const chip = document.getElementById("zeroStockToggleCountChip");
   const btn = document.getElementById("btnZeroStockToggle");
-  if (!chip) return;
+  const p1Btn = document.getElementById("btnPriorityP1");
+  const p2Btn = document.getElementById("btnPriorityP2");
+  const p3Btn = document.getElementById("btnPriorityP3");
+  const p1Chip = document.getElementById("p1CountChip");
+  const p2Chip = document.getElementById("p2CountChip");
+  const p3Chip = document.getElementById("p3CountChip");
+
   const stats = getFilteredZeroStockStats();
-  const count = stats.zeroLines.toLocaleString();
-  const pctStr = `${stats.pct}%`;
-  const tooltip = `${stats.zeroLines.toLocaleString()} out of ${stats.totalLines.toLocaleString()} total item lines (${stats.pct}%) currently have 0 stock in warehouse. Click to filter.`;
 
-  if (btn) btn.title = tooltip;
+  if (chip) {
+    const count = stats.zeroLines.toLocaleString();
+    const pctStr = `${stats.pct}%`;
+    const tooltip = `${stats.zeroLines.toLocaleString()} out of ${stats.totalLines.toLocaleString()} total item lines (${stats.pct}%) currently have 0 stock in warehouse. Click to filter.`;
 
-  if (isZeroStockFilterActive) {
-    if (btn) btn.classList.add("active-zero-filter");
-    chip.style.background = "#ef4444";
-    chip.style.color = "#ffffff";
-    chip.textContent = `${count} Lines (${pctStr}) (Active)`;
-  } else {
-    if (btn) btn.classList.remove("active-zero-filter");
-    chip.style.background = "rgba(239,68,68,0.25)";
-    chip.style.color = "#fca5a5";
-    chip.textContent = `${count} Lines (${pctStr})`;
+    if (btn) btn.title = tooltip;
+
+    if (isZeroStockFilterActive) {
+      if (btn) btn.classList.add("active-zero-filter");
+      chip.style.background = "#ef4444";
+      chip.style.color = "#ffffff";
+      chip.textContent = `${count} Lines (${pctStr}) (Active)`;
+    } else {
+      if (btn) btn.classList.remove("active-zero-filter");
+      chip.style.background = "rgba(239,68,68,0.25)";
+      chip.style.color = "#fca5a5";
+      chip.textContent = `${count} Lines (${pctStr})`;
+    }
   }
+
+  // Update Priority Pills
+  if (p1Chip) p1Chip.textContent = stats.p1Lines.toLocaleString();
+  if (p2Chip) p2Chip.textContent = stats.p2Lines.toLocaleString();
+  if (p3Chip) p3Chip.textContent = stats.p3Lines.toLocaleString();
+
+  if (p1Btn) {
+    p1Btn.classList.toggle("active-p1-filter", activePriorityFilter === 'P1');
+    p1Btn.title = `${stats.p1Lines.toLocaleString()} item lines are P1 Critical Stock-Out (Surging/High Demand). Click to isolate.`;
+  }
+  if (p2Btn) {
+    p2Btn.classList.toggle("active-p2-filter", activePriorityFilter === 'P2');
+    p2Btn.title = `${stats.p2Lines.toLocaleString()} item lines are P2 Active Stock-Out (Ongoing Regular Consumption). Click to isolate.`;
+  }
+  if (p3Btn) {
+    p3Btn.classList.toggle("active-p3-filter", activePriorityFilter === 'P3');
+    p3Btn.title = `${stats.p3Lines.toLocaleString()} item lines are P3 Pre-Stockout (Stock below ROP). Click to isolate.`;
+  }
+}
+
+function togglePriorityFilter(level) {
+  if (activePriorityFilter === level) {
+    activePriorityFilter = null;
+    showToast(`Cleared Priority filter (Displaying all urgency levels)`);
+  } else {
+    activePriorityFilter = level;
+    const label = level === 'P1' ? 'P1 CRITICAL (Surging Burn)' : (level === 'P2' ? 'P2 ACTIVE (Steady Burn)' : 'P3 PRE-STOCKOUT (Below ROP)');
+    showToast(`Filtered dashboard: Displaying ${label} tasks only`);
+  }
+  updateZeroStockToggleChip();
+  renderLifecycleCards();
+  renderStatusChart();
 }
 
 function toggleZeroStockFilter() {
@@ -8426,7 +8615,9 @@ async function exportZeroStockMatrix() {
     const matchStage = (selectedStage === 'ALL') ? true : (selectedStage === 'PARTIAL' ? t.is_partial : t.task_stage === selectedStage);
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    return matchB && matchP && matchD && matchPRPO && matchY && matchO && matchStage && taskHasZeroStock(t) && matchEnt && matchReq;
+    const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
+    const isTargetStock = taskHasZeroStock(t) || (activePriorityFilter === 'P3' && t.priority === 'P3');
+    return matchB && matchP && matchD && matchPRPO && matchY && matchO && matchStage && isTargetStock && matchPrio && matchEnt && matchReq;
   });
 
   // 2. Filter Level 4 pre-commercial zero-stock tasks matching active filters
@@ -8434,12 +8625,13 @@ async function exportZeroStockMatrix() {
     const matchD = isAllD || selD.has(t.department);
     const matchP = isAllP || selP.has(t.project);
     const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-    const isZero = t.is_zero_stock || t.stock === 0;
-    return matchD && matchP && matchY && isZero;
+    const isZero = t.is_zero_stock || t.stock === 0 || (activePriorityFilter === 'P3' && t.priority === 'P3');
+    const matchL4Prio = !activePriorityFilter || (t.priority === activePriorityFilter);
+    return matchD && matchP && matchY && isZero && matchL4Prio;
   }) : [];
 
   if (!zeroTasks.length && !zeroL4Tasks.length) {
-    alert("No zero-stock records match the current filter.");
+    alert("No records match the current priority/zero-stock filter.");
     return;
   }
 
@@ -8462,15 +8654,17 @@ async function exportZeroStockMatrix() {
     scopeTag += `_${selectedStage.replace(/[^a-zA-Z0-9]/g, '_')}`;
   }
 
+  const prioTag = activePriorityFilter ? `_${activePriorityFilter}` : '';
   const todayStr = new Date().toISOString().split('T')[0];
-  const fileName = `SuezSteel_${scopeTag}_Zero_Stock_${todayStr}.xlsx`;
+  const fileName = `SuezSteel_${scopeTag}${prioTag}_Zero_Stock_${todayStr}.xlsx`;
 
   // Construct active filter description
   const activeDeptStr = isAllD ? 'All Departments' : Array.from(selD).join(', ');
   const activeProjStr = isAllP ? 'All Projects' : Array.from(selP).join(', ');
   const activeBuyerStr = isAllB ? 'All Buyers' : Array.from(selB).join(', ');
   const activeStageStr = selectedStage === 'ALL' ? 'All Stages' : selectedStage;
-  const filterSummary = `Scope: Dept: [${activeDeptStr}] | Plant: [${activeProjStr}] | Buyer: [${activeBuyerStr}] | Stage: [${activeStageStr}] | Year: [${selectedYear}]`;
+  const activePrioStr = activePriorityFilter ? ` | Priority: [${activePriorityFilter}]` : '';
+  const filterSummary = `Scope: Dept: [${activeDeptStr}] | Plant: [${activeProjStr}] | Buyer: [${activeBuyerStr}] | Stage: [${activeStageStr}] | Year: [${selectedYear}]${activePrioStr}`;
 
   if (typeof ExcelJS !== "undefined") {
     try {
@@ -8480,7 +8674,7 @@ async function exportZeroStockMatrix() {
 
       // Sheet 1: Zero-Stock Commercial Documents
       const ws1 = wb.addWorksheet('Zero-Stock Documents', { views: [{ showGridLines: true }] });
-      ws1.mergeCells('A1:M1');
+      ws1.mergeCells('A1:N1');
       const ws1Title = ws1.getCell('A1');
       ws1Title.value = `SUEZ STEEL CO. — ZERO-STOCK ACTION MATRIX (${zeroTasks.length} Tasks)`;
       ws1Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
@@ -8488,7 +8682,7 @@ async function exportZeroStockMatrix() {
       ws1Title.alignment = { vertical: 'middle', horizontal: 'center' };
       ws1.getRow(1).height = 24;
 
-      ws1.mergeCells('A2:M2');
+      ws1.mergeCells('A2:N2');
       const ws1Sub = ws1.getCell('A2');
       ws1Sub.value = filterSummary;
       ws1Sub.font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFCBD5E1' } };
@@ -8496,7 +8690,7 @@ async function exportZeroStockMatrix() {
       ws1Sub.alignment = { vertical: 'middle', horizontal: 'center' };
       ws1.getRow(2).height = 18;
 
-      const ws1Headers = ['Department', 'Buyer', 'Project', 'Task Stage', 'PR No.', 'PO No.', 'Order Type', 'Supplier', 'Required Action', 'PR Date', 'Promised Delivery', 'Supplier Overdue (d)', 'Primary Bottleneck'];
+      const ws1Headers = ['Priority', 'Department', 'Buyer', 'Project', 'Task Stage', 'PR No.', 'PO No.', 'Order Type', 'Supplier', 'Required Action', 'PR Date', 'Promised Delivery', 'Supplier Overdue (d)', 'Primary Bottleneck'];
       const ws1HRow = ws1.addRow(ws1Headers);
       ws1HRow.height = 22;
       ws1HRow.eachCell(cell => {
@@ -8507,21 +8701,21 @@ async function exportZeroStockMatrix() {
 
       zeroTasks.forEach(t => {
         const row = ws1.addRow([
-          t.department || '-', t.buyer, t.project, t.task_stage, t.pr_no, t.po_no || '-', t.order_type,
+          t.priority_label || t.priority || '-', t.department || '-', t.buyer, t.project, t.task_stage, t.pr_no, t.po_no || '-', t.order_type,
           t.supplier || '-', t.action_text, t.pr_date, t.promised_date || '-',
           t.overdue_days || 0, t.primary_bottleneck || '-'
         ]);
         row.height = 20;
       });
       ws1.columns = [
-        { width: 24 }, { width: 22 }, { width: 16 }, { width: 26 }, { width: 12 }, { width: 14 },
+        { width: 15 }, { width: 24 }, { width: 22 }, { width: 16 }, { width: 26 }, { width: 12 }, { width: 14 },
         { width: 13 }, { width: 28 }, { width: 45 }, { width: 13 }, { width: 14 },
         { width: 14 }, { width: 32 }
       ];
 
       // Sheet 2: Zero-Stock Line Items Detailed Audit
       const ws2 = wb.addWorksheet('Zero-Stock Line Items', { views: [{ showGridLines: true }] });
-      ws2.mergeCells('A1:J1');
+      ws2.mergeCells('A1:M1');
       const ws2Title = ws2.getCell('A1');
       ws2Title.value = 'ZERO-STOCK PHYSICAL INVENTORY SPARES (STOCK = 0)';
       ws2Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
@@ -8529,7 +8723,7 @@ async function exportZeroStockMatrix() {
       ws2Title.alignment = { vertical: 'middle', horizontal: 'center' };
       ws2.getRow(1).height = 24;
 
-      ws2.mergeCells('A2:J2');
+      ws2.mergeCells('A2:M2');
       const ws2Sub = ws2.getCell('A2');
       ws2Sub.value = filterSummary;
       ws2Sub.font = { name: 'Calibri', size: 9, italic: true, color: { argb: 'FFCBD5E1' } };
@@ -8537,7 +8731,7 @@ async function exportZeroStockMatrix() {
       ws2Sub.alignment = { vertical: 'middle', horizontal: 'center' };
       ws2.getRow(2).height = 18;
 
-      const ws2Headers = ['Department', 'Buyer', 'Project', 'PR No.', 'PO No.', 'Item Code', 'Item Description', 'Stock', 'Pending Balance Qty', 'Task Stage'];
+      const ws2Headers = ['Priority', 'Department', 'Buyer', 'Project', 'PR No.', 'PO No.', 'Item Code', 'Item Description', 'Stock', 'Avg Cons/Yr', 'Trend', 'Pending Balance Qty', 'Task Stage'];
       const ws2HRow = ws2.addRow(ws2Headers);
       ws2HRow.height = 22;
       ws2HRow.eachCell(cell => {
@@ -8548,18 +8742,22 @@ async function exportZeroStockMatrix() {
 
       zeroTasks.forEach(t => {
         (t.lines || []).forEach(l => {
-          if (l.is_zero_stock || l.stock === 0) {
+          const isTargetLine = l.is_zero_stock || l.stock === 0 || (activePriorityFilter === 'P3' && l.priority === 'P3');
+          const matchesLinePrio = !activePriorityFilter || (l.priority === activePriorityFilter);
+          if (isTargetLine && matchesLinePrio) {
+            const wmaVal = Number(l.wma_annual || 0);
+            const wmaStr = wmaVal > 0 ? (wmaVal >= 10 ? Math.round(wmaVal).toString() : wmaVal.toFixed(1)) : '0';
             const lRow = ws2.addRow([
-              t.department || '-', t.buyer, t.project, t.pr_no, t.po_no || '-', l.item_code, l.item_desc,
-              0, l.bal_qty || 0, t.task_stage
+              l.priority_label || l.priority || '-', t.department || '-', t.buyer, t.project, t.pr_no, t.po_no || '-', l.item_code || '-', l.item_desc || '-',
+              l.stock !== null && l.stock !== undefined ? l.stock : 0, wmaStr, l.trend_label || '-', l.bal_qty || 0, t.task_stage
             ]);
             lRow.height = 20;
           }
         });
       });
       ws2.columns = [
-        { width: 24 }, { width: 22 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 18 },
-        { width: 45 }, { width: 16 }, { width: 18 }, { width: 26 }
+        { width: 15 }, { width: 24 }, { width: 22 }, { width: 16 }, { width: 12 }, { width: 14 }, { width: 18 },
+        { width: 45 }, { width: 12 }, { width: 14 }, { width: 16 }, { width: 18 }, { width: 26 }
       ];
 
       // Sheet 3: Level 4 Pre-Commercial Zero-Stock Spares
@@ -8932,9 +9130,10 @@ function renderDelayModalView() {
       const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
       const matchO = matchOrderType(t);
       const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+      return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq;
     });
   } else if (stageName === "Under Technical Inspection") {
     allStageTasks = allStageTasks.filter(t => {
@@ -8946,9 +9145,10 @@ function renderDelayModalView() {
       const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
       const matchO = matchOrderType(t);
       const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+      return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq;
     });
   } else {
     allStageTasks = allStageTasks.filter(t => {
@@ -8959,9 +9159,10 @@ function renderDelayModalView() {
       const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
       const matchO = matchOrderType(t);
       const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+      const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
       const matchEnt = matchEnteredBy(t);
       const matchReq = matchRequestedBy(t);
-      return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && t.task_stage === stageName;
+      return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq && t.task_stage === stageName;
     });
   }
 
@@ -9250,12 +9451,21 @@ function renderDelayModalView() {
     const matchedSnip = activeQuery ? getMatchingLineSnippet(t, activeQuery) : null;
     const snipBadge = matchedSnip ? `<div style="font-size:0.67rem; color:#fde047; margin-top:3px; font-weight:600; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(matchedSnip.item_desc || '')}"><i class="fa-solid fa-wand-magic-sparkles" style="font-size:0.6rem;"></i> ${highlightKeyword(matchedSnip.item_desc || '', activeQuery)}</div>` : '';
 
+    let prioBadgeHtml = '';
+    if (t.priority === 'P1') {
+      prioBadgeHtml = ` <span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; margin-left:4px;" title="P1 Critical Stock-Out (Zero-Stock & Surging Demand)"><span class="p-dot dot-p1" style="width:5px; height:5px; margin-right:3px; display:inline-block;"></span>P1</span>`;
+    } else if (t.priority === 'P2') {
+      prioBadgeHtml = ` <span style="background:rgba(249,115,22,0.25); color:#fdba74; border:1px solid rgba(249,115,22,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; margin-left:4px;" title="P2 Active Stock-Out (Zero-Stock & Steady Demand)"><span class="p-dot dot-p2" style="width:5px; height:5px; margin-right:3px; display:inline-block;"></span>P2</span>`;
+    } else if (t.priority === 'P3') {
+      prioBadgeHtml = ` <span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; margin-left:4px;" title="P3 Pre-Stockout Alert (Stock below Re-Order Point)"><span class="p-dot dot-p3" style="width:5px; height:5px; margin-right:3px; display:inline-block;"></span>P3</span>`;
+    }
+
     if (isStage1) {
       return `
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
           <td style="padding:10px 8px;">
-            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
+            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>${prioBadgeHtml}
             ${snipBadge}
           </td>
           <td style="text-align:center; padding:10px 8px;">${tsBadgeHtml}</td>
@@ -9274,7 +9484,7 @@ function renderDelayModalView() {
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
           <td style="padding:10px 8px;">
-            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
+            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>${prioBadgeHtml}
             ${snipBadge}
           </td>
           <td style="text-align:center; padding:10px 8px;">${tsBadgeHtml}</td>
@@ -9293,7 +9503,7 @@ function renderDelayModalView() {
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
           <td style="padding:10px 8px;">
-            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
+            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>${prioBadgeHtml}
             ${tsTagHtml}
             ${snipBadge}
           </td>
@@ -9312,7 +9522,7 @@ function renderDelayModalView() {
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
           <td style="padding:10px 8px;">
-            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
+            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>${prioBadgeHtml}
             ${snipBadge}
           </td>
           <td style="font-weight:700; padding:10px 8px;">PO #${t.po_no} <span style="font-size:0.68rem; color:#fca5a5; font-weight:800; border:1px solid rgba(239,68,68,0.4); padding:1px 4px; border-radius:4px; margin-left:4px;">Draft</span></td>
@@ -9377,7 +9587,7 @@ function renderDelayModalView() {
         <tr style="border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;" onclick="openPrDossierModal('${t.pr_no}', '${t.po_no || ''}', true)">
           <td style="text-align:center; font-weight:800; color:var(--text-sub); padding:10px 8px;">${idx + 1}</td>
           <td style="padding:10px 8px;">
-            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>
+            <span class="pr-click-link" title="Click to inspect Document Inquiry">PR #${t.pr_no}</span>${prioBadgeHtml}
             ${snipBadge}
           </td>
           <td style="font-weight:700; padding:10px 8px;">
@@ -9590,9 +9800,10 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
         const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
         const matchO = matchOrderType(t);
         const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+        const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
         const matchEnt = matchEnteredBy(t);
         const matchReq = matchRequestedBy(t);
-        return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+        return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq;
       });
     } else if (stageName === "Under Technical Inspection") {
       stageTasks = stageTasks.filter(t => {
@@ -9604,9 +9815,10 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
         const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
         const matchO = matchOrderType(t);
         const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+        const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
         const matchEnt = matchEnteredBy(t);
         const matchReq = matchRequestedBy(t);
-        return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
+        return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq;
       });
     } else {
       stageTasks = stageTasks.filter(t => {
@@ -9617,9 +9829,10 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
         const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
         const matchO = matchOrderType(t);
         const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
+        const matchPrio = !activePriorityFilter || taskMatchesPriority(t);
         const matchEnt = matchEnteredBy(t);
         const matchReq = matchRequestedBy(t);
-        return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && t.task_stage === stageName;
+        return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchPrio && matchEnt && matchReq && t.task_stage === stageName;
       });
     }
 
@@ -10329,6 +10542,16 @@ function resetAllFilters() {
   selectedPrPoKey = 'ALL';
   selectedYear = 'ALL';
   isZeroStockFilterActive = false;
+  activePriorityFilter = null;
+
+  const zeroBtn = document.getElementById("btnZeroStockToggle");
+  if (zeroBtn) zeroBtn.classList.remove("active-zero-filter");
+  const p1Btn = document.getElementById("btnPriorityP1");
+  const p2Btn = document.getElementById("btnPriorityP2");
+  const p3Btn = document.getElementById("btnPriorityP3");
+  if (p1Btn) p1Btn.classList.remove("active-p1-filter");
+  if (p2Btn) p2Btn.classList.remove("active-p2-filter");
+  if (p3Btn) p3Btn.classList.remove("active-p3-filter");
 
   const yrSel = document.getElementById('yearSelector');
   if (yrSel) yrSel.value = 'ALL';
@@ -10341,6 +10564,7 @@ function resetAllFilters() {
   updateEnteredByComboboxTriggerDisplay();
   updateRequestedByComboboxTriggerDisplay();
 
+  updateZeroStockToggleChip();
   renderLifecycleCards();
   renderStatusChart();
   if (typeof updateActiveFilterCounters === 'function') updateActiveFilterCounters();
