@@ -1488,54 +1488,6 @@
       margin-left: 2px;
     }
 
-    .inspection-quick-card {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: rgba(168, 85, 247, 0.10);
-      border: 1px solid rgba(168, 85, 247, 0.45);
-      border-radius: 8px;
-      padding: 4px 10px;
-      font-size: clamp(0.68rem, 0.82vw, 0.75rem);
-      color: #e9d5ff;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    }
-
-    .inspection-quick-card:hover {
-      background: rgba(168, 85, 247, 0.22);
-      border-color: rgba(168, 85, 247, 0.75);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);
-    }
-
-    .inspection-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #c084fc;
-      box-shadow: 0 0 7px #c084fc;
-      animation: pulse-purple 2s infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes pulse-purple {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.25); }
-    }
-
-    .inspection-btn {
-      font-size: 0.64rem;
-      background: rgba(168, 85, 247, 0.25);
-      color: #ffffff;
-      padding: 1px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(168, 85, 247, 0.55);
-      font-weight: 700;
-      margin-left: 2px;
-    }
-
     /* 3-COLUMN SYMMETRICAL LAYOUT */
     .lifecycle-3col-grid {
       display: grid;
@@ -3264,22 +3216,13 @@
 
 
       <!-- CENTER COLUMN: DUAL-RING SUNBURST DOUGHNUT CHART CANVAS -->
-      <div class="chart-container-box" style="position:relative;">
+      <div class="chart-container-box">
         <!-- Floating Unassigned Quick-Card on Upper-Left above PR Hemisphere -->
         <div style="position:absolute; top:10px; left:12px; z-index:20;">
           <div id="unassignedQuickCard" class="unassigned-quick-card" onclick="openDelayModal('Unassigned PRs')" title="Click to inspect unassigned requisitions" style="margin:0;">
             <span class="unassigned-dot"></span>
             <span><strong style="color:#ffffff;">64 Unassigned PRs</strong> &bull; All PRs Assigned</span>
             <span class="unassigned-btn"><i class="fa-solid fa-circle-check"></i> Clean</span>
-          </div>
-        </div>
-
-        <!-- Floating Under Technical Inspection Quick-Card on Bottom-Right below Open PO Hemisphere -->
-        <div style="position:absolute; bottom:10px; right:12px; z-index:20;">
-          <div id="inspectionQuickCard" class="inspection-quick-card" onclick="openDelayModal('Under Technical Inspection')" title="Click to inspect goods under technical inspection at plant gate" style="margin:0;">
-            <span class="inspection-dot"></span>
-            <span><strong style="color:#ffffff;">106 Under Inspection</strong> &bull; Goods at Gate / QC Pending</span>
-            <span class="inspection-btn"><i class="fa-solid fa-bolt"></i> Inspect</span>
           </div>
         </div>
 
@@ -6625,7 +6568,7 @@ function getCombinedBuyerLifecycle() {
   const st2 = b_tasks.filter(t => t.task_stage === "Sourcing / RFQ");
   const st3 = b_tasks.filter(t => t.task_stage === "TS Review in Plant");
   const st4 = b_tasks.filter(t => t.task_stage === "Draft PO Approval");
-  const st5 = b_tasks.filter(t => t.task_stage === "Supplier Overdue" && !t.is_under_inspection);
+  const st5 = b_tasks.filter(t => t.task_stage === "Supplier Overdue");
   const st6 = b_tasks.filter(t => t.task_stage === "On-Track Delivery");
 
   const prepo_prs = new Set(st1.concat(st2, st3).map(t => t.pr_no)).size;
@@ -6906,42 +6849,6 @@ function renderLifecycleCards() {
         <span class="unassigned-dot" style="background:#10b981; box-shadow:0 0 7px #10b981;"></span>
         <span><strong style="color:#ffffff;">0 Unassigned PRs</strong> &bull; All PRs Assigned</span>
         <span class="unassigned-btn" style="background:rgba(16,185,129,0.2); color:#6ee7b7; border-color:rgba(16,185,129,0.35);"><i class="fa-solid fa-circle-check"></i> Clean</span>
-      `;
-    }
-  }
-
-  // ── UNDER TECHNICAL INSPECTION QUICK-CARD (ALWAYS PERMANENTLY VISIBLE) ──
-  const inspCard = document.getElementById("inspectionQuickCard");
-  if (inspCard) {
-    inspCard.style.display = 'inline-flex';
-    const isAllP = isAllProjectsSelected();
-    const isAllD = isAllDeptsSelected();
-    const isAllB = isAllBuyersSelected();
-    const inspTasks = ALL_TASKS.filter(t => {
-      const isInsp = t.is_under_inspection;
-      const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-      const matchP = isAllP || selectedProjectsSet.has(t.project);
-      const matchD = isAllD || selectedDeptsSet.has(t.department);
-      const matchPRPO = matchPrPo(t);
-      const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-      const matchO = matchOrderType(t);
-      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-      const matchEnt = matchEnteredBy(t);
-      const matchReq = matchRequestedBy(t);
-      return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
-    });
-    const inspCount = new Set(inspTasks.map(t => t.po_no)).size;
-    if (inspCount > 0) {
-      inspCard.innerHTML = `
-        <span class="inspection-dot"></span>
-        <span><strong style="color:#ffffff;">${inspCount} Under Inspection</strong> &bull; Goods at Gate / QC Pending</span>
-        <span class="inspection-btn"><i class="fa-solid fa-bolt"></i> Inspect</span>
-      `;
-    } else {
-      inspCard.innerHTML = `
-        <span class="inspection-dot" style="background:#10b981; box-shadow:0 0 7px #10b981;"></span>
-        <span><strong style="color:#ffffff;">0 Under Inspection</strong> &bull; All Received Goods Processed</span>
-        <span class="inspection-btn" style="background:rgba(16,185,129,0.2); color:#6ee7b7; border-color:rgba(16,185,129,0.35);"><i class="fa-solid fa-circle-check"></i> Clean</span>
       `;
     }
   }
@@ -8306,33 +8213,6 @@ function renderDelayModalView() {
       const matchReq = matchRequestedBy(t);
       return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
     });
-  } else if (stageName === "Under Technical Inspection") {
-    allStageTasks = allStageTasks.filter(t => {
-      const isInsp = t.is_under_inspection;
-      const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-      const matchP = isAllP || selectedProjectsSet.has(t.project);
-      const matchD = isAllD || selectedDeptsSet.has(t.department);
-      const matchPRPO = matchPrPo(t);
-      const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-      const matchO = matchOrderType(t);
-      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-      const matchEnt = matchEnteredBy(t);
-      const matchReq = matchRequestedBy(t);
-      return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
-    });
-  } else if (stageName === "Supplier Overdue") {
-    allStageTasks = allStageTasks.filter(t => {
-      const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-      const matchP = isAllP || selectedProjectsSet.has(t.project);
-      const matchD = isAllD || selectedDeptsSet.has(t.department);
-      const matchPRPO = matchPrPo(t);
-      const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-      const matchO = matchOrderType(t);
-      const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-      const matchEnt = matchEnteredBy(t);
-      const matchReq = matchRequestedBy(t);
-      return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && t.task_stage === "Supplier Overdue" && !t.is_under_inspection;
-    });
   } else {
     allStageTasks = allStageTasks.filter(t => {
       const matchB = isAllB || selectedBuyersSet.has(t.buyer);
@@ -8378,15 +8258,10 @@ function renderDelayModalView() {
     warningCount = allStageTasks.filter(t => (t.stage_delay || 0) > 7 && (t.stage_delay || 0) <= 14).length;
     criticalCount = allStageTasks.filter(t => (t.stage_delay || 0) > 14).length;
   } else if (stageName === 'Supplier Overdue') {
-    slaTargetDesc = 'Promised Delivery Overdue (True Supplier Delays)';
+    slaTargetDesc = 'Promised Delivery Overdue';
     onTrackCount = allStageTasks.filter(t => (t.stage_delay || 0) <= 30).length;
     warningCount = allStageTasks.filter(t => (t.stage_delay || 0) > 30 && (t.stage_delay || 0) <= 90).length;
     criticalCount = allStageTasks.filter(t => (t.stage_delay || 0) > 90).length;
-  } else if (stageName === 'Under Technical Inspection') {
-    slaTargetDesc = 'Warehouse Gate QC Hold (Suez Steel Plant Inspection)';
-    onTrackCount = allStageTasks.filter(t => (t.stage_delay || 0) <= 7).length;
-    warningCount = allStageTasks.filter(t => (t.stage_delay || 0) > 7 && (t.stage_delay || 0) <= 14).length;
-    criticalCount = allStageTasks.filter(t => (t.stage_delay || 0) > 14).length;
   } else if (stageName === 'On-Track Delivery') {
     slaTargetDesc = 'Supplier Manufacturing & In-Transit';
     onTrackCount = allStageTasks.length;
@@ -8432,16 +8307,8 @@ function renderDelayModalView() {
     }
   }
 
-  if (currentDelayModalDeliveryFilter === 'OVERDUE') {
-    displayTasks = displayTasks.filter(t => !t.is_under_inspection);
-  } else if (currentDelayModalDeliveryFilter === 'UNDELIVERED') {
-    displayTasks = displayTasks.filter(t => !t.is_partial && !t.has_rejection && !t.is_under_inspection);
-  } else if (currentDelayModalDeliveryFilter === 'INSPECTION') {
-    displayTasks = displayTasks.filter(t => t.is_under_inspection);
-  } else if (currentDelayModalDeliveryFilter === 'REJECTED') {
-    displayTasks = displayTasks.filter(t => t.has_rejection);
-  } else if (currentDelayModalDeliveryFilter === 'UNDELIVERED') {
-    displayTasks = displayTasks.filter(t => !t.is_partial && !t.is_under_inspection);
+  if (currentDelayModalDeliveryFilter === 'UNDELIVERED') {
+    displayTasks = displayTasks.filter(t => !t.is_partial);
   } else if (currentDelayModalDeliveryFilter === 'PARTIAL') {
     displayTasks = displayTasks.filter(t => t.is_partial);
   }
@@ -8525,17 +8392,13 @@ function renderDelayModalView() {
   let displayStageTitle = stageName;
   if (stageName === "TS Review in Plant") displayStageTitle = "Offers Under Plant Evaluation";
   else if (stageName === "TS Confirmed (Pending PO)") displayStageTitle = "TS Confirmed (Ready for PO)";
-  else if (stageName === "Under Technical Inspection") displayStageTitle = "Under Technical Inspection (Warehouse Gate QC Hold)";
   const titleEl = document.getElementById("modalTitle");
   titleEl.innerHTML = `<i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Stage Inspection: <span style="color:#ffffff;">${displayStageTitle}</span> (${totalStageCount} Tasks)`;
 
   const totSeg = (totalStageCount || 1);
-  const isDeliveryStage = (stageName === 'Supplier Overdue' || stageName === 'On-Track Delivery' || stageName === 'Under Technical Inspection');
-  const stageSupplierOverdueCount = allStageTasks.filter(t => !t.is_under_inspection).length;
-  const stageUnderInspectionCount = allStageTasks.filter(t => t.is_under_inspection).length;
-  const stageRejectedCount = allStageTasks.filter(t => t.has_rejection).length;
-  const stageUndeliveredCount = allStageTasks.filter(t => !t.is_partial && !t.is_under_inspection).length;
-  const stagePartialCount = allStageTasks.filter(t => t.is_partial && !t.is_under_inspection).length;
+  const isDeliveryStage = (stageName === 'Supplier Overdue' || stageName === 'On-Track Delivery');
+  const stageUndeliveredCount = allStageTasks.filter(t => !t.is_partial).length;
+  const stagePartialCount = allStageTasks.filter(t => t.is_partial).length;
   const greenPct = ((onTrackCount / totSeg) * 100).toFixed(1);
   const yellowPct = ((warningCount / totSeg) * 100).toFixed(1);
   const redPct = ((criticalCount / totSeg) * 100).toFixed(1);
@@ -8722,13 +8585,7 @@ function renderDelayModalView() {
     } else {
       let deliveryBadgeHtml = '';
       if (t.has_po && t.po_no && t.po_no !== '—') {
-        if (t.is_under_inspection) {
-          const insQ = Number(t.total_ins_qty || t.total_bal_qty || 0);
-          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(192,132,252,0.18); color:#e9d5ff; border:1px solid rgba(192,132,252,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Goods delivered to warehouse gate. Awaiting technical inspection sign-off and SRV entry. (Do not penalize supplier)"><i class="fa-solid fa-microscope" style="color:#c084fc;"></i> Under Technical Inspection (${insQ.toLocaleString()} at Gate)</span></div>`;
-        } else if (t.has_rejection) {
-          const rejQ = Number(t.total_rej_qty || 0);
-          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Supplier failed inspection. ${rejQ.toLocaleString()} units rejected by QC. Supplier remains overdue for replacement."><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> Overdue — Rejected by QC (${rejQ.toLocaleString()} Units)</span></div>`;
-        } else if (t.is_partial) {
+        if (t.is_partial) {
           const srvQ = Number(t.total_srv_qty || 0);
           const balQ = Number(t.total_bal_qty || 0);
           const totQ = Number(t.total_po_qty || 0) || (srvQ + balQ);
@@ -8860,14 +8717,8 @@ function renderDelayModalView() {
       <button class="btn-mode ${currentDelayModalDeliveryFilter === 'ALL' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('ALL')" style="font-size:0.7rem; padding:3px 10px;">
         All Deliveries (${totalStageCount})
       </button>
-      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'OVERDUE' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('OVERDUE')" style="font-size:0.7rem; padding:3px 10px; color:#fca5a5;" title="All true supplier overdue orders: un-shipped goods plus QC-rejected deliveries">
-        <i class="fa-solid fa-clock-rotate-left" style="margin-right:4px;"></i> Supplier Overdue (${stageSupplierOverdueCount})
-      </button>
-      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'INSPECTION' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('INSPECTION')" style="font-size:0.7rem; padding:3px 10px; color:#e9d5ff; background:${currentDelayModalDeliveryFilter === 'INSPECTION' ? 'rgba(192,132,252,0.3)' : 'transparent'}; border-color:${currentDelayModalDeliveryFilter === 'INSPECTION' ? '#c084fc' : 'rgba(192,132,252,0.35)'};" title="Extracted from supplier overdue: goods physically at warehouse gate awaiting plant technical inspection sign-off">
-        <i class="fa-solid fa-microscope" style="margin-right:4px; color:#c084fc;"></i> Under Technical Inspection (${stageUnderInspectionCount})
-      </button>
-      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'REJECTED' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('REJECTED')" style="font-size:0.7rem; padding:3px 10px; color:#f87171;" title="Orders returned to overdue: supplier delivered defective goods that failed QC inspection">
-        <i class="fa-solid fa-triangle-exclamation" style="margin-right:4px; color:#ef4444;"></i> Rejected by QC (${stageRejectedCount})
+      <button class="btn-mode ${currentDelayModalDeliveryFilter === 'UNDELIVERED' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('UNDELIVERED')" style="font-size:0.7rem; padding:3px 10px; color:#fca5a5;">
+        <i class="fa-solid fa-box-open" style="margin-right:4px;"></i> 0% Undelivered (${stageUndeliveredCount})
       </button>
       <button class="btn-mode ${currentDelayModalDeliveryFilter === 'PARTIAL' ? 'active' : ''}" onclick="setDelayModalDeliveryFilter('PARTIAL')" style="font-size:0.7rem; padding:3px 10px; color:#fde047;">
         <i class="fa-solid fa-truck" style="margin-right:4px;"></i> Partially Delivered (${stagePartialCount})
@@ -8966,33 +8817,6 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
         const matchReq = matchRequestedBy(t);
         return isUnass && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
       });
-    } else if (stageName === "Under Technical Inspection") {
-      stageTasks = stageTasks.filter(t => {
-        const isInsp = t.is_under_inspection;
-        const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-        const matchP = isAllP || selectedProjectsSet.has(t.project);
-        const matchD = isAllD || selectedDeptsSet.has(t.department);
-        const matchPRPO = matchPrPo(t);
-        const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-        const matchO = matchOrderType(t);
-        const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-        const matchEnt = matchEnteredBy(t);
-        const matchReq = matchRequestedBy(t);
-        return isInsp && matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq;
-      });
-    } else if (stageName === "Supplier Overdue") {
-      stageTasks = stageTasks.filter(t => {
-        const matchB = isAllB || selectedBuyersSet.has(t.buyer);
-        const matchP = isAllP || selectedProjectsSet.has(t.project);
-        const matchD = isAllD || selectedDeptsSet.has(t.department);
-        const matchPRPO = matchPrPo(t);
-        const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
-        const matchO = matchOrderType(t);
-        const matchZero = !isZeroStockFilterActive || taskHasZeroStock(t);
-        const matchEnt = matchEnteredBy(t);
-        const matchReq = matchRequestedBy(t);
-        return matchB && matchP && matchD && matchY && matchPRPO && matchO && matchZero && matchEnt && matchReq && t.task_stage === "Supplier Overdue" && !t.is_under_inspection;
-      });
     } else {
       stageTasks = stageTasks.filter(t => {
         const matchB = isAllB || selectedBuyersSet.has(t.buyer);
@@ -9026,14 +8850,8 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
 
     // Filter by delivery status
     const deliv = deliveryFilter || 'ALL';
-    if (deliv === 'OVERDUE') {
-      stageTasks = stageTasks.filter(t => !t.is_under_inspection);
-    } else if (deliv === 'INSPECTION') {
-      stageTasks = stageTasks.filter(t => t.is_under_inspection);
-    } else if (deliv === 'REJECTED') {
-      stageTasks = stageTasks.filter(t => t.has_rejection);
-    } else if (deliv === 'UNDELIVERED') {
-      stageTasks = stageTasks.filter(t => !t.is_partial && !t.is_under_inspection);
+    if (deliv === 'UNDELIVERED') {
+      stageTasks = stageTasks.filter(t => !t.is_partial);
     } else if (deliv === 'PARTIAL') {
       stageTasks = stageTasks.filter(t => t.is_partial);
     }
@@ -9131,10 +8949,6 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
     } else if (sLow.includes("unassigned")) {
       stageModifier = "Unassigned_PRs";
       stageTitleText = "Unassigned PRs Queue";
-    } else if (sLow.includes("under technical inspection") || sLow.includes("inspection")) {
-      stageModifier = "Technical_Inspection_Hold";
-      stageTitleText = "Stage Inspection: Under Technical Inspection";
-      isDeliveryStage = true;
     } else {
       stageModifier = currentStageTarget.replace(/[^a-zA-Z0-9]/g, '_');
       stageTitleText = currentStageTarget;
@@ -9144,16 +8958,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
   // Delivery filter modifier in filename & title
   let deliveryModifier = "";
   let deliveryTitleSuffix = "";
-  if (ctx.deliveryFilter === 'OVERDUE') {
-    deliveryModifier = "_Supplier_Overdue";
-    deliveryTitleSuffix = " — [SUPPLIER OVERDUE]";
-  } else if (ctx.deliveryFilter === 'INSPECTION') {
-    deliveryModifier = "_Under_Technical_Inspection";
-    deliveryTitleSuffix = " — [UNDER TECHNICAL INSPECTION]";
-  } else if (ctx.deliveryFilter === 'REJECTED') {
-    deliveryModifier = "_QC_Rejected";
-    deliveryTitleSuffix = " — [QC REJECTED]";
-  } else if (ctx.deliveryFilter === 'UNDELIVERED') {
+  if (ctx.deliveryFilter === 'UNDELIVERED') {
     deliveryModifier = "_0pct_Undelivered";
     deliveryTitleSuffix = " — [0% UNDELIVERED]";
   } else if (ctx.deliveryFilter === 'PARTIAL') {
@@ -9243,14 +9048,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           const srvQtyVal = Number(t.total_srv_qty || 0);
           const balQtyVal = Number(t.total_bal_qty || 0);
           const pctVal = poQtyVal > 0 ? (srvQtyVal / poQtyVal) : 0;
-          let situationStr = '0% Undelivered';
-          if (t.is_under_inspection) {
-            situationStr = 'Under Technical Inspection (At Gate)';
-          } else if (t.has_rejection) {
-            situationStr = `Overdue — Rejected by QC (${Number(t.total_rej_qty || 0)} Units)`;
-          } else if (t.is_partial) {
-            situationStr = 'Partially Delivered';
-          }
+          const situationStr = t.is_partial ? 'Partially Delivered' : '0% Undelivered';
 
           let severityStr = 'On SLA';
           if (t.task_stage === 'Supplier Overdue') {
@@ -9301,13 +9099,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
 
             // Col 7: Delivery Situation High-Contrast Styling
             if (colNum === 7) {
-              if (t.is_under_inspection) {
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF3E8FF' } };
-                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF7E22CE' } };
-              } else if (t.has_rejection) {
-                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
-                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF991B1B' } };
-              } else if (t.is_partial) {
+              if (t.is_partial) {
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
                 cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF92400E' } };
               } else {
@@ -9571,7 +9363,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           "Plant / Project": t.project || '—',
           "Buyer": t.buyer,
           "Supplier Name": t.supplier || t.remarks || '—',
-          "Delivery Situation": t.is_under_inspection ? 'Under Technical Inspection (At Gate)' : (t.has_rejection ? `Overdue — Rejected by QC (${t.total_rej_qty || 0} Units)` : (t.is_partial ? 'Partially Delivered' : '0% Undelivered')),
+          "Delivery Situation": t.is_partial ? 'Partially Delivered' : '0% Undelivered',
           "Total Order Qty": poQtyVal,
           "Received SRV Qty": srvQtyVal,
           "Pending Balance Qty": balQtyVal,
