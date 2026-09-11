@@ -8175,8 +8175,35 @@ function openItemIntelligence(itemCode) {
 
   const supplier = intel.supplier || intel.last_supplier || '—';
   const poPrice = (intel.po_price_egp !== undefined && intel.po_price_egp !== null) ? intel.po_price_egp : intel.last_po_price;
+  const poPriceOrig = (intel.po_price_orig !== undefined && intel.po_price_orig !== null) ? intel.po_price_orig : null;
   const poCurr = intel.po_curr || intel.last_po_currency || 'EGP';
   const poDate = intel.po_date || intel.last_po_date || '—';
+  const codeDate = intel.code_date || '';
+
+  // ── CODE AGE BADGE ──
+  let codeAgeBadgeHtml = '';
+  let codeDateDisplay = '';
+  if (codeDate) {
+    const cdParts = codeDate.split('-');
+    if (cdParts.length === 3) {
+      const cdObj = new Date(parseInt(cdParts[0]), parseInt(cdParts[1]) - 1, parseInt(cdParts[2]));
+      const now = new Date();
+      const diffMs = now - cdObj;
+      const totalMonths = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.44));
+      const ageYears = Math.floor(totalMonths / 12);
+      const ageMos = totalMonths % 12;
+      const ageStr = ageYears > 0
+        ? `${ageYears} yr${ageYears > 1 ? 's' : ''}${ageMos > 0 ? ' ' + ageMos + ' mo' : ''}`
+        : `${ageMos} mo`;
+      codeDateDisplay = cdObj.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric'});
+      let ageColor, ageBg, ageLabel;
+      if (totalMonths < 24)       { ageColor = '#4ade80'; ageBg = 'rgba(74,222,128,0.15)';  ageLabel = 'New Code'; }
+      else if (totalMonths < 60)  { ageColor = '#60a5fa'; ageBg = 'rgba(96,165,250,0.15)';  ageLabel = 'Established'; }
+      else if (totalMonths < 120) { ageColor = '#fbbf24'; ageBg = 'rgba(251,191,36,0.15)';  ageLabel = 'Mature'; }
+      else                         { ageColor = '#f87171'; ageBg = 'rgba(248,113,113,0.15)'; ageLabel = 'Legacy Code'; }
+      codeAgeBadgeHtml = `<span style="background:${ageBg};color:${ageColor};border:1px solid ${ageColor}40;padding:2px 8px;border-radius:5px;font-size:0.65rem;font-weight:800;">⏱ ${ageStr} · ${ageLabel}</span>`;
+    }
+  }
 
   const leadTot = Number(intel.lead_time !== undefined ? intel.lead_time : (intel.lead_time_tot || 0));
   const leadInt = Number(intel.int_lead !== undefined ? intel.int_lead : (intel.lead_time_int || 0));
@@ -8468,18 +8495,111 @@ function openItemIntelligence(itemCode) {
           <span style="color:#38bdf8; font-weight:700; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
         </div>
 
+        <!-- Last PO Unit Price (original currency) -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:4px; color:#64748b;"></i>Last PO Unit Price:</span>
-          <span style="color:#34d399; font-weight:800;">${poPrice !== null && poPrice !== undefined && poPrice !== '' ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + escapeHtml(poCurr) : '—'}</span>
+          <span style="color:#34d399; font-weight:800;">${
+            poPriceOrig !== null && poPriceOrig > 0
+              ? Number(poPriceOrig).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(poCurr)
+              : (poPrice !== null && poPrice !== undefined && poPrice > 0
+                  ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(poCurr)
+                  : '—')
+          }</span>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem;">
+        <!-- EGP Equivalent (only if currency is not already EGP) -->
+        ${poCurr && poCurr.toUpperCase() !== 'EGP' && poPrice !== null && poPrice !== undefined && poPrice > 0 ? `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-coins" style="margin-right:4px; color:#64748b;"></i>EGP Equivalent:</span>
+          <span style="color:#fbbf24; font-weight:800;">${Number(poPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
+        </div>` : ''}
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; ${codeDateDisplay ? '' : ''}">
           <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-days" style="margin-right:4px; color:#64748b;"></i>Last Purchase Date:</span>
           <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
         </div>
+
+        <!-- Code Creation Date + Age Badge -->
+        ${codeDateDisplay ? `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; font-size:0.76rem; padding-top:4px; border-top:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-plus" style="margin-right:4px; color:#64748b;"></i>Code Created:</span>
+          <span style="text-align:right;">
+            <span style="color:#ffffff; font-weight:700;">${escapeHtml(codeDateDisplay)}</span>
+            <br>${codeAgeBadgeHtml}
+          </span>
+        </div>` : ''}
       </div>
 
     </div>
+
+    <!-- ── CROSS-REFERENCE: OTHER OPEN PRs WITH THIS ITEM ── -->
+    ${(() => {
+      const xrefMatches = [];
+      const currentPrNo = (typeof currentDossierTask !== 'undefined' && currentDossierTask) ? currentDossierTask.pr_no : null;
+      (typeof ALL_TASKS !== 'undefined' ? ALL_TASKS : []).forEach(t => {
+        (t.lines || []).forEach(l => {
+          if (l.item_code === itemCode) {
+            xrefMatches.push({
+              pr_no: t.pr_no,
+              buyer: t.buyer || '—',
+              task_stage: t.task_stage || '—',
+              pr_qty: l.pr_qty,
+              item_desc: l.item_desc || '',
+              overdue: t.overdue_days || 0,
+              is_current: t.pr_no === currentPrNo
+            });
+          }
+        });
+      });
+      const xrefTotal = xrefMatches.length;
+      const xrefSlice = xrefMatches.slice(0, 10);
+
+      if (xrefTotal === 0) {
+        return `<div style="margin-top:8px; padding:8px 14px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; display:flex; align-items:center; gap:8px; font-size:0.76rem; color:#4ade80;">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>No other open PRs reference this item code.</span>
+        </div>`;
+      }
+
+      const rows = xrefSlice.map(r => {
+        const overdueCell = r.overdue > 0
+          ? `<span style="color:#f87171; font-weight:700;">${r.overdue}d</span>`
+          : `<span style="color:#4ade80;">—</span>`;
+        const rowStyle = r.is_current
+          ? 'background:rgba(96,165,250,0.12); border-left:3px solid #60a5fa;'
+          : 'border-left:3px solid transparent;';
+        return `<tr style="${rowStyle}">
+          <td style="padding:4px 8px; color:${r.is_current ? '#60a5fa' : '#e2e8f0'}; font-weight:${r.is_current ? '800' : '600'};">${escapeHtml(r.pr_no)}${r.is_current ? ' <span style="font-size:0.6rem;background:rgba(96,165,250,0.2);color:#60a5fa;border-radius:4px;padding:1px 5px;">current</span>' : ''}</td>
+          <td style="padding:4px 8px; color:#94a3b8; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.task_stage)}">${escapeHtml(r.task_stage)}</td>
+          <td style="padding:4px 8px; color:#fbbf24; text-align:right;">${Number(r.pr_qty || 0).toLocaleString()}</td>
+          <td style="padding:4px 8px; text-align:right;">${overdueCell}</td>
+          <td style="padding:4px 8px; color:#94a3b8;">${escapeHtml(r.buyer)}</td>
+        </tr>`;
+      }).join('');
+
+      const moreRow = xrefTotal > 10
+        ? `<tr><td colspan="5" style="padding:4px 8px; color:#64748b; font-style:italic; text-align:center;">+${xrefTotal - 10} more PR(s) not shown</td></tr>`
+        : '';
+
+      return `<div style="margin-top:8px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#fb923c; display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+          <i class="fa-solid fa-arrows-rotate"></i> Other Open PRs — Same Item Code
+          <span style="margin-left:auto; background:rgba(251,146,60,0.15); color:#fb923c; border:1px solid rgba(251,146,60,0.3); padding:1px 8px; border-radius:5px; font-size:0.7rem;">${xrefTotal} PR${xrefTotal > 1 ? 's' : ''}</span>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:0.72rem;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+              <th style="padding:3px 8px; color:#64748b; font-weight:600; text-align:left;">PR No.</th>
+              <th style="padding:3px 8px; color:#64748b; font-weight:600; text-align:left;">Stage</th>
+              <th style="padding:3px 8px; color:#64748b; font-weight:600; text-align:right;">PR Qty</th>
+              <th style="padding:3px 8px; color:#64748b; font-weight:600; text-align:right;">Overdue</th>
+              <th style="padding:3px 8px; color:#64748b; font-weight:600; text-align:left;">Buyer</th>
+            </tr>
+          </thead>
+          <tbody>${rows}${moreRow}</tbody>
+        </table>
+      </div>`;
+    })()}
   `;
 
   document.getElementById("itemIntelModal").style.display = "flex";
