@@ -9129,6 +9129,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
 
   // Pre-calculate summary statistics
   const totPoQty = tasks.reduce((sum, t) => sum + (Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0))), 0);
+  const totInsQty = tasks.reduce((sum, t) => sum + Number(t.total_ins_qty || 0), 0);
+  const totInsPending = tasks.reduce((sum, t) => sum + Number(t.total_ins_pending || 0), 0);
+  const totRejQty = tasks.reduce((sum, t) => sum + Number(t.total_rej_qty || 0), 0);
   const totSrvQty = tasks.reduce((sum, t) => sum + Number(t.total_srv_qty || 0), 0);
   const totBalQty = tasks.reduce((sum, t) => sum + Number(t.total_bal_qty || 0), 0);
   const pctTot = totPoQty > 0 ? ((totSrvQty / totPoQty) * 100).toFixed(1) : '0.0';
@@ -9147,8 +9150,8 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         // ══════════════════════════════════════════════════════════════════
         const ws1 = wb.addWorksheet('Delivery Action Matrix', { views: [{ state: 'frozen', ySplit: 3, showGridLines: true }] });
         
-        // Title Banner Row (A1:S1)
-        ws1.mergeCells('A1:S1');
+        // Title Banner Row (A1:V1)
+        ws1.mergeCells('A1:V1');
         const titleCell = ws1.getCell('A1');
         titleCell.value = `SUEZ STEEL CO. — ${displayScopeTitle.toUpperCase()} (${stageTitleText.toUpperCase()}${deliveryTitleSuffix}${tierTitleSuffix})`;
         titleCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
@@ -9156,19 +9159,19 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
         ws1.getRow(1).height = 30;
 
-        // Summary Sub-Banner Row (A2:S2)
-        ws1.mergeCells('A2:S2');
+        // Summary Sub-Banner Row (A2:V2)
+        ws1.mergeCells('A2:V2');
         const subCell = ws1.getCell('A2');
-        subCell.value = `Exported Scope: ${tasks.length} Orders | Total Order Qty: ${totPoQty.toLocaleString()} Units | Received SRVs: ${totSrvQty.toLocaleString()} Units (${pctTot}%) | Pending Balance: ${totBalQty.toLocaleString()} Units | Generated: ${new Date().toLocaleDateString()}`;
+        subCell.value = `Exported Scope: ${tasks.length} Orders | PO Qty: ${totPoQty.toLocaleString()} | Inspected: ${totInsQty.toLocaleString()} | In QC: ${totInsPending.toLocaleString()} | Rejected: ${totRejQty.toLocaleString()} | Accepted: ${totSrvQty.toLocaleString()} (${pctTot}%) | Remaining Balance: ${totBalQty.toLocaleString()} | Generated: ${new Date().toLocaleDateString()}`;
         subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF38BDF8' } };
         subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
         subCell.alignment = { vertical: 'middle', horizontal: 'center' };
         ws1.getRow(2).height = 22;
 
-        // Table Headers (Row 3)
+        // Table Headers (Row 3 - 22 columns)
         const headers = [
           '#', 'PO No.', 'PR No.', 'Plant / Project', 'Buyer Name', 'Supplier Name',
-          'Delivery Situation', 'Total Order Qty', 'Received SRV Qty', 'Pending Balance Qty', 'Fulfillment %',
+          'Delivery Situation', 'PO Qty', 'Inspected Qty', 'Under Inspection', 'Rejected Qty', 'Accepted Qty', 'Remaining Balance', 'Fulfillment %',
           'PO Issue Date', 'Promised Delivery', 'Overdue / Remaining (d)', 'SLA Severity',
           'Origin', 'Planner (Entered By)', 'Requestor (Requested By)', 'Primary Delay Bottleneck / Notes'
         ];
@@ -9190,6 +9193,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         // Data Rows
         tasks.forEach((t, idx) => {
           const poQtyVal = Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0));
+          const insQtyVal = Number(t.total_ins_qty || 0);
+          const insPendingVal = Number(t.total_ins_pending || 0);
+          const rejQtyVal = Number(t.total_rej_qty || 0);
           const srvQtyVal = Number(t.total_srv_qty || 0);
           const balQtyVal = Number(t.total_bal_qty || 0);
           const pctVal = poQtyVal > 0 ? (srvQtyVal / poQtyVal) : 0;
@@ -9215,6 +9221,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
             t.supplier || t.remarks || '—',
             situationStr,
             poQtyVal,
+            insQtyVal,
+            insPendingVal,
+            rejQtyVal,
             srvQtyVal,
             balQtyVal,
             pctVal,
@@ -9254,13 +9263,27 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
             }
 
             // Number formatting
-            if (colNum === 8 || colNum === 9 || colNum === 10) {
+            if ([8, 9, 10, 11, 12, 13].includes(colNum)) {
               cell.numFmt = '#,##0.0';
               cell.alignment = { vertical: 'middle', horizontal: 'right' };
-            } else if (colNum === 11) {
+              if (colNum === 10 && insPendingVal > 0) {
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFB45309' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+              }
+              if (colNum === 11 && rejQtyVal > 0) {
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFDC2626' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+              }
+              if (colNum === 12 && srvQtyVal > 0) {
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF047857' } };
+              }
+              if (colNum === 13 && balQtyVal > 0) {
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFBE123C' } };
+              }
+            } else if (colNum === 14) {
               cell.numFmt = '0.0%';
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            } else if ([1, 2, 3, 4, 12, 13, 14, 15, 16].includes(colNum)) {
+            } else if ([1, 2, 3, 4, 15, 16, 17, 18, 19].includes(colNum)) {
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
             } else {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
@@ -9271,9 +9294,10 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         // Column widths
         ws1.columns = [
           { width: 6 },  { width: 16 }, { width: 14 }, { width: 18 }, { width: 22 }, 
-          { width: 35 }, { width: 22 }, { width: 16 }, { width: 16 }, { width: 16 }, 
-          { width: 14 }, { width: 14 }, { width: 16 }, { width: 15 }, { width: 18 }, 
-          { width: 14 }, { width: 24 }, { width: 24 }, { width: 40 }
+          { width: 35 }, { width: 22 }, { width: 15 }, { width: 15 }, { width: 16 }, 
+          { width: 15 }, { width: 15 }, { width: 16 }, { width: 14 }, { width: 14 }, 
+          { width: 16 }, { width: 15 }, { width: 18 }, { width: 14 }, { width: 24 }, 
+          { width: 24 }, { width: 40 }
         ];
 
       } else {
@@ -9364,7 +9388,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
       // SHEET 2: Line Items Breakdown & Fulfillment Audit
       // ══════════════════════════════════════════════════════════════════
       const ws2 = wb.addWorksheet('Line Items Breakdown', { views: [{ state: 'frozen', ySplit: 3, showGridLines: true }] });
-      ws2.mergeCells('A1:T1');
+      ws2.mergeCells('A1:W1');
       const ws2Title = ws2.getCell('A1');
       ws2Title.value = `SUEZ STEEL CO. — DETAILED LINE ITEMS AUDIT & INVENTORY FULFILLMENT (${stageTitleText.toUpperCase()})`;
       ws2Title.font = { name: 'Calibri', size: 12, bold: true, color: { argb: 'FFFFFFFF' } };
@@ -9373,9 +9397,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
       ws2.getRow(1).height = 28;
 
       // Sub-banner
-      ws2.mergeCells('A2:T2');
+      ws2.mergeCells('A2:W2');
       const ws2Sub = ws2.getCell('A2');
-      ws2Sub.value = `Item-Level Breakdown | Requisitions & Purchase Orders Audited | Exported: ${dateStr}`;
+      ws2Sub.value = `Item-Level Breakdown | End-to-End Delivery & Quality Inspection Audit | Exported: ${dateStr}`;
       ws2Sub.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: 'FF38BDF8' } };
       ws2Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
       ws2Sub.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -9383,7 +9407,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
 
       const ws2Headers = [
         '#', 'PO No.', 'PR No.', 'Line #', 'Plant / Cost Center', 'Buyer Name',
-        'Item Code', 'Technical Description', 'Unit', 'PR Qty', 'PO Qty', 'Received SRV Qty', 'Pending Balance', 'Fulfillment %',
+        'Item Code', 'Technical Description', 'Unit', 'Req Qty', 'PO Qty', 'Inspected Qty', 'Under Inspection', 'Rejected Qty', 'Accepted Qty', 'Remaining Balance', 'Fulfillment %',
         'Warehouse Stock', 'Zero-Stock Alert', 'Supplier Name', 'Promised Delivery', 'Planner (Entered By)', 'Requestor (Requested By)'
       ];
       const ws2HRow = ws2.addRow(ws2Headers);
@@ -9403,13 +9427,17 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         const linesList = (t.lines && t.lines.length) ? t.lines : [{
           line_no: 1, item_code: '—', item_desc: t.remarks || '—', unit: 'EA',
           pr_qty: t.total_pr_qty || 0, po_qty: t.total_po_qty || 0,
-          srv_qty: t.total_srv_qty || 0, bal_qty: t.total_bal_qty || 0,
+          ins_qty: t.total_ins_qty || 0, pending_ins_qty: t.total_ins_pending || 0,
+          rej_qty: t.total_rej_qty || 0, srv_qty: t.total_srv_qty || 0, bal_qty: t.total_bal_qty || 0,
           stock: t.stock, is_zero_stock: t.is_zero_stock
         }];
 
         linesList.forEach(l => {
           const lPrQ = Number(l.pr_qty || 0);
           const lPoQ = Number(l.po_qty || 0);
+          const lInsQ = Number(l.ins_qty || 0);
+          const lPendingInsQ = Number(l.pending_ins_qty || 0);
+          const lRejQ = Number(l.rej_qty || 0);
           const lSrvQ = Number(l.srv_qty || 0);
           const lBalQ = Number(l.bal_qty || 0);
           const lBaseQ = lPoQ > 0 ? lPoQ : lPrQ;
@@ -9429,6 +9457,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
             l.unit || 'EA',
             lPrQ,
             lPoQ,
+            lInsQ,
+            lPendingInsQ,
+            lRejQ,
             lSrvQ,
             lBalQ,
             lPct,
@@ -9445,22 +9476,36 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
             cell.font = { name: 'Calibri', size: 9 };
             cell.border = { top: { style: 'thin', color: { argb: 'FFE2E8F0' } }, bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } } };
             
-            // Format numbers
-            if ([10, 11, 12, 13].includes(cIdx)) {
+            // Format numbers (10: Req, 11: PO, 12: Inspected, 13: Under Insp, 14: Rej, 15: Accepted, 16: Remaining)
+            if ([10, 11, 12, 13, 14, 15, 16].includes(cIdx)) {
               cell.numFmt = '#,##0.0';
               cell.alignment = { vertical: 'middle', horizontal: 'right' };
-            } else if (cIdx === 14) {
+              if (cIdx === 13 && lPendingInsQ > 0) {
+                cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FFB45309' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
+              }
+              if (cIdx === 14 && lRejQ > 0) {
+                cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FFDC2626' } };
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
+              }
+              if (cIdx === 15 && lSrvQ > 0) {
+                cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FF047857' } };
+              }
+              if (cIdx === 16 && lBalQ > 0) {
+                cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FFBE123C' } };
+              }
+            } else if (cIdx === 17) {
               cell.numFmt = '0.0%';
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            } else if (cIdx === 15) {
+            } else if (cIdx === 18) {
               cell.alignment = { vertical: 'middle', horizontal: 'right' };
-            } else if (cIdx === 16) {
+            } else if (cIdx === 19) {
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
               if (isZeroStock) {
                 cell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FFDC2626' } };
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
               }
-            } else if ([1, 2, 3, 4, 5, 7, 9, 18].includes(cIdx)) {
+            } else if ([1, 2, 3, 4, 5, 7, 9, 21].includes(cIdx)) {
               cell.alignment = { vertical: 'middle', horizontal: 'center' };
             } else {
               cell.alignment = { vertical: 'middle', horizontal: 'left' };
@@ -9472,8 +9517,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
       ws2.columns = [
         { width: 6 },  { width: 16 }, { width: 14 }, { width: 8 },  { width: 18 }, 
         { width: 22 }, { width: 16 }, { width: 45 }, { width: 8 },  { width: 14 }, 
-        { width: 14 }, { width: 16 }, { width: 16 }, { width: 14 }, { width: 16 }, 
-        { width: 16 }, { width: 30 }, { width: 16 }, { width: 22 }, { width: 22 }
+        { width: 14 }, { width: 15 }, { width: 16 }, { width: 15 }, { width: 15 }, 
+        { width: 16 }, { width: 14 }, { width: 16 }, { width: 16 }, { width: 30 }, 
+        { width: 16 }, { width: 22 }, { width: 22 }
       ];
 
       // Download buffer
@@ -9497,6 +9543,9 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
     const exportData = [];
     tasks.forEach(t => {
       const poQtyVal = Number(t.total_po_qty) || (Number(t.total_srv_qty || 0) + Number(t.total_bal_qty || 0));
+      const insQtyVal = Number(t.total_ins_qty || 0);
+      const insPendingVal = Number(t.total_ins_pending || 0);
+      const rejQtyVal = Number(t.total_rej_qty || 0);
       const srvQtyVal = Number(t.total_srv_qty || 0);
       const balQtyVal = Number(t.total_bal_qty || 0);
       const pctVal = poQtyVal > 0 ? ((srvQtyVal / poQtyVal) * 100).toFixed(1) + '%' : '0.0%';
@@ -9509,9 +9558,12 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           "Buyer": t.buyer,
           "Supplier Name": t.supplier || t.remarks || '—',
           "Delivery Situation": t.is_partial ? 'Partially Delivered' : 'Undelivered (0% Received)',
-          "Total Order Qty": poQtyVal,
-          "Received SRV Qty": srvQtyVal,
-          "Pending Balance Qty": balQtyVal,
+          "PO Qty": poQtyVal,
+          "Inspected Qty": insQtyVal,
+          "Under Inspection": insPendingVal,
+          "Rejected Qty": rejQtyVal,
+          "Accepted Qty": srvQtyVal,
+          "Remaining Balance": balQtyVal,
           "Fulfillment %": pctVal,
           "PO Date": t.po_date,
           "Promised Delivery": t.promised_date,
