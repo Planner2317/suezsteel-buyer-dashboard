@@ -7953,11 +7953,11 @@ function openItemIntelligence(itemCode) {
   const maxC = Math.max(cY1, cY2, cY3, avgConsAnnual, 1);
 
   // ── DYNAMIC YoY DELTAS & PILLAR VISUALS ──
-  const pillarMaxH = 100;
+  const pillarMaxH = 82;
   const hPillarY3 = Math.max(6, Math.round((cY3 / maxC) * pillarMaxH));
   const hPillarY2 = Math.max(6, Math.round((cY2 / maxC) * pillarMaxH));
   const hPillarY1 = Math.max(6, Math.round((cY1 / maxC) * pillarMaxH));
-  const avgLineBottomPx = Math.min(125, Math.max(10, Math.round((avgConsAnnual / maxC) * pillarMaxH)));
+  const avgLineBottomPx = Math.min(105, Math.max(10, Math.round((avgConsAnnual / maxC) * pillarMaxH)));
 
   // Year 1 (2023-2024) Baseline
   const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Baseline</span>';
@@ -8123,13 +8123,11 @@ function openItemIntelligence(itemCode) {
             <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Annual Plant Consumption
           </span>
           <span style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;">Chronological SIV</span>
+          ${avgConsAnnual > 0 ? `
+          <span style="background:rgba(192,132,252,0.12); color:#c084fc; border:1px solid rgba(192,132,252,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">
+            <i class="fa-solid fa-chart-line" style="margin-right:4px;"></i>3-Yr Avg: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr
+          </span>` : ''}
         </div>
-
-        ${avgConsAnnual > 0 ? `
-        <div style="display:inline-flex; align-items:center; gap:8px; font-size:0.75rem; background:rgba(192,132,252,0.1); border:1px solid rgba(192,132,252,0.25); padding:3px 10px; border-radius:6px;">
-          <span style="width:14px; border-top:2px dashed #c084fc; display:inline-block;"></span>
-          <strong style="color:#c084fc;">3-Year Average: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr</strong>
-        </div>` : ''}
       </div>
 
       <!-- Glassmorphic Neon Pillars Chart -->
