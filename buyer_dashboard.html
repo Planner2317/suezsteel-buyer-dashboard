@@ -7881,8 +7881,8 @@ function openItemIntelligence(itemCode) {
   const maxStock = intel.max_stock !== undefined ? intel.max_stock : 0;
   const rop = intel.rop !== undefined ? intel.rop : 0;
 
-  const maxVal = Math.max(cY1, cY2, cY3, pY1, pY2, pY3, 1);
-  const chartHeightPx = 120;
+  const maxVal = Math.max(cY1, cY2, cY3, 1);
+  const chartHeightPx = 135;
 
   function calcH(v) {
     if (v <= 0) return 4;
@@ -7890,11 +7890,21 @@ function openItemIntelligence(itemCode) {
   }
 
   const hConsY3 = calcH(cY3);
-  const hPurY3 = calcH(pY3);
   const hConsY2 = calcH(cY2);
-  const hPurY2 = calcH(pY2);
   const hConsY1 = calcH(cY1);
-  const hPurY1 = calcH(pY1);
+
+  const avgConsAnnual = Math.round((cY1 + cY2 + cY3) / 3.0);
+  let avgLineHtml = '';
+  if (avgConsAnnual > 0 && maxVal > 0) {
+    const avgLineBottom = Math.min(130, Math.max(12, Math.round((avgConsAnnual / maxVal) * 135)));
+    avgLineHtml = `
+      <div style="position:absolute; left:0; right:0; bottom:${avgLineBottom + 34}px; border-top:1.5px dashed rgba(192,132,252,0.85); pointer-events:none; z-index:5;">
+        <span style="position:absolute; right:12px; top:-12px; font-size:0.68rem; font-weight:800; color:#c084fc; background:rgba(15,23,42,0.95); padding:1px 8px; border-radius:4px; border:1px solid rgba(192,132,252,0.4);">
+          <i class="fa-solid fa-chart-line" style="margin-right:3px;"></i> 3-Year Average: ${avgConsAnnual.toLocaleString()} ${uom}/yr
+        </span>
+      </div>
+    `;
+  }
 
   let runwayText = '—';
   let runwayColor = '#6ee7b7';
@@ -8000,70 +8010,68 @@ function openItemIntelligence(itemCode) {
       </div>
     </div>
 
-    <!-- 3-Year Movement Trajectory Bar Chart -->
-    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.2rem;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:8px;">
-        <span style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-chart-column" style="color:#a78bfa;"></i> 3-Year Movement Trajectory (Net Issues vs. Purchases)
+    <!-- 3-Year Annual Plant Consumption Chart -->
+    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:8px;">
+        <span style="font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Annual Plant Consumption
         </span>
-        <div style="display:flex; align-items:center; gap:12px; font-size:0.7rem;">
-          <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:2px; background:linear-gradient(180deg,#38bdf8,#0284c7);"></span> Net Issues (Dispensed)</span>
-          <span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:2px; background:linear-gradient(180deg,#34d399,#059669);"></span> Purchases (Receipts)</span>
+        <div style="display:flex; align-items:center; gap:16px; font-size:0.75rem;">
+          <span style="display:inline-flex; align-items:center; gap:6px;">
+            <span style="width:12px; height:12px; border-radius:3px; background:linear-gradient(180deg,#38bdf8,#0284c7);"></span>
+            <strong style="color:#e2e8f0;">Annual Consumption (Net Issues / SIV)</strong>
+          </span>
+          <span style="display:inline-flex; align-items:center; gap:6px;">
+            <span style="width:14px; border-top:2px dashed #c084fc; display:inline-block;"></span>
+            <strong style="color:#c084fc;">3-Year Average Line</strong>
+          </span>
         </div>
       </div>
 
-      <div style="display:flex; justify-content:space-around; align-items:flex-end; gap:16px; padding:0 10px;">
-        <!-- Year 3 (Sep 2023 - Aug 2024) -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
-          <div style="display:flex; align-items:flex-end; justify-content:center; gap:8px; height:130px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#38bdf8; margin-bottom:3px;">${cY3.toLocaleString()}</span>
-              <div style="width:26px; height:${hConsY3}px; background:${cY3 > 0 ? 'linear-gradient(180deg,#38bdf8 0%,#0284c7 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 3 Consumption: ${cY3} ${uom}"></div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#34d399; margin-bottom:3px;">${pY3.toLocaleString()}</span>
-              <div style="width:26px; height:${hPurY3}px; background:${pY3 > 0 ? 'linear-gradient(180deg,#34d399 0%,#059669 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 3 Purchases: ${pY3} ${uom}"></div>
-            </div>
-          </div>
-          <div style="text-align:center;">
-            <div style="font-size:0.75rem; font-weight:700; color:#94a3b8;">Year 3</div>
-            <div style="font-size:0.62rem; color:#64748b;">Sep 23 – Aug 24 (Baseline)</div>
-          </div>
-        </div>
+      <div style="position:relative;">
+        ${avgLineHtml}
 
-        <!-- Year 2 (Sep 2024 - Aug 2025) -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
-          <div style="display:flex; align-items:flex-end; justify-content:center; gap:8px; height:130px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#38bdf8; margin-bottom:3px;">${cY2.toLocaleString()}</span>
-              <div style="width:26px; height:${hConsY2}px; background:${cY2 > 0 ? 'linear-gradient(180deg,#38bdf8 0%,#0284c7 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 2 Consumption: ${cY2} ${uom}"></div>
+        <div style="display:flex; justify-content:space-around; align-items:flex-end; gap:20px; padding:0 20px;">
+          <!-- Year 1: 2023 - 2024 -->
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
+            <div style="display:flex; align-items:flex-end; justify-content:center; height:145px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <span style="font-size:0.82rem; font-weight:800; color:#ffffff; margin-bottom:5px;">${cY3.toLocaleString()}</span>
+                <div style="width:48px; height:${hConsY3}px; background:${cY3 > 0 ? 'linear-gradient(180deg,#38bdf8 0%,#0284c7 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:6px 6px 0 0; box-shadow:0 4px 14px rgba(56,189,248,0.25);" title="Period 2023 - 2024: ${cY3.toLocaleString()} ${uom} consumed"></div>
+              </div>
             </div>
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#34d399; margin-bottom:3px;">${pY2.toLocaleString()}</span>
-              <div style="width:26px; height:${hPurY2}px; background:${pY2 > 0 ? 'linear-gradient(180deg,#34d399 0%,#059669 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 2 Purchases: ${pY2} ${uom}"></div>
+            <div style="text-align:center;">
+              <div style="font-size:0.82rem; font-weight:800; color:#ffffff;">2023 – 2024</div>
+              <div style="font-size:0.65rem; color:#94a3b8;">Sep 2023 – Aug 2024</div>
             </div>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:0.75rem; font-weight:700; color:#94a3b8;">Year 2</div>
-            <div style="font-size:0.62rem; color:#64748b;">Sep 24 – Aug 25 (Mid-Term)</div>
-          </div>
-        </div>
 
-        <!-- Year 1 (Sep 2025 - Sep 2026) -->
-        <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
-          <div style="display:flex; align-items:flex-end; justify-content:center; gap:8px; height:130px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#38bdf8; margin-bottom:3px;">${cY1.toLocaleString()}</span>
-              <div style="width:26px; height:${hConsY1}px; background:${cY1 > 0 ? 'linear-gradient(180deg,#38bdf8 0%,#0284c7 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 1 Consumption: ${cY1} ${uom}"></div>
+          <!-- Year 2: 2024 - 2025 -->
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
+            <div style="display:flex; align-items:flex-end; justify-content:center; height:145px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <span style="font-size:0.82rem; font-weight:800; color:#ffffff; margin-bottom:5px;">${cY2.toLocaleString()}</span>
+                <div style="width:48px; height:${hConsY2}px; background:${cY2 > 0 ? 'linear-gradient(180deg,#38bdf8 0%,#0284c7 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:6px 6px 0 0; box-shadow:0 4px 14px rgba(56,189,248,0.25);" title="Period 2024 - 2025: ${cY2.toLocaleString()} ${uom} consumed"></div>
+              </div>
             </div>
-            <div style="display:flex; flex-direction:column; align-items:center;">
-              <span style="font-size:0.7rem; font-weight:800; color:#34d399; margin-bottom:3px;">${pY1.toLocaleString()}</span>
-              <div style="width:26px; height:${hPurY1}px; background:${pY1 > 0 ? 'linear-gradient(180deg,#34d399 0%,#059669 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:4px 4px 0 0;" title="Year 1 Purchases: ${pY1} ${uom}"></div>
+            <div style="text-align:center;">
+              <div style="font-size:0.82rem; font-weight:800; color:#ffffff;">2024 – 2025</div>
+              <div style="font-size:0.65rem; color:#94a3b8;">Sep 2024 – Aug 2025</div>
             </div>
           </div>
-          <div style="text-align:center;">
-            <div style="font-size:0.75rem; font-weight:800; color:#38bdf8;">Year 1 (Recent)</div>
-            <div style="font-size:0.62rem; color:#7dd3fc;">Sep 25 – Sep 26 (Weight 50%)</div>
+
+          <!-- Year 3: 2025 - 2026 -->
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;">
+            <div style="display:flex; align-items:flex-end; justify-content:center; height:145px; width:100%; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:4px;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <span style="font-size:0.82rem; font-weight:800; color:#38bdf8; margin-bottom:5px;">${cY1.toLocaleString()}</span>
+                <div style="width:48px; height:${hConsY1}px; background:${cY1 > 0 ? 'linear-gradient(180deg,#60a5fa 0%,#2563eb 100%)' : 'rgba(255,255,255,0.1)'}; border-radius:6px 6px 0 0; box-shadow:0 4px 14px rgba(56,189,248,0.25);" title="Period 2025 - 2026: ${cY1.toLocaleString()} ${uom} consumed (Current / Last 12M)"></div>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:0.82rem; font-weight:800; color:#38bdf8;">2025 – 2026</div>
+              <div style="font-size:0.65rem; color:#7dd3fc; font-weight:700;">Last 12 Months (Current)</div>
+            </div>
           </div>
         </div>
       </div>
