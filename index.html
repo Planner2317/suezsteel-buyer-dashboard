@@ -2886,12 +2886,12 @@
           <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle">
             <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
             <span>Zero-Stock</span>
-            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">531 Lines (85.6%)</span>
+            <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">1,062 Lines (85.6%)</span>
           </button>
           <span class="hdr-info-icon" tabindex="0">ⓘ
             <span class="hdr-info-tooltip">
               <strong>⚠ Zero-Stock counts LINE ITEMS</strong><br>
-              531 individual item rows (across all PRs)<br>
+              1,062 individual item rows (across all PRs)<br>
               currently have 0 qty in warehouse.<br>
               <span style="opacity:0.7;font-size:0.75em;">This is different from the Priority count which counts whole PRs.</span>
             </span>
@@ -2907,9 +2907,9 @@
             </label>
             <select id="prioritySelector" class="header-priority-dropdown" onchange="onPriorityDropdownChange(this.value)">
               <option value="ALL">All Priorities</option>
-              <option value="P1" id="p1Opt">🔴 P1 Critical (72)</option>
-              <option value="P2" id="p2Opt">🟠 P2 Active (49)</option>
-              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (30)</option>
+              <option value="P1" id="p1Opt">🔴 P1 Critical (144)</option>
+              <option value="P2" id="p2Opt">🟠 P2 Active (98)</option>
+              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (60)</option>
             </select>
           </div>
           <span class="hdr-info-icon" tabindex="0">ⓘ
@@ -3437,7 +3437,7 @@
                 🟣 Sourcing / RFQ (No Offers)
               </div>
               <div id="st2-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="323 out of 378 item lines in this stage (85.4%) currently have 0 stock across 68 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 323 Zero-Stock Lines (85.4% &bull; 68 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="646 out of 755 item lines in this stage (85.6%) currently have 0 stock across 68 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 646 Zero-Stock Lines (85.6% &bull; 68 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3472,7 +3472,7 @@
                 🟡 Offers Under Plant Evaluation
               </div>
               <div id="st3-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="7 out of 7 item lines in this stage (100.0%) currently have 0 stock across 3 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 7 Zero-Stock Lines (100.0% &bull; 3 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="14 out of 14 item lines in this stage (100.0%) currently have 0 stock across 3 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 14 Zero-Stock Lines (100.0% &bull; 3 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3542,7 +3542,7 @@
                 🔵 PO not Confirmed
               </div>
               <div id="st4-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="90 out of 91 item lines in this stage (98.9%) currently have 0 stock across 5 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 90 Zero-Stock Lines (98.9% &bull; 5 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="180 out of 182 item lines in this stage (98.9%) currently have 0 stock across 5 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 180 Zero-Stock Lines (98.9% &bull; 5 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3621,7 +3621,7 @@
                 🟢 On-Track Delivery
               </div>
               <div id="st6-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="5 out of 7 item lines in this stage (71.4%) currently have 0 stock across 2 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 5 Zero-Stock Lines (71.4% &bull; 2 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="10 out of 14 item lines in this stage (71.4%) currently have 0 stock across 2 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 10 Zero-Stock Lines (71.4% &bull; 2 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
