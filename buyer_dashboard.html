@@ -2657,11 +2657,11 @@
       display: flex;
       justify-content: space-around;
       align-items: flex-end;
-      height: 135px;
-      padding: 8px 20px 0;
+      height: 142px;
+      padding: 24px 20px 0;
       position: relative;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
     }
     .pillar-col {
       display: flex;
@@ -2699,31 +2699,31 @@
     }
     .pillar-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.92rem;
+      font-size: 0.82rem;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
       position: relative;
       z-index: 3;
-      background: rgba(11, 19, 43, 0.8);
-      padding: 1px 7px;
+      background: rgba(11, 19, 43, 0.85);
+      padding: 1px 6px;
       border-radius: 4px;
       display: inline-block;
     }
     .pillar-footer {
-      margin-top: 10px;
+      margin-top: 6px;
       text-align: center;
     }
     .pillar-yr {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 800;
       color: #ffffff;
     }
     .pillar-date {
-      font-size: 0.68rem;
+      font-size: 0.64rem;
       color: #94a3b8;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
   </style>
@@ -7974,11 +7974,11 @@ function openItemIntelligence(itemCode) {
   const maxC = Math.max(cY1, cY2, cY3, benchmarkVal, 1);
 
   // ── DYNAMIC YoY DELTAS & PILLAR VISUALS ──
-  const pillarMaxH = 68;
+  const pillarMaxH = 46;
   const hPillarY3 = Math.max(6, Math.round((cY3 / maxC) * pillarMaxH));
   const hPillarY2 = Math.max(6, Math.round((cY2 / maxC) * pillarMaxH));
   const hPillarY1 = Math.max(6, Math.round((cY1 / maxC) * pillarMaxH));
-  const wmaLineBottomPx = Math.min(85, Math.max(8, Math.round((benchmarkVal / maxC) * pillarMaxH)));
+  const wmaLineBottomPx = Math.min(55, Math.max(6, Math.round((benchmarkVal / maxC) * pillarMaxH)));
 
   // Year 1 (2023-2024) Baseline
   const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Baseline</span>';
@@ -8144,7 +8144,7 @@ function openItemIntelligence(itemCode) {
       <div class="pillar-chart">
         <!-- Average Benchmark Reference Line (Runs behind pillars, no overlapping badge) -->
         ${benchmarkVal > 0 ? `
-        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 38}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
+        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 44}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
         ` : ''}
 
         <!-- Pillar 1: 2023 - 2024 -->
