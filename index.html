@@ -2699,11 +2699,17 @@
     }
     .pillar-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 8px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      position: relative;
+      z-index: 3;
+      background: rgba(11, 19, 43, 0.8);
+      padding: 1px 7px;
+      border-radius: 4px;
+      display: inline-block;
     }
     .pillar-footer {
       margin-top: 10px;
@@ -8106,7 +8112,6 @@ function openItemIntelligence(itemCode) {
           <span style="font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:800; color:#38bdf8;">${escapeHtml(itemCode)}</span>
           <span style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">WH: ${escapeHtml(wh)}</span>
           ${uom ? `<span style="background:rgba(234,179,8,0.15); color:#fde047; border:1px solid rgba(234,179,8,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">${escapeHtml(uom)}</span>` : ''}
-          <span style="background:rgba(168,85,247,0.15); color:#c084fc; border:1px solid rgba(168,85,247,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">WMA: ${wma.toFixed(1)}/yr</span>
         </div>
         <div style="font-size:0.8rem; color:#cbd5e1; font-weight:500; line-height:1.4;">${escapeHtml(desc)}</div>
       </div>
@@ -8133,20 +8138,17 @@ function openItemIntelligence(itemCode) {
           <span style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;">Chronological SIV</span>
           ${avgConsAnnual > 0 ? `
           <span style="background:rgba(192,132,252,0.12); color:#c084fc; border:1px solid rgba(192,132,252,0.3); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;">
-            <i class="fa-solid fa-chart-line" style="margin-right:4px;"></i>3-Yr Avg: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr
+            <i class="fa-solid fa-chart-line" style="margin-right:4px;"></i>3-Year Average: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr
           </span>` : ''}
         </div>
       </div>
 
       <!-- Glassmorphic Neon Pillars Chart -->
       <div class="pillar-chart">
-        <!-- Average Benchmark Line -->
+        <!-- Average Benchmark Reference Line (Runs behind pillars, no overlapping badge) -->
         ${avgConsAnnual > 0 ? `
-        <div style="position:absolute; left:0; right:0; bottom:${avgLineBottomPx + 42}px; border-top:1.5px dashed rgba(192,132,252,0.85); pointer-events:none; z-index:5;">
-          <span style="position:absolute; right:10px; top:-12px; font-size:0.65rem; font-weight:800; color:#c084fc; background:rgba(15,23,42,0.95); padding:1px 7px; border-radius:4px; border:1px solid rgba(192,132,252,0.4);">
-            <i class="fa-solid fa-chart-line"></i> 3-Year Average: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)} / yr
-          </span>
-        </div>` : ''}
+        <div style="position:absolute; left:0; right:0; bottom:${avgLineBottomPx + 42}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="3-Year Average Benchmark: ${avgConsAnnual.toLocaleString()} ${escapeHtml(uom)}/yr"></div>
+        ` : ''}
 
         <!-- Pillar 1: 2023 - 2024 -->
         <div class="pillar-col">
