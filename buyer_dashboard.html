@@ -7917,7 +7917,15 @@ function openItemIntelligence(itemCode) {
   const desc = intel.desc || intel.item_desc || lineDesc || '—';
   const uom = intel.unit || intel.uom || '';
   const wh = intel.warehouse || intel.wh_code || '—';
-  const cc = intel.owner || intel.project || intel.cost_center || '—';
+  const mainPlant = intel.main_plants || intel.main_plant || '';
+  let plantDisplay = mainPlant;
+  if (!plantDisplay) {
+    let rawOwner = intel.owner || intel.project || intel.cost_center || '';
+    if (rawOwner && rawOwner !== '—') {
+      plantDisplay = rawOwner.replace(/^\s*\((?:Create PR|SIV|SRV|RIS)\)\s*/i, '').trim();
+    }
+  }
+  if (!plantDisplay) plantDisplay = '—';
   const stkTot = (intel.stock !== undefined && intel.stock !== null) ? Number(intel.stock) : ((intel.stock_total !== undefined && intel.stock_total !== null) ? Number(intel.stock_total) : 0);
   const stkNew = (intel.stock_new !== undefined && intel.stock_new !== null) ? Number(intel.stock_new) : 0;
   const stkUsed = (intel.stock_used !== undefined && intel.stock_used !== null) ? Number(intel.stock_used) : 0;
@@ -8086,9 +8094,9 @@ function openItemIntelligence(itemCode) {
     }
   }
 
-  const ccShort = cc && cc.length > 55 ? cc.substring(0, 52) + '...' : cc;
+  const plantShort = plantDisplay && plantDisplay.length > 58 ? plantDisplay.substring(0, 55) + '...' : plantDisplay;
   document.getElementById("itemIntelTitle").textContent = `Item Intelligence • ${itemCode}`;
-  document.getElementById("itemIntelSubtitle").textContent = `${wh && wh !== '—' ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${ccShort && ccShort !== '—' ? 'Cost Center / Owner: ' + ccShort : ''}`;
+  document.getElementById("itemIntelSubtitle").textContent = `${wh && wh !== '—' ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${plantShort && plantShort !== '—' ? 'Main Plant: ' + plantShort : ''}`;
 
   document.getElementById("itemIntelContent").innerHTML = `
     <!-- Top Header Overview -->
