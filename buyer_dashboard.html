@@ -3275,10 +3275,10 @@
 
         <!-- Floating Under Technical Inspection Quick-Card on Bottom-Right below Circle Stage -->
         <div style="position:absolute; bottom:10px; right:12px; z-index:20;">
-          <div id="inspectionQuickCard" class="inspection-quick-card" onclick="openDelayModal('Under Technical Inspection')" title="Click to inspect goods under technical inspection at warehouse gate" style="margin:0;">
+          <div id="inspectionQuickCard" class="inspection-quick-card" onclick="openDelayModal('Under Technical Inspection')" title="Click to inspect shipments under plant technical inspection" style="margin:0;">
             <span class="inspection-dot"></span>
-            <span><strong style="color:#ffffff;">103 Under Inspection</strong> &bull; Goods at Gate / QC Pending</span>
-            <span class="inspection-btn"><i class="fa-solid fa-bolt"></i> Inspect</span>
+            <span><strong style="color:#ffffff;">103 Under Technical Inspection</strong> &bull; Plant Receiving Bay / Spec Validation</span>
+            <span class="inspection-btn"><i class="fa-solid fa-microscope"></i> Inspect</span>
           </div>
         </div>
 
@@ -6932,13 +6932,13 @@ function renderLifecycleCards() {
     if (inspCount > 0) {
       inspCard.innerHTML = `
         <span class="inspection-dot"></span>
-        <span><strong style="color:#ffffff;">${inspCount} Under Inspection</strong> &bull; Goods at Gate / QC Pending</span>
-        <span class="inspection-btn"><i class="fa-solid fa-bolt"></i> Inspect</span>
+        <span><strong style="color:#ffffff;">${inspCount} Under Technical Inspection</strong> &bull; Plant Receiving Bay / Spec Validation</span>
+        <span class="inspection-btn"><i class="fa-solid fa-microscope"></i> Inspect</span>
       `;
     } else {
       inspCard.innerHTML = `
         <span class="inspection-dot" style="background:#10b981; box-shadow:0 0 7px #10b981;"></span>
-        <span><strong style="color:#ffffff;">0 Under Inspection</strong> &bull; All Received Goods Processed</span>
+        <span><strong style="color:#ffffff;">0 Under Technical Inspection</strong> &bull; All Plant Inspections Accomplished</span>
         <span class="inspection-btn" style="background:rgba(16,185,129,0.2); color:#6ee7b7; border-color:rgba(16,185,129,0.35);"><i class="fa-solid fa-circle-check"></i> Clean</span>
       `;
     }
@@ -7396,12 +7396,38 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       }
     }
 
-    let insHtml = insQ > 0 ? `<strong style="color:#38bdf8;">${insQ.toLocaleString()}</strong>` : '<span style="color:#64748b;">—</span>';
-    if (pendingInsQ > 0) {
-      insHtml += `<br><span style="font-size:0.65rem; color:#fde047; background:rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.35); padding:1px 5px; border-radius:4px; white-space:nowrap; display:inline-block; margin-top:2px;" title="${pendingInsQ.toLocaleString()} units currently under QC inspection at the gate"><i class="fa-solid fa-hourglass-half" style="margin-right:2px;"></i>${pendingInsQ.toLocaleString()} in QC</span>`;
+    let insHtml = '<span style="color:#64748b;">—</span>';
+    if (insQ > 0) {
+      if (srvQ === 0 && rejQ === 0) {
+        // Pure active technical inspection: goods at gate, 0 accepted, 0 rejected yet
+        insHtml = `
+          <strong style="color:#38bdf8; font-size:0.88rem;">${insQ.toLocaleString()}</strong>
+          <div style="margin-top:2px;">
+            <span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.63rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="${insQ.toLocaleString()} units arrived at plant gate — actively undergoing Technical Specification Validation by Plant Engineering"><i class="fa-solid fa-microscope" style="color:#fde047;"></i> In Technical Inspection</span>
+          </div>
+        `;
+      } else if (pendingInsQ > 0) {
+        // Partially accomplished inspection with remainder still undergoing inspection
+        const closedCount = srvQ + rejQ;
+        insHtml = `
+          <strong style="color:#38bdf8; font-size:0.88rem;">${insQ.toLocaleString()}</strong>
+          <div style="margin-top:2px; display:inline-flex; flex-direction:column; gap:2px; align-items:flex-end;">
+            <span style="background:rgba(52,211,153,0.15); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:1px 4px; border-radius:4px; font-weight:700; font-size:0.6rem; white-space:nowrap;" title="${closedCount.toLocaleString()} units inspected & processed (${srvQ.toLocaleString()} accepted + ${rejQ.toLocaleString()} rejected)"><i class="fa-solid fa-check"></i> ${closedCount.toLocaleString()} Accomplished</span>
+            <span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 4px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap;" title="${pendingInsQ.toLocaleString()} units still undergoing Technical Inspection"><i class="fa-solid fa-microscope"></i> ${pendingInsQ.toLocaleString()} In Inspection</span>
+          </div>
+        `;
+      } else {
+        // Technical inspection fully accomplished (all inspected units accounted for in Accepted / Rejected)
+        insHtml = `
+          <strong style="color:#38bdf8; font-size:0.88rem;">${insQ.toLocaleString()}</strong>
+          <div style="margin-top:2px;">
+            <span style="background:rgba(52,211,153,0.15); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:1px 5px; border-radius:4px; font-weight:700; font-size:0.62rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Technical inspection 100% accomplished for delivered units (${srvQ.toLocaleString()} accepted + ${rejQ.toLocaleString()} rejected)"><i class="fa-solid fa-circle-check"></i> Accomplished</span>
+          </div>
+        `;
+      }
     }
 
-    let rejHtml = rejQ > 0 ? `<span style="color:#ef4444; font-weight:800; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); padding:2px 6px; border-radius:5px; white-space:nowrap;" title="${rejQ.toLocaleString()} units failed QC inspection (Vendor Claim / Replacement)"><i class="fa-solid fa-circle-xmark" style="margin-right:2px;"></i>${rejQ.toLocaleString()}</span>` : '<span style="color:#64748b;">—</span>';
+    let rejHtml = rejQ > 0 ? `<span style="color:#ef4444; font-weight:800; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.45); padding:2px 6px; border-radius:5px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="${rejQ.toLocaleString()} units rejected by Plant Technical Inspection — Vendor Claim / Replacement Required"><i class="fa-solid fa-triangle-exclamation"></i> ${rejQ.toLocaleString()}</span>` : '<span style="color:#64748b;">—</span>';
 
     return `
       <tr ${rowClass} style="border-bottom:1px solid rgba(255,255,255,0.06);">
@@ -7533,8 +7559,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       <div style="font-size:0.72rem; color:#94a3b8; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <span>Total Items: <strong style="color:#ffffff;">${(t.lines || []).length}</strong></span> &bull; 
         <span>Remaining Balance: <strong style="color:#fda4af;">${(t.total_bal_qty || 0).toLocaleString()} Units</strong></span>
-        ${(t.total_rej_qty || 0) > 0 ? `&bull; <span style="color:#ef4444; font-weight:700;"><i class="fa-solid fa-circle-xmark"></i> ${Number(t.total_rej_qty).toLocaleString()} Rejected</span>` : ''}
-        ${(t.total_ins_pending || 0) > 0 ? `&bull; <span style="color:#fde047; font-weight:700;"><i class="fa-solid fa-hourglass-half"></i> ${Number(t.total_ins_pending).toLocaleString()} in QC</span>` : ''}
+        ${(t.total_rej_qty || 0) > 0 ? `&bull; <span style="color:#ef4444; font-weight:800; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="Technical Rejections: Vendor claim or replacement notice required"><i class="fa-solid fa-triangle-exclamation"></i> ${Number(t.total_rej_qty).toLocaleString()} Technical Rejection</span>` : ''}
+        ${t.is_under_inspection ? `&bull; <span style="color:#fde047; font-weight:800; background:rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="Arrived at Gate / Undergoing Technical Inspection by Plant Engineering"><i class="fa-solid fa-microscope"></i> ${Number(t.total_ins_pending || t.total_ins_qty).toLocaleString()} In Technical Inspection</span>` : ((t.total_ins_qty || 0) > 0 && !(t.total_ins_pending || 0) ? `&bull; <span style="color:#34d399; font-weight:700; background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check"></i> Technical Inspection Accomplished (${Number(t.total_ins_qty).toLocaleString()} Units)</span>` : '')}
       </div>
     </div>
 
@@ -7587,10 +7613,10 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
               <th style="padding:8px; min-width:220px;">Technical Specification / Description</th>
               <th style="text-align:right; padding:8px;" title="Original PR Requisition Quantity">Req Qty</th>
               <th style="text-align:right; padding:8px;" title="Contractual Purchase Order Quantity">PO Qty</th>
-              <th style="text-align:right; padding:8px; color:#38bdf8;" title="Total Delivered to Gate / Undergoing Inspection">Inspected</th>
-              <th style="text-align:right; padding:8px; color:#f87171;" title="Rejected by QC (Vendor Claim / Replacement)">Rejected</th>
-              <th style="text-align:right; padding:8px; color:#34d399;" title="Passed QC & Accepted into Stock (SRV Created)">Accepted</th>
-              <th style="text-align:right; padding:8px; color:#fda4af;" title="Remaining Outstanding PO Balance">Remaining</th>
+              <th style="text-align:right; padding:8px; color:#38bdf8;" title="Delivered to Plant Gate / Undergoing Technical Inspection">Inspected</th>
+              <th style="text-align:right; padding:8px; color:#f87171;" title="Rejected by Technical Inspection (Vendor Claim / Replacement Required)">Rejected</th>
+              <th style="text-align:right; padding:8px; color:#34d399;" title="Passed Technical Inspection & Accepted into Stock (SRV Created)">Accepted</th>
+              <th style="text-align:right; padding:8px; color:#fda4af;" title="Remaining Outstanding PO Balance Awaiting Delivery">Remaining</th>
               <th style="text-align:center; padding:8px; color:#38bdf8;" title="Current On-Hand Warehouse Physical Stock">Warehouse Stock</th>
               <th style="text-align:center; padding:8px; width:90px;" title="Fulfillment Percentage">Fulfillment</th>
             </tr>
@@ -8384,7 +8410,7 @@ function renderDelayModalView() {
     warningCount = allStageTasks.filter(t => (t.stage_delay || 0) > 30 && (t.stage_delay || 0) <= 90).length;
     criticalCount = allStageTasks.filter(t => (t.stage_delay || 0) > 90).length;
   } else if (stageName === 'Under Technical Inspection') {
-    slaTargetDesc = 'Warehouse Gate QC Hold (Suez Steel Plant Inspection)';
+    slaTargetDesc = 'Plant Technical Spec Validation SLA: ≤7d';
     onTrackCount = allStageTasks.filter(t => (t.stage_delay || 0) <= 7).length;
     warningCount = allStageTasks.filter(t => (t.stage_delay || 0) > 7 && (t.stage_delay || 0) <= 14).length;
     criticalCount = allStageTasks.filter(t => (t.stage_delay || 0) > 14).length;
@@ -8518,7 +8544,7 @@ function renderDelayModalView() {
   let displayStageTitle = stageName;
   if (stageName === "TS Review in Plant") displayStageTitle = "Offers Under Plant Evaluation";
   else if (stageName === "TS Confirmed (Pending PO)") displayStageTitle = "TS Confirmed (Ready for PO)";
-  else if (stageName === "Under Technical Inspection") displayStageTitle = "Under Technical Inspection (Warehouse Gate QC Hold)";
+  else if (stageName === "Under Technical Inspection") displayStageTitle = "Under Technical Inspection (Plant Engineering Spec Validation)";
   const titleEl = document.getElementById("modalTitle");
   titleEl.innerHTML = `<i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Stage Inspection: <span style="color:#ffffff;">${displayStageTitle}</span> (${totalStageCount} Tasks)`;
 
@@ -8712,15 +8738,39 @@ function renderDelayModalView() {
     } else {
       let deliveryBadgeHtml = '';
       if (t.has_po && t.po_no && t.po_no !== '—') {
-        if (t.is_partial) {
-          const srvQ = Number(t.total_srv_qty || 0);
-          const balQ = Number(t.total_bal_qty || 0);
-          const totQ = Number(t.total_po_qty || 0) || (srvQ + balQ);
-          const pct = totQ > 0 ? Math.min(100, Math.round((srvQ / totQ) * 100)) : 0;
-          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Received: ${srvQ.toLocaleString()} units, Pending: ${balQ.toLocaleString()} units (${pct}% delivered)"><i class="fa-solid fa-truck-ramp-box"></i> Partial (${pct}% Recv &bull; ${balQ.toLocaleString()} Bal)</span></div>`;
+        const srvQ = Number(t.total_srv_qty || 0);
+        const balQ = Number(t.total_bal_qty || 0);
+        const insPendingQ = Number(t.total_ins_pending || 0);
+        const rejQ = Number(t.total_rej_qty || 0);
+        const totQ = Number(t.total_po_qty || 0) || (srvQ + balQ);
+        const pct = totQ > 0 ? Math.min(100, Math.round((srvQ / totQ) * 100)) : 0;
+
+        let rejBadge = '';
+        if (rejQ > 0) {
+          rejBadge = `<div style="margin-top:2px;"><span style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="${rejQ.toLocaleString()} units rejected by Plant Technical Inspection — Vendor Claim / Replacement Required"><i class="fa-solid fa-triangle-exclamation"></i> ${rejQ.toLocaleString()} Tech Rejection</span></div>`;
+        }
+
+        if (t.is_under_inspection) {
+          deliveryBadgeHtml = `
+            <div style="margin-top:3px;">
+              <span style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="${insPendingQ.toLocaleString()} units arrived at plant gate — undergoing Technical Inspection"><i class="fa-solid fa-microscope"></i> Under Technical Inspection (${insPendingQ.toLocaleString()} Units)</span>
+            </div>
+            ${rejBadge}
+          `;
+        } else if (t.is_partial) {
+          deliveryBadgeHtml = `
+            <div style="margin-top:3px;">
+              <span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="Received: ${srvQ.toLocaleString()} units, Pending: ${balQ.toLocaleString()} units (${pct}% delivered)"><i class="fa-solid fa-truck-ramp-box"></i> Partial (${pct}% Recv &bull; ${balQ.toLocaleString()} Bal)</span>
+            </div>
+            ${rejBadge}
+          `;
         } else {
-          const balQ = Number(t.total_bal_qty || 0);
-          deliveryBadgeHtml = `<div style="margin-top:3px;"><span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.35); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="0 units received yet. Entire order pending: ${balQ.toLocaleString()} units"><i class="fa-solid fa-box-open"></i> Undelivered (0% Recv)</span></div>`;
+          deliveryBadgeHtml = `
+            <div style="margin-top:3px;">
+              <span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.35); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.67rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;" title="0 units received yet. Entire order pending: ${balQ.toLocaleString()} units"><i class="fa-solid fa-box-open"></i> Undelivered (0% Recv)</span>
+            </div>
+            ${rejBadge}
+          `;
         }
       }
 
@@ -9162,7 +9212,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         // Summary Sub-Banner Row (A2:V2)
         ws1.mergeCells('A2:V2');
         const subCell = ws1.getCell('A2');
-        subCell.value = `Exported Scope: ${tasks.length} Orders | PO Qty: ${totPoQty.toLocaleString()} | Inspected: ${totInsQty.toLocaleString()} | In QC: ${totInsPending.toLocaleString()} | Rejected: ${totRejQty.toLocaleString()} | Accepted: ${totSrvQty.toLocaleString()} (${pctTot}%) | Remaining Balance: ${totBalQty.toLocaleString()} | Generated: ${new Date().toLocaleDateString()}`;
+        subCell.value = `Exported Scope: ${tasks.length} Orders | PO Qty: ${totPoQty.toLocaleString()} | Inspected: ${totInsQty.toLocaleString()} | In Technical Inspection: ${totInsPending.toLocaleString()} | Technical Rejections: ${totRejQty.toLocaleString()} | Accepted: ${totSrvQty.toLocaleString()} (${pctTot}%) | Remaining Balance: ${totBalQty.toLocaleString()} | Generated: ${new Date().toLocaleDateString()}`;
         subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FF38BDF8' } };
         subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
         subCell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -9171,7 +9221,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
         // Table Headers (Row 3 - 22 columns)
         const headers = [
           '#', 'PO No.', 'PR No.', 'Plant / Project', 'Buyer Name', 'Supplier Name',
-          'Delivery Situation', 'PO Qty', 'Inspected Qty', 'Under Inspection', 'Rejected Qty', 'Accepted Qty', 'Remaining Balance', 'Fulfillment %',
+          'Delivery Situation', 'PO Qty', 'Inspected Qty', 'In Technical Inspection', 'Technical Rejection', 'Accepted Qty (SRV)', 'Remaining Balance', 'Fulfillment %',
           'PO Issue Date', 'Promised Delivery', 'Overdue / Remaining (d)', 'SLA Severity',
           'Origin', 'Planner (Entered By)', 'Requestor (Requested By)', 'Primary Delay Bottleneck / Notes'
         ];
@@ -9199,7 +9249,14 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
           const srvQtyVal = Number(t.total_srv_qty || 0);
           const balQtyVal = Number(t.total_bal_qty || 0);
           const pctVal = poQtyVal > 0 ? (srvQtyVal / poQtyVal) : 0;
-          const situationStr = t.is_partial ? 'Partially Delivered' : 'Undelivered (0% Received)';
+          let situationStr = 'Undelivered (0% Received)';
+          if (t.is_under_inspection) {
+            situationStr = 'Under Technical Inspection (At Gate)';
+          } else if (t.is_partial) {
+            situationStr = rejQtyVal > 0 ? 'Partially Delivered (With Tech Rejection)' : 'Partially Delivered';
+          } else if (rejQtyVal > 0) {
+            situationStr = 'Undelivered (Tech Rejection Claim)';
+          }
 
           let severityStr = 'On SLA';
           if (t.task_stage === 'Supplier Overdue') {
@@ -9253,12 +9310,18 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
 
             // Col 7: Delivery Situation High-Contrast Styling
             if (colNum === 7) {
-              if (t.is_partial) {
+              if (t.is_under_inspection) {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF0369A1' } };
+              } else if (t.is_partial) {
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };
                 cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF92400E' } };
-              } else {
+              } else if (rejQtyVal > 0) {
                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };
-                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF991B1B' } };
+                cell.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFB91C1C' } };
+              } else {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF1F5F9' } };
+                cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF475569' } };
               }
             }
 
@@ -9399,7 +9462,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
       // Sub-banner
       ws2.mergeCells('A2:W2');
       const ws2Sub = ws2.getCell('A2');
-      ws2Sub.value = `Item-Level Breakdown | End-to-End Delivery & Quality Inspection Audit | Exported: ${dateStr}`;
+      ws2Sub.value = `Item-Level Breakdown | End-to-End Delivery & Technical Inspection Audit | Exported: ${dateStr}`;
       ws2Sub.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: 'FF38BDF8' } };
       ws2Sub.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
       ws2Sub.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -9407,7 +9470,7 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
 
       const ws2Headers = [
         '#', 'PO No.', 'PR No.', 'Line #', 'Plant / Cost Center', 'Buyer Name',
-        'Item Code', 'Technical Description', 'Unit', 'Req Qty', 'PO Qty', 'Inspected Qty', 'Under Inspection', 'Rejected Qty', 'Accepted Qty', 'Remaining Balance', 'Fulfillment %',
+        'Item Code', 'Technical Description', 'Unit', 'Req Qty', 'PO Qty', 'Inspected Qty', 'In Technical Inspection', 'Technical Rejection', 'Accepted Qty (SRV)', 'Remaining Balance', 'Fulfillment %',
         'Warehouse Stock', 'Zero-Stock Alert', 'Supplier Name', 'Promised Delivery', 'Planner (Entered By)', 'Requestor (Requested By)'
       ];
       const ws2HRow = ws2.addRow(ws2Headers);
@@ -9551,17 +9614,26 @@ async function exportStyledFilteredExcel(customTasks, filterContext) {
       const pctVal = poQtyVal > 0 ? ((srvQtyVal / poQtyVal) * 100).toFixed(1) + '%' : '0.0%';
 
       if (isDeliveryStage) {
+        let situationStr = 'Undelivered (0% Received)';
+        if (t.is_under_inspection) {
+          situationStr = 'Under Technical Inspection (At Gate)';
+        } else if (t.is_partial) {
+          situationStr = rejQtyVal > 0 ? 'Partially Delivered (With Tech Rejection)' : 'Partially Delivered';
+        } else if (rejQtyVal > 0) {
+          situationStr = 'Undelivered (Tech Rejection Claim)';
+        }
+
         exportData.push({
           "PO No": t.po_no ? `PO #${t.po_no}` : '—',
           "PR No": `PR #${t.pr_no}`,
           "Plant / Project": t.project || '—',
           "Buyer": t.buyer,
           "Supplier Name": t.supplier || t.remarks || '—',
-          "Delivery Situation": t.is_partial ? 'Partially Delivered' : 'Undelivered (0% Received)',
+          "Delivery Situation": situationStr,
           "PO Qty": poQtyVal,
           "Inspected Qty": insQtyVal,
-          "Under Inspection": insPendingVal,
-          "Rejected Qty": rejQtyVal,
+          "In Technical Inspection": insPendingVal,
+          "Technical Rejection": rejQtyVal,
           "Accepted Qty": srvQtyVal,
           "Remaining Balance": balQtyVal,
           "Fulfillment %": pctVal,
