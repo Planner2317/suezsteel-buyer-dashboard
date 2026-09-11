@@ -7846,26 +7846,40 @@ function openItemIntelligence(itemCode) {
     return;
   }
 
-  const desc = intel.item_desc || lineDesc || '—';
-  const uom = intel.uom || '';
-  const wh = intel.wh_code || '—';
-  const cc = intel.cost_center || '—';
-  const stkTot = (intel.stock_total !== null && intel.stock_total !== undefined) ? Number(intel.stock_total) : 0;
-  const stkNew = (intel.stock_new !== null && intel.stock_new !== undefined) ? Number(intel.stock_new) : 0;
-  const stkUsed = (intel.stock_used !== null && intel.stock_used !== undefined) ? Number(intel.stock_used) : 0;
+  const desc = intel.desc || intel.item_desc || lineDesc || '—';
+  const uom = intel.unit || intel.uom || '';
+  const wh = intel.warehouse || intel.wh_code || '—';
+  const cc = intel.owner || intel.project || intel.cost_center || '—';
+  const stkTot = (intel.stock !== undefined && intel.stock !== null) ? Number(intel.stock) : ((intel.stock_total !== undefined && intel.stock_total !== null) ? Number(intel.stock_total) : 0);
+  const stkNew = (intel.stock_new !== undefined && intel.stock_new !== null) ? Number(intel.stock_new) : 0;
+  const stkUsed = (intel.stock_used !== undefined && intel.stock_used !== null) ? Number(intel.stock_used) : 0;
   const wma = Number(intel.wma_annual || 0);
   const trend = intel.trend || 'none';
   const trendLabel = intel.trend_label || 'No Data';
 
-  const cY1 = Number(intel.c_y1 || 0);
-  const cY2 = Number(intel.c_y2 || 0);
-  const cY3 = Number(intel.c_y3 || 0);
-  const pY1 = Number(intel.p_y1 || 0);
-  const pY2 = Number(intel.p_y2 || 0);
-  const pY3 = Number(intel.p_y3 || 0);
+  const cY1 = Number(intel.y1_cons !== undefined ? intel.y1_cons : (intel.c_y1 || 0));
+  const cY2 = Number(intel.y2_cons !== undefined ? intel.y2_cons : (intel.c_y2 || 0));
+  const cY3 = Number(intel.y3_cons !== undefined ? intel.y3_cons : (intel.c_y3 || 0));
+  const pY1 = Number(intel.y1_pur !== undefined ? intel.y1_pur : (intel.p_y1 || 0));
+  const pY2 = Number(intel.y2_pur !== undefined ? intel.y2_pur : (intel.p_y2 || 0));
+  const pY3 = Number(intel.y3_pur !== undefined ? intel.y3_pur : (intel.p_y3 || 0));
 
-  const siv3y = Number(intel.siv_3y || 0);
-  const ris3y = Number(intel.ris_3y || 0);
+  const siv3y = Number(intel.siv !== undefined ? intel.siv : (intel.siv_3y || 0));
+  const ris3y = Number(intel.ris !== undefined ? intel.ris : (intel.ris_3y || 0));
+  const c3y = Number(intel.c3y || (cY1 + cY2 + cY3));
+
+  const supplier = intel.supplier || intel.last_supplier || '—';
+  const poPrice = (intel.po_price_egp !== undefined && intel.po_price_egp !== null) ? intel.po_price_egp : intel.last_po_price;
+  const poCurr = intel.po_curr || intel.last_po_currency || 'EGP';
+  const poDate = intel.po_date || intel.last_po_date || '—';
+
+  const leadTot = Number(intel.lead_time !== undefined ? intel.lead_time : (intel.lead_time_tot || 0));
+  const leadInt = Number(intel.int_lead !== undefined ? intel.int_lead : (intel.lead_time_int || 0));
+  const leadExt = Number(intel.ext_lead !== undefined ? intel.ext_lead : (intel.lead_time_ext || 0));
+
+  const minStock = intel.min_stock !== undefined ? intel.min_stock : 0;
+  const maxStock = intel.max_stock !== undefined ? intel.max_stock : 0;
+  const rop = intel.rop !== undefined ? intel.rop : 0;
 
   const maxVal = Math.max(cY1, cY2, cY3, pY1, pY2, pY3, 1);
   const chartHeightPx = 120;
@@ -7887,6 +7901,23 @@ function openItemIntelligence(itemCode) {
   if (stkTot === 0) {
     runwayText = '0.00 M (Zero Stock / Stock-out)';
     runwayColor = '#f87171';
+  } else if (intel.cover) {
+    if (String(intel.cover).toUpperCase().includes('INF')) {
+      runwayText = 'Infinite (> 36M Zero Burn)';
+      runwayColor = '#94a3b8';
+    } else {
+      const covVal = parseFloat(intel.cover);
+      if (covVal <= 1.0) {
+        runwayText = `${intel.cover} (Critical Low)`;
+        runwayColor = '#f87171';
+      } else if (covVal <= 3.0) {
+        runwayText = `${intel.cover} (Warning / Re-order Soon)`;
+        runwayColor = '#fde047';
+      } else {
+        runwayText = `${intel.cover} (Optimal Runway)`;
+        runwayColor = '#6ee7b7';
+      }
+    }
   } else if (intel.cover_months !== null && intel.cover_months !== undefined) {
     const cm = Number(intel.cover_months);
     if (cm > 36) {
@@ -7940,8 +7971,9 @@ function openItemIntelligence(itemCode) {
     }
   }
 
+  const ccShort = cc && cc.length > 55 ? cc.substring(0, 52) + '...' : cc;
   document.getElementById("itemIntelTitle").textContent = `Item Intelligence • ${itemCode}`;
-  document.getElementById("itemIntelSubtitle").textContent = `${wh ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${cc ? 'Cost Center: ' + cc : ''}`;
+  document.getElementById("itemIntelSubtitle").textContent = `${wh && wh !== '—' ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${ccShort && ccShort !== '—' ? 'Cost Center / Owner: ' + ccShort : ''}`;
 
   document.getElementById("itemIntelContent").innerHTML = `
     <!-- Top Header Overview -->
@@ -8055,7 +8087,7 @@ function openItemIntelligence(itemCode) {
           </div>
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">3-Year Cumulative Consumption:</span>
-            <span style="color:#ffffff; font-weight:700;">${(cY1 + cY2 + cY3).toLocaleString()} ${uom}</span>
+            <span style="color:#ffffff; font-weight:700;">${c3y.toLocaleString()} ${uom}</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">3-Year Store Issues (SIV):</span>
@@ -8077,23 +8109,23 @@ function openItemIntelligence(itemCode) {
         <div style="display:flex; flex-direction:column; gap:6px; font-size:0.78rem;">
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">Last Awarded Supplier:</span>
-            <span style="color:#38bdf8; font-weight:700; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(intel.last_supplier || '—')}">${escapeHtml(intel.last_supplier || '—')}</span>
+            <span style="color:#38bdf8; font-weight:700; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">Last PO Unit Price:</span>
-            <span style="color:#34d399; font-weight:700;">${intel.last_po_price !== null && intel.last_po_price !== undefined ? Number(intel.last_po_price).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + escapeHtml(intel.last_po_currency || 'EGP') : '—'}</span>
+            <span style="color:#34d399; font-weight:700;">${poPrice !== null && poPrice !== undefined && poPrice !== '' ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + escapeHtml(poCurr) : '—'}</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">Last Purchase Date:</span>
-            <span style="color:#ffffff; font-weight:700;">${escapeHtml(intel.last_po_date || '—')}</span>
+            <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
           </div>
           <div style="display:flex; justify-content:space-between; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
             <span style="color:#94a3b8;">Average Lead Time:</span>
-            <span style="color:#ffffff; font-weight:700;">${Number(intel.lead_time_tot || 0).toFixed(1)} Wks (${Number(intel.lead_time_int || 0).toFixed(1)} Int / ${Number(intel.lead_time_ext || 0).toFixed(1)} Ext)</span>
+            <span style="color:#ffffff; font-weight:700;">${leadTot.toFixed(1)} Wks (${leadInt.toFixed(1)} Int / ${leadExt.toFixed(1)} Ext)</span>
           </div>
           <div style="display:flex; justify-content:space-between;">
             <span style="color:#94a3b8;">Safety Stock & ROP:</span>
-            <span style="color:#ffffff; font-weight:700;">Min: ${intel.min_stock || 0} &bull; ROP: ${intel.rop || 0} &bull; Max: ${intel.max_stock || 0}</span>
+            <span style="color:#ffffff; font-weight:700;">Min: ${minStock} &bull; ROP: ${rop} &bull; Max: ${maxStock}</span>
           </div>
         </div>
       </div>
