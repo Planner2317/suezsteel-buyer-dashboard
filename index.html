@@ -3337,7 +3337,7 @@
                 🟠 Overdue Delivery
               </div>
               <div id="st5-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2972 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2972 Zero-Stock Lines (680 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2838 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2838 Zero-Stock Lines (635 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3381,7 +3381,7 @@
                 🟢 On-Track Delivery
               </div>
               <div id="st6-zero-badge" style="margin-top:5px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2141 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2141 Zero-Stock Lines (606 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2063 item lines in this stage currently have 0 warehouse stock"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2063 Zero-Stock Lines (573 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -6626,11 +6626,12 @@ function getCombinedBuyerLifecycle() {
   const st4 = b_tasks.filter(t => t.task_stage === "Draft PO Approval");
   const st5 = b_tasks.filter(t => t.task_stage === "Supplier Overdue");
   const st6 = b_tasks.filter(t => t.task_stage === "On-Track Delivery");
+  const st_insp = b_tasks.filter(t => t.task_stage === "Under Technical Inspection" || t.is_under_inspection);
 
   const prepo_prs = new Set(st1.concat(st2, st3).map(t => t.pr_no)).size;
-  const openpo_pos = new Set(st4.concat(st5, st6).map(t => t.po_no)).size;
-  const openpo_foreign = st4.concat(st5, st6).filter(t => t.order_type === "Foreign").length;
-  const openpo_local = st4.concat(st5, st6).filter(t => t.order_type === "Local").length;
+  const openpo_pos = new Set(st4.concat(st5, st6, st_insp).map(t => t.po_no)).size;
+  const openpo_foreign = st4.concat(st5, st6, st_insp).filter(t => t.order_type === "Foreign").length;
+  const openpo_local = st4.concat(st5, st6, st_insp).filter(t => t.order_type === "Local").length;
 
   const st1_prs = new Set(st1.map(t => t.pr_no)).size;
   const st1_lines = st1.reduce((sum, t) => sum + (t.lines ? t.lines.length : 0), 0);
@@ -6917,7 +6918,7 @@ function renderLifecycleCards() {
     const isAllD = isAllDeptsSelected();
     const isAllB = isAllBuyersSelected();
     const inspTasks = ALL_TASKS.filter(t => {
-      const isInsp = t.is_under_inspection;
+      const isInsp = t.is_under_inspection || t.task_stage === "Under Technical Inspection";
       const matchB = isAllB || selectedBuyersSet.has(t.buyer);
       const matchP = isAllP || selectedProjectsSet.has(t.project);
       const matchD = isAllD || selectedDeptsSet.has(t.department);
@@ -7257,12 +7258,14 @@ function closeDossierModalDirect() {
   currentDossierTask = null;
 }
 
-function getStageBadge(stageName, isPartial) {
+function getStageBadge(stageName, isPartial, isUnderInspection) {
   let bg = 'rgba(139,92,246,0.2)';
   let color = '#c4b5fd';
   let border = 'rgba(139,92,246,0.4)';
   
-  if (stageName === 'TS Confirmed (Pending PO)') {
+  if (isUnderInspection || stageName === 'Under Technical Inspection') {
+    return `<span style="background:rgba(56,189,248,0.22); color:#38bdf8; border:1px solid rgba(56,189,248,0.55); padding:2px 8px; border-radius:5px; font-size:0.7rem; font-weight:800; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-microscope"></i> Under Technical Inspection</span>`;
+  } else if (stageName === 'TS Confirmed (Pending PO)') {
     bg = 'rgba(244,63,94,0.2)'; color = '#fda4af'; border = 'rgba(244,63,94,0.4)';
   } else if (stageName === 'Sourcing / RFQ') {
     bg = 'rgba(139,92,246,0.2)'; color = '#c4b5fd'; border = 'rgba(139,92,246,0.4)';
@@ -7359,7 +7362,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       ${originPill}
       <span class="dossier-pill" style="border-color:rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);" title="Current Workflow Stage">
         <span class="pill-lbl" style="margin-right:2px;">Stage:</span>
-        ${getStageBadge(t.task_stage, t.is_partial)}
+        ${getStageBadge(t.task_stage, t.is_partial, t.is_under_inspection)}
       </span>
     `;
   }
@@ -7474,6 +7477,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       if (stepKey === 'D7') return { isDone: false, isCurrent: false, days: 0, label: 'Issue PO' };
       if (stepKey === 'D8') return { isDone: false, isCurrent: false, days: 0, label: 'Draft PO Audit' };
       if (stepKey === 'D9') return { isDone: false, isCurrent: false, days: 0, label: 'Supplier Delivery' };
+      if (stepKey === 'D10') return { isDone: false, isCurrent: false, days: 0, label: 'Technical Inspection' };
     }
     if (stepKey === 'D1') return { isDone: true, isCurrent: false, days: d1, label: 'Plant Conf' };
     if (stepKey === 'D2') return { isDone: true, isCurrent: false, days: d2, label: 'SC L4 Conf' };
@@ -7498,17 +7502,30 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     }
     if (stepKey === 'D8') {
       const isCurrent = currentStage === 'Draft PO Approval';
-      const isDone = currentStage === 'Supplier Overdue' || currentStage === 'On-Track Delivery';
-      return { isDone: isDone, isCurrent: isCurrent, days: d8, label: 'Draft PO Audit' };
+      const isDone = currentStage === 'Supplier Overdue' || currentStage === 'On-Track Delivery' || currentStage === 'Under Technical Inspection' || (t.has_po && !isPrePO);
+      return { isDone: isDone && !isCurrent, isCurrent: isCurrent, days: d8, label: 'Draft PO Audit' };
     }
     if (stepKey === 'D9') {
+      if (currentStage === 'Under Technical Inspection' || t.is_under_inspection) {
+        return { isDone: true, isCurrent: false, days: d9, label: 'Supplier Delivery (Arrived)' };
+      }
       const isCurrent = currentStage === 'Supplier Overdue' || currentStage === 'On-Track Delivery';
-      return { isDone: false, isCurrent: isCurrent, days: d9, label: 'Supplier Delivery' };
+      const isDone = (Number(t.total_srv_qty || 0) > 0 && Number(t.total_bal_qty || 0) === 0);
+      return { isDone: isDone, isCurrent: isCurrent, days: d9, label: isDone ? 'Supplier Delivery (Delivered)' : 'Supplier Delivery' };
+    }
+    if (stepKey === 'D10') {
+      if (currentStage === 'Under Technical Inspection' || t.is_under_inspection) {
+        return { isDone: false, isCurrent: true, days: t.stage_delay || 0, label: 'Technical Inspection' };
+      } else if (Number(t.total_srv_qty || 0) > 0 || Number(t.total_rej_qty || 0) > 0) {
+        return { isDone: true, isCurrent: false, days: 0, label: 'Technical Inspection' };
+      } else {
+        return { isDone: false, isCurrent: false, days: 0, label: 'Technical Inspection' };
+      }
     }
     return { isDone: false, isCurrent: false, days: 0, label: stepKey };
   }
 
-  const steps = ['D1', 'D2', 'D3', 'D4', 'D56', 'D7', 'D8', 'D9'];
+  const steps = ['D1', 'D2', 'D3', 'D4', 'D56', 'D7', 'D8', 'D9', 'D10'];
   const stepIcons = {
     'D1': 'fa-calendar-check',
     'D2': 'fa-shield-halved',
@@ -7517,7 +7534,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     'D56': 'fa-clipboard-check',
     'D7': 'fa-file-signature',
     'D8': 'fa-stamp',
-    'D9': 'fa-truck-fast'
+    'D9': 'fa-truck-fast',
+    'D10': 'fa-microscope'
   };
 
   const timelineHtml = steps.map(s => {
@@ -8348,7 +8366,7 @@ function renderDelayModalView() {
     });
   } else if (stageName === "Under Technical Inspection") {
     allStageTasks = allStageTasks.filter(t => {
-      const isInsp = t.is_under_inspection;
+      const isInsp = t.is_under_inspection || t.task_stage === "Under Technical Inspection";
       const matchB = isAllB || selectedBuyersSet.has(t.buyer);
       const matchP = isAllP || selectedProjectsSet.has(t.project);
       const matchD = isAllD || selectedDeptsSet.has(t.department);
@@ -8430,7 +8448,7 @@ function renderDelayModalView() {
   if (currentDelayModalTier === 'CRITICAL') {
     if (stageName === 'On-Track Delivery') {
       displayTasks = [];
-    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval') {
+    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval' || stageName === 'Under Technical Inspection') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) > 14);
     } else if (stageName === 'Supplier Overdue') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) > 90);
@@ -8440,7 +8458,7 @@ function renderDelayModalView() {
   } else if (currentDelayModalTier === 'WARNING') {
     if (stageName === 'On-Track Delivery') {
       displayTasks = [];
-    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval') {
+    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval' || stageName === 'Under Technical Inspection') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) > 7 && (t.stage_delay || 0) <= 14);
     } else if (stageName === 'Supplier Overdue') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) > 30 && (t.stage_delay || 0) <= 90);
@@ -8450,7 +8468,7 @@ function renderDelayModalView() {
   } else if (currentDelayModalTier === 'ONTRACK') {
     if (stageName === 'On-Track Delivery') {
       displayTasks = allStageTasks;
-    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval') {
+    } else if (stageName === 'TS Confirmed (Pending PO)' || stageName === 'Sourcing / RFQ' || stageName === 'TS Review in Plant' || stageName === 'Draft PO Approval' || stageName === 'Under Technical Inspection') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) <= 7);
     } else if (stageName === 'Supplier Overdue') {
       displayTasks = allStageTasks.filter(t => (t.stage_delay || 0) <= 30);
@@ -8996,7 +9014,7 @@ function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword)
       });
     } else if (stageName === "Under Technical Inspection") {
       stageTasks = stageTasks.filter(t => {
-        const isInsp = t.is_under_inspection;
+        const isInsp = t.is_under_inspection || t.task_stage === "Under Technical Inspection";
         const matchB = isAllB || selectedBuyersSet.has(t.buyer);
         const matchP = isAllP || selectedProjectsSet.has(t.project);
         const matchD = isAllD || selectedDeptsSet.has(t.department);
