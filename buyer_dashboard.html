@@ -503,72 +503,73 @@
       box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
     }
 
-    /* Priority Cluster & Pills */
-    .priority-cluster {
+    /* Priority Dropdown Pill Selector */
+    .header-priority-pill {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      background: rgba(15, 23, 42, 0.7);
-      padding: 2px 4px;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(167, 139, 250, 0.35);
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 8px;
+      min-height: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
     }
-    .btn-priority-pill {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #94a3b8;
-      padding: clamp(2px, 0.4vh, 4px) clamp(5px, 0.6vw, 8px);
-      border-radius: 6px;
-      font-size: clamp(0.65rem, 0.75vw, 0.72rem);
+    .header-priority-pill:hover {
+      border-color: rgba(167, 139, 250, 0.65);
+    }
+    .header-priority-pill label {
+      font-size: 0.72rem;
       font-weight: 700;
-      cursor: pointer;
+      color: #cbd5e1;
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+      margin: 0;
+      cursor: pointer;
     }
-    .btn-priority-pill:hover {
-      background: rgba(255, 255, 255, 0.06);
+    .header-priority-dropdown {
+      background: transparent;
+      border: none;
       color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 800;
+      outline: none;
+      cursor: pointer;
     }
-    .btn-priority-pill .p-dot {
+    .header-priority-dropdown option {
+      background: #0f172a;
+      color: #f8fafc;
+      font-weight: 700;
+      padding: 4px 8px;
+    }
+    .header-priority-pill.active-p1 {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+    }
+    .header-priority-pill.active-p2 {
+      background: rgba(245, 158, 11, 0.25) !important;
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+    }
+    .header-priority-pill.active-p3 {
+      background: rgba(56, 189, 248, 0.25) !important;
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+    }
+
+    .p-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       display: inline-block;
     }
-    .btn-priority-pill .dot-p1 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
-    .btn-priority-pill .dot-p2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
-    .btn-priority-pill .dot-p3 { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
-    .btn-priority-pill .p-cnt {
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-size: 0.64rem;
-      font-weight: 800;
-    }
-    .btn-priority-pill.p1 .p-cnt { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-    .btn-priority-pill.p2 .p-cnt { background: rgba(245, 158, 11, 0.2); color: #fde047; }
-    .btn-priority-pill.p3 .p-cnt { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
-
-    .btn-priority-pill.active-p1-filter {
-      background: rgba(239, 68, 68, 0.28) !important;
-      border-color: #ef4444 !important;
-      color: #ffffff !important;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
-    }
-    .btn-priority-pill.active-p2-filter {
-      background: rgba(245, 158, 11, 0.28) !important;
-      border-color: #f59e0b !important;
-      color: #ffffff !important;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
-    }
-    .btn-priority-pill.active-p3-filter {
-      background: rgba(56, 189, 248, 0.28) !important;
-      border-color: #38bdf8 !important;
-      color: #ffffff !important;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
-    }
+    .dot-p1 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .dot-p2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+    .dot-p3 { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
 
 .header-actions-right {
       display: flex;
@@ -2824,23 +2825,18 @@
           <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">531 Lines (85.6%)</span>
         </button>
 
-        <!-- Consumption-Driven Priority Filter Cluster -->
-        <div class="priority-cluster" id="priorityFilterCluster">
-          <button id="btnPriorityP1" onclick="togglePriorityFilter('P1')" class="btn-priority-pill p1" title="72 item lines are Critical Stock-Out (Stock 0 with Surging/High Demand). Click to isolate.">
-            <span class="p-dot dot-p1"></span>
-            <span>P1 Critical</span>
-            <span class="p-cnt" id="p1CountChip">72</span>
-          </button>
-          <button id="btnPriorityP2" onclick="togglePriorityFilter('P2')" class="btn-priority-pill p2" title="49 item lines are Active Stock-Out (Stock 0 with Ongoing Regular Consumption). Click to isolate.">
-            <span class="p-dot dot-p2"></span>
-            <span>P2 Active</span>
-            <span class="p-cnt" id="p2CountChip">49</span>
-          </button>
-          <button id="btnPriorityP3" onclick="togglePriorityFilter('P3')" class="btn-priority-pill p3" title="30 item lines are Pre-Stockout (Stock below Re-Order Point). Click to isolate.">
-            <span class="p-dot dot-p3"></span>
-            <span>P3 Near-Zero</span>
-            <span class="p-cnt" id="p3CountChip">30</span>
-          </button>
+        <!-- Consumption-Driven Priority Dropdown Selector -->
+        <div class="header-priority-pill" id="prioritySelectorWrap" title="Filter entire dashboard by Consumption Urgency Priority">
+          <label for="prioritySelector">
+            <i class="fa-solid fa-layer-group" style="color:#a78bfa; font-size:0.75rem;"></i>
+            <span>Priority:</span>
+          </label>
+          <select id="prioritySelector" class="header-priority-dropdown" onchange="onPriorityDropdownChange(this.value)">
+            <option value="ALL">All Priorities</option>
+            <option value="P1" id="p1Opt">🔴 P1 Critical (72)</option>
+            <option value="P2" id="p2Opt">🟠 P2 Active (49)</option>
+            <option value="P3" id="p3Opt">🟡 P3 Near-Zero (30)</option>
+          </select>
         </div>
 
         <!-- Zero-Stock Excel Export -->
@@ -7606,24 +7602,41 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     const pct = ordQ > 0 ? Math.min(100, Math.round((srvQ / ordQ) * 100)) : 0;
     const stVal = l.stock;
     const isZero = l.is_zero_stock || (stVal === 0);
-    let stockBadgeHtml = '<span style="color:#64748b; font-size:0.75rem;">—</span>';
+    let stockDisplayHtml = '<span style="color:#64748b; font-size:0.75rem;">—</span>';
     if (stVal !== null && stVal !== undefined && stVal !== '') {
+      let stockNumColor = '#34d399';
+      let stockNumIcon = '';
       if (isZero) {
-        stockBadgeHtml = `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem; white-space:nowrap;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:3px;"></i>Stock: 0</span>`;
+        stockNumColor = '#ef4444';
+        stockNumIcon = '<i class="fa-solid fa-triangle-exclamation" style="font-size:0.68rem; margin-right:3px; color:#ef4444;"></i>';
       } else if (stVal <= 3) {
-        stockBadgeHtml = `<span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem; white-space:nowrap;">Stock: ${stVal}</span>`;
-      } else {
-        stockBadgeHtml = `<span style="background:rgba(52,211,153,0.22); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem; white-space:nowrap;">Stock: ${stVal}</span>`;
+        stockNumColor = '#fde047';
+        stockNumIcon = '<i class="fa-solid fa-triangle-exclamation" style="font-size:0.68rem; margin-right:3px; color:#f59e0b;"></i>';
       }
-    }
 
-    let linePrioBadgeHtml = '';
-    if (l.priority === 'P1') {
-      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P1 Critical: Zero Stock with Surging Demand"><span class="p-dot dot-p1" style="width:5px; height:5px;"></span> P1</span></div>`;
-    } else if (l.priority === 'P2') {
-      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(249,115,22,0.25); color:#fdba74; border:1px solid rgba(249,115,22,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P2 Active: Zero Stock with Steady Demand"><span class="p-dot dot-p2" style="width:5px; height:5px;"></span> P2</span></div>`;
-    } else if (l.priority === 'P3') {
-      linePrioBadgeHtml = `<div style="margin-top:2px;"><span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P3 Pre-Stockout: Stock below Re-Order Point"><span class="p-dot dot-p3" style="width:5px; height:5px;"></span> P3</span></div>`;
+      const numFormatted = isZero ? '0' : Number(stVal).toLocaleString();
+
+      let subBadgeHtml = '';
+      if (l.priority === 'P1') {
+        subBadgeHtml = `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P1 Critical: Zero Stock with Surging Demand"><span class="p-dot dot-p1" style="width:5px; height:5px; border-radius:50%; background:#ef4444; display:inline-block;"></span> P1</span>`;
+      } else if (l.priority === 'P2') {
+        subBadgeHtml = `<span style="background:rgba(249,115,22,0.25); color:#fdba74; border:1px solid rgba(249,115,22,0.5); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P2 Active: Zero Stock with Steady Demand"><span class="p-dot dot-p2" style="width:5px; height:5px; border-radius:50%; background:#f59e0b; display:inline-block;"></span> P2</span>`;
+      } else if (l.priority === 'P3') {
+        subBadgeHtml = `<span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.62rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P3 Pre-Stockout: Stock below Re-Order Point"><span class="p-dot dot-p3" style="width:5px; height:5px; border-radius:50%; background:#38bdf8; display:inline-block;"></span> P3</span>`;
+      } else if (l.priority === 'P4') {
+        subBadgeHtml = `<span style="background:rgba(100,116,139,0.2); color:#94a3b8; border:1px solid rgba(100,116,139,0.4); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="P4 Dormant: Zero Stock with Zero Consumption"><span style="width:5px; height:5px; border-radius:50%; background:#94a3b8; display:inline-block;"></span> P4</span>`;
+      } else if (!isZero) {
+        subBadgeHtml = `<span style="color:#6ee7b7; font-size:0.62rem; font-weight:700; display:inline-flex; align-items:center; gap:2px;"><i class="fa-solid fa-circle-check" style="font-size:0.58rem;"></i> In Stock</span>`;
+      }
+
+      stockDisplayHtml = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
+          <strong style="color:${stockNumColor}; font-size:0.86rem; font-family:'Outfit',sans-serif; display:inline-flex; align-items:center;">
+            ${stockNumIcon}${numFormatted}
+          </strong>
+          ${subBadgeHtml}
+        </div>
+      `;
     }
 
     // Avg Consumption Column (Weighted 3-Year Annualized Average & Velocity Trend)
@@ -7721,7 +7734,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <td style="text-align:right; color:#34d399; font-weight:800; padding:9px 8px;">${srvQ > 0 ? srvQ.toLocaleString() : '—'}</td>
         <td style="text-align:right; color:#fda4af; font-weight:800; padding:9px 8px;">${balQ > 0 ? balQ.toLocaleString() : '0'}</td>
         <td style="text-align:center; padding:9px 8px;">${avgConsHtml}</td>
-        <td style="text-align:center; padding:9px 8px;">${stockBadgeHtml}${linePrioBadgeHtml}</td>
+        <td style="text-align:center; padding:9px 8px;">${stockDisplayHtml}</td>
         <td style="text-align:center; padding:9px 8px;">
           ${ordQ > 0 ? `
             <div style="display:inline-flex; align-items:center; gap:6px;">
@@ -8512,15 +8525,46 @@ function getFilteredZeroStockStats() {
   };
 }
 
+function updatePriorityDropdownVisuals() {
+  const wrap = document.getElementById("prioritySelectorWrap");
+  const sel = document.getElementById("prioritySelector");
+  if (!wrap || !sel) return;
+  wrap.classList.remove("active-p1", "active-p2", "active-p3");
+  if (activePriorityFilter === 'P1') {
+    wrap.classList.add("active-p1");
+    sel.value = 'P1';
+  } else if (activePriorityFilter === 'P2') {
+    wrap.classList.add("active-p2");
+    sel.value = 'P2';
+  } else if (activePriorityFilter === 'P3') {
+    wrap.classList.add("active-p3");
+    sel.value = 'P3';
+  } else {
+    sel.value = 'ALL';
+  }
+}
+
+function onPriorityDropdownChange(val) {
+  if (!val || val === 'ALL') {
+    activePriorityFilter = null;
+    showToast("Cleared Priority filter (Displaying all urgency levels)");
+  } else {
+    activePriorityFilter = val;
+    const label = val === 'P1' ? 'P1 CRITICAL (Surging Demand)' : (val === 'P2' ? 'P2 ACTIVE (Steady Demand)' : 'P3 PRE-STOCKOUT (Below ROP)');
+    showToast(`Filtered dashboard: Displaying ${label} tasks only`);
+  }
+  updatePriorityDropdownVisuals();
+  updateZeroStockToggleChip();
+  renderLifecycleCards();
+  renderStatusChart();
+}
+
 function updateZeroStockToggleChip() {
   const chip = document.getElementById("zeroStockToggleCountChip");
   const btn = document.getElementById("btnZeroStockToggle");
-  const p1Btn = document.getElementById("btnPriorityP1");
-  const p2Btn = document.getElementById("btnPriorityP2");
-  const p3Btn = document.getElementById("btnPriorityP3");
-  const p1Chip = document.getElementById("p1CountChip");
-  const p2Chip = document.getElementById("p2CountChip");
-  const p3Chip = document.getElementById("p3CountChip");
+  const p1Opt = document.getElementById("p1Opt");
+  const p2Opt = document.getElementById("p2Opt");
+  const p3Opt = document.getElementById("p3Opt");
 
   const stats = getFilteredZeroStockStats();
 
@@ -8544,23 +8588,12 @@ function updateZeroStockToggleChip() {
     }
   }
 
-  // Update Priority Pills
-  if (p1Chip) p1Chip.textContent = stats.p1Lines.toLocaleString();
-  if (p2Chip) p2Chip.textContent = stats.p2Lines.toLocaleString();
-  if (p3Chip) p3Chip.textContent = stats.p3Lines.toLocaleString();
+  // Update Priority Dropdown Option Labels
+  if (p1Opt) p1Opt.textContent = `🔴 P1 Critical (${stats.p1Lines.toLocaleString()})`;
+  if (p2Opt) p2Opt.textContent = `🟠 P2 Active (${stats.p2Lines.toLocaleString()})`;
+  if (p3Opt) p3Opt.textContent = `🟡 P3 Near-Zero (${stats.p3Lines.toLocaleString()})`;
 
-  if (p1Btn) {
-    p1Btn.classList.toggle("active-p1-filter", activePriorityFilter === 'P1');
-    p1Btn.title = `${stats.p1Lines.toLocaleString()} item lines are P1 Critical Stock-Out (Surging/High Demand). Click to isolate.`;
-  }
-  if (p2Btn) {
-    p2Btn.classList.toggle("active-p2-filter", activePriorityFilter === 'P2');
-    p2Btn.title = `${stats.p2Lines.toLocaleString()} item lines are P2 Active Stock-Out (Ongoing Regular Consumption). Click to isolate.`;
-  }
-  if (p3Btn) {
-    p3Btn.classList.toggle("active-p3-filter", activePriorityFilter === 'P3');
-    p3Btn.title = `${stats.p3Lines.toLocaleString()} item lines are P3 Pre-Stockout (Stock below ROP). Click to isolate.`;
-  }
+  updatePriorityDropdownVisuals();
 }
 
 function togglePriorityFilter(level) {
@@ -8569,9 +8602,10 @@ function togglePriorityFilter(level) {
     showToast(`Cleared Priority filter (Displaying all urgency levels)`);
   } else {
     activePriorityFilter = level;
-    const label = level === 'P1' ? 'P1 CRITICAL (Surging Burn)' : (level === 'P2' ? 'P2 ACTIVE (Steady Burn)' : 'P3 PRE-STOCKOUT (Below ROP)');
+    const label = level === 'P1' ? 'P1 CRITICAL (Surging Demand)' : (level === 'P2' ? 'P2 ACTIVE (Steady Demand)' : 'P3 PRE-STOCKOUT (Below ROP)');
     showToast(`Filtered dashboard: Displaying ${label} tasks only`);
   }
+  updatePriorityDropdownVisuals();
   updateZeroStockToggleChip();
   renderLifecycleCards();
   renderStatusChart();
@@ -8970,10 +9004,10 @@ function openL4Modal() {
   // 2. Generate Flat Lines Rows
   let linesRowsHtml = activeL4Tasks.length > 0 ? activeL4Tasks.map((t, idx) => {
     const stockBadge = t.is_zero_stock
-      ? `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem;"><i class="fa-solid fa-triangle-exclamation"></i> Stock: 0</span>`
+      ? `<span style="color:#ef4444; font-weight:800; font-size:0.86rem; font-family:'Outfit',sans-serif; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.7rem;"></i>0</span>`
       : (t.stock !== null && t.stock <= 3
-          ? `<span style="background:rgba(234,179,8,0.25); color:#fde047; border:1px solid rgba(234,179,8,0.5); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem;">Stock: ${t.stock}</span>`
-          : `<span style="background:rgba(52,211,153,0.22); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:2px 7px; border-radius:6px; font-weight:800; font-size:0.72rem;">Stock: ${t.stock !== null ? t.stock : '—'}</span>`);
+          ? `<span style="color:#fde047; font-weight:800; font-size:0.86rem; font-family:'Outfit',sans-serif;"><i class="fa-solid fa-triangle-exclamation" style="font-size:0.7rem; color:#f59e0b; margin-right:3px;"></i>${t.stock}</span>`
+          : `<span style="color:#34d399; font-weight:800; font-size:0.86rem; font-family:'Outfit',sans-serif;">${t.stock !== null ? Number(t.stock).toLocaleString() : '—'}</span>`);
 
     return `
       <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background:${idx % 2 === 0 ? 'rgba(15,23,42,0.3)' : 'transparent'};">
@@ -10546,12 +10580,10 @@ function resetAllFilters() {
 
   const zeroBtn = document.getElementById("btnZeroStockToggle");
   if (zeroBtn) zeroBtn.classList.remove("active-zero-filter");
-  const p1Btn = document.getElementById("btnPriorityP1");
-  const p2Btn = document.getElementById("btnPriorityP2");
-  const p3Btn = document.getElementById("btnPriorityP3");
-  if (p1Btn) p1Btn.classList.remove("active-p1-filter");
-  if (p2Btn) p2Btn.classList.remove("active-p2-filter");
-  if (p3Btn) p3Btn.classList.remove("active-p3-filter");
+  const prioSel = document.getElementById("prioritySelector");
+  if (prioSel) prioSel.value = 'ALL';
+  const prioWrap = document.getElementById("prioritySelectorWrap");
+  if (prioWrap) prioWrap.classList.remove("active-p1", "active-p2", "active-p3");
 
   const yrSel = document.getElementById('yearSelector');
   if (yrSel) yrSel.value = 'ALL';
