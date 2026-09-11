@@ -7784,11 +7784,9 @@ function getFilteredZeroStockCount() {
     const matchPRPO = matchPrPo(t);
     const matchY = (selectedYear === 'ALL') || (String(t.pr_year) === String(selectedYear));
     const matchO = matchOrderType(t);
-    const matchStage = (selectedStage === 'ALL') ? true : (selectedStage === 'PARTIAL' ? t.is_partial : t.task_stage === selectedStage);
-    
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    if (matchB && matchP && matchD && matchPRPO && matchY && matchO && matchStage && matchEnt && matchReq) {
+    if (matchB && matchP && matchD && matchPRPO && matchY && matchO && matchEnt && matchReq) {
       (t.lines || []).forEach(l => {
         if (l.is_zero_stock || l.stock === 0) totalZeroLines++;
       });
@@ -8320,7 +8318,6 @@ function openDelayModal(stageName, filterTier, deliveryFilter) {
   currentDelayModalTier = filterTier || 'ALL';
   currentDelayModalDeliveryFilter = deliveryFilter || 'ALL';
   currentDelayModalSearch = '';
-  selectedStage = stageName;
 
   if (stageName === 'On-Track Delivery') {
     currentDelayModalSortKey = 'timeline';
@@ -8970,6 +8967,7 @@ function closeModalDirect() {
     const icon = document.getElementById('itemModalExpandIcon');
     if (icon) icon.className = 'fa-solid fa-expand';
   }
+  currentDelayModalStage = null;
   currentDelayModalSearch = '';
   currentDelayModalDeliveryFilter = 'ALL';
 }
@@ -8987,10 +8985,11 @@ function downloadOriginalMasterExcel() {
     
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = ORIGINAL_XLSX_NAME || "07_RM3_Buyer_Follow_Up_2026-08-27.xlsx";
+    link.download = ORIGINAL_XLSX_NAME;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
     showToast(`Downloaded official master workbook: ${ORIGINAL_XLSX_NAME}`);
   } catch(e) {
     console.error("Master download error:", e);
@@ -9000,7 +8999,6 @@ function downloadOriginalMasterExcel() {
 
 // ── 2. Export Filtered Scope directly with Stage ──
 function exportStageDirect(stageName, filterTier, deliveryFilter, searchKeyword) {
-  selectedStage = stageName;
   let tasksToExport = null;
 
   if (typeof stageName === 'string' && stageName) {
