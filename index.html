@@ -7114,7 +7114,8 @@ function getFilteredL4Tasks() {
     const matchZero = !isZeroStockFilterActive || t.is_zero_stock;
     const matchEnt = matchEnteredBy(t);
     const matchReq = matchRequestedBy(t);
-    return matchD && matchP && matchY && matchZero && matchEnt && matchReq;
+    const matchPrio = !activePriorityFilter || (t.priority === activePriorityFilter);
+    return matchD && matchP && matchY && matchZero && matchEnt && matchReq && matchPrio;
   });
 }
 
@@ -9384,8 +9385,28 @@ function openL4Modal() {
     titleEl.innerHTML = `<i class="fa-solid fa-clipboard-check" style="color:#c084fc;"></i> Pre-Commercial Queue: <span style="color:#ffffff;">Pending Level 4 Stock Control (${uniquePRs} PRs)</span>`;
   }
 
-  // 1. Generate Requisition (PR) Summary Rows
-  const activePrSummaries = (typeof L4_PRS_SUMMARY !== 'undefined' ? L4_PRS_SUMMARY : []).filter(p => uniquePrNumbers.has(p.pr_no));
+  // 1. Generate Requisition (PR) Summary Rows dynamically from activeL4Tasks
+  const prMap = new Map();
+  activeL4Tasks.forEach(t => {
+    if (!prMap.has(t.pr_no)) {
+      prMap.set(t.pr_no, {
+        pr_no: t.pr_no,
+        pr_date: t.pr_date,
+        requested_by: t.requested_by,
+        project: t.project,
+        department: t.department,
+        unit: t.unit,
+        total_lines: 0,
+        zero_lines: 0,
+        total_units: 0
+      });
+    }
+    const p = prMap.get(t.pr_no);
+    p.total_lines++;
+    if (t.is_zero_stock || t.stock === 0) p.zero_lines++;
+    p.total_units += (t.qty || 0);
+  });
+  const activePrSummaries = Array.from(prMap.values());
   let prRowsHtml = activePrSummaries.length > 0 ? activePrSummaries.map((p, idx) => {
     const zeroBadge = p.zero_lines > 0
       ? `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:3px 8px; border-radius:6px; font-weight:800; font-size:0.75rem; white-space:nowrap;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>${p.zero_lines} Zero-Stock (${((p.zero_lines / p.total_lines)*100).toFixed(0)}%)</span>`
@@ -9413,7 +9434,7 @@ function openL4Modal() {
         </td>
       </tr>
     `;
-  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control PRs match the active Department / Project filters.</td></tr>`;
+  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control PRs match the active filters.</td></tr>`;
 
   // 2. Generate Flat Lines Rows
   let linesRowsHtml = activeL4Tasks.length > 0 ? activeL4Tasks.map((t, idx) => {
@@ -9439,7 +9460,7 @@ function openL4Modal() {
         <td style="padding:8px; text-align:center;"><span style="background:rgba(168,85,247,0.22); color:#e9d5ff; border:1px solid rgba(168,85,247,0.5); padding:2px 7px; border-radius:6px; font-size:0.7rem; font-weight:700;">Pending L4</span></td>
       </tr>
     `;
-  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control item lines match the active Department / Project filters.</td></tr>`;
+  }).join('') : `<tr><td colspan="10" style="text-align:center; padding:2rem; color:#94a3b8;"><i class="fa-solid fa-circle-info" style="font-size:1.5rem; color:#c084fc; margin-bottom:8px; display:block;"></i>No Level 4 Stock Control item lines match the active filters.</td></tr>`;
 
   modalContent.innerHTML = `
     <!-- Top 3 KPI Cards for L4 -->
