@@ -2783,16 +2783,16 @@
     }
     .btn-more-filters-done:hover { background: #0369a1; }
 
-    /* ── Item Intelligence Neon Pillars Chart ── */
+    /* ── Item Intelligence Neon Pillars Chart (Ultra-Compact) ── */
     .pillar-chart {
       display: flex;
       justify-content: space-around;
       align-items: flex-end;
-      height: 142px;
-      padding: 24px 20px 0;
+      height: 92px;
+      padding: 10px 14px 0;
       position: relative;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-top: 0.8rem;
+      margin-top: 0.2rem;
     }
     .pillar-col {
       display: flex;
@@ -2803,14 +2803,14 @@
     }
     .pillar-bar-wrap {
       position: relative;
-      width: 64px;
+      width: 46px;
       display: flex;
       justify-content: center;
       align-items: flex-end;
     }
     .pillar-bar {
       width: 100%;
-      border-radius: 10px 10px 0 0;
+      border-radius: 6px 6px 0 0;
       position: relative;
       border-bottom: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2818,43 +2818,43 @@
     }
     .pillar-bar:hover {
       filter: brightness(1.25);
-      transform: translateY(-4px);
+      transform: translateY(-3px);
     }
     .pillar-cap {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 6px;
-      border-radius: 10px 10px 0 0;
+      height: 4px;
+      border-radius: 6px 6px 0 0;
     }
     .pillar-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.82rem;
+      font-size: 0.72rem;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
       position: relative;
       z-index: 3;
       background: rgba(11, 19, 43, 0.85);
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
       display: inline-block;
     }
     .pillar-footer {
-      margin-top: 6px;
+      margin-top: 3px;
       text-align: center;
     }
     .pillar-yr {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       font-weight: 800;
       color: #ffffff;
     }
     .pillar-date {
-      font-size: 0.64rem;
+      font-size: 0.58rem;
       color: #94a3b8;
-      margin-top: 1px;
+      margin-top: 0px;
     }
 
   </style>
@@ -3715,25 +3715,25 @@
 
 <!-- ITEM CONSUMPTION & TECHNICAL INTELLIGENCE MODAL -->
 <div class="dossier-overlay" id="itemIntelModal" style="z-index:10200;" onclick="closeItemIntelModal(event)">
-  <div class="dossier-card" style="width:95vw; max-width:1420px; max-height:94vh;" onclick="event.stopPropagation()">
-    <div class="modal-header" style="background:rgba(15,23,42,0.98); border-bottom:1px solid rgba(168,85,247,0.35);">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,#8b5cf6 0%,#6366f1 100%); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:1.05rem; flex-shrink:0;">
+  <div class="dossier-card" style="width:95vw; max-width:1380px; max-height:94vh;" onclick="event.stopPropagation()">
+    <div class="modal-header" style="background:rgba(15,23,42,0.98); border-bottom:1px solid rgba(168,85,247,0.35); padding:8px 16px;">
+      <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+        <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg,#8b5cf6 0%,#6366f1 100%); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:0.95rem; flex-shrink:0;">
           <i class="fa-solid fa-chart-column"></i>
         </div>
-        <div>
-          <h3 style="font-family:'Outfit',sans-serif; color:#ffffff; font-size:1.12rem; margin:0;" id="itemIntelTitle">Item Consumption & Technical Intelligence</h3>
-          <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:4px; font-size:0.75rem; color:#94a3b8;" id="itemIntelSubtitle">Historical Consumption • Stock Coverage • Procurement Benchmarks</div>
+        <div style="flex:1; min-width:0;">
+          <div id="itemIntelTitle" style="font-family:'Outfit',sans-serif; color:#ffffff; font-size:1.02rem; margin:0; line-height:1.3;">Item Consumption & Technical Intelligence</div>
+          <div id="itemIntelSubtitle" style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">Historical Consumption • Stock Coverage • Procurement Benchmarks</div>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         <button class="modal-expand-btn" id="itemIntelModalExpandBtn" onclick="toggleModalMaximize('itemIntelModal')" title="Toggle Fullscreen (Maximize)">
           <i class="fa-solid fa-expand" id="itemIntelModalExpandIcon"></i>
         </button>
         <button class="modal-close-btn" onclick="closeItemIntelModalDirect()">&times;</button>
       </div>
     </div>
-    <div class="modal-body" id="itemIntelContent" style="gap:0.75rem; padding:0.9rem 1.4rem;">
+    <div class="modal-body" id="itemIntelContent" style="gap:0.42rem; padding:0.5rem 1.1rem; overflow-y:auto;">
       <!-- Populated dynamically via openItemIntelligence() -->
     </div>
   </div>
@@ -8169,27 +8169,36 @@ function openItemIntelligence(itemCode) {
   }
 
   if (!intel) {
-    document.getElementById("itemIntelTitle").textContent = `Item Intelligence • ${itemCode}`;
-    document.getElementById("itemIntelSubtitle").textContent = `Requisition Item • Oracle Apex Inventory Record`;
+    document.getElementById("itemIntelTitle").innerHTML = `
+      <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+        <span>Item Intelligence • <strong style="color:#38bdf8; font-family:monospace; font-size:1.05rem; letter-spacing:0.4px;">${escapeHtml(itemCode)}</strong></span>
+        ${lineDesc ? `
+          <span style="font-size:0.8rem; color:#f8fafc; font-weight:700; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.35); padding:2px 10px; border-radius:6px; max-width:680px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:5px;" title="${escapeHtml(lineDesc)}">
+            <i class="fa-solid fa-cube" style="color:#38bdf8; font-size:0.75rem;"></i> ${escapeHtml(lineDesc)}
+          </span>
+        ` : ''}
+      </div>
+    `;
+    document.getElementById("itemIntelSubtitle").innerHTML = `<span style="font-size:0.72rem; color:#94a3b8;">Requisition Item • Oracle Apex Inventory Record</span>`;
     document.getElementById("itemIntelContent").innerHTML = `
-      <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.8rem; text-align:center;">
-        <div style="width:48px; height:48px; border-radius:50%; background:rgba(56,189,248,0.12); color:#38bdf8; display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 12px;">
+      <div style="background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.2rem; text-align:center;">
+        <div style="width:40px; height:40px; border-radius:50%; background:rgba(56,189,248,0.12); color:#38bdf8; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin:0 auto 8px;">
           <i class="fa-solid fa-box-open"></i>
         </div>
-        <h4 style="color:#ffffff; font-size:1.1rem; margin:0 0 6px;">${escapeHtml(itemCode)}</h4>
-        <p style="color:#94a3b8; font-size:0.82rem; margin:0 auto 16px; max-width:550px; line-height:1.4;">${escapeHtml(lineDesc || 'Detailed warehouse inventory master record not found in current consolidated chunk.')}</p>
-        <div style="display:inline-flex; gap:16px; background:rgba(255,255,255,0.04); padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+        <h4 style="color:#ffffff; font-size:1rem; margin:0 0 4px;">${escapeHtml(itemCode)}</h4>
+        <p style="color:#94a3b8; font-size:0.78rem; margin:0 auto 12px; max-width:550px; line-height:1.4;">${escapeHtml(lineDesc || 'Detailed warehouse inventory master record not found in current consolidated chunk.')}</p>
+        <div style="display:inline-flex; gap:16px; background:rgba(255,255,255,0.04); padding:8px 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
           <div style="text-align:left;">
-            <span style="font-size:0.68rem; color:#94a3b8; text-transform:uppercase;">Requested PR Qty</span><br>
-            <strong style="color:#ffffff; font-size:1rem;">${prQty > 0 ? prQty.toLocaleString() : '—'}</strong>
+            <span style="font-size:0.65rem; color:#94a3b8; text-transform:uppercase;">Requested PR Qty</span><br>
+            <strong style="color:#ffffff; font-size:0.95rem;">${prQty > 0 ? prQty.toLocaleString() : '—'}</strong>
           </div>
           <div style="width:1px; background:rgba(255,255,255,0.1);"></div>
           <div style="text-align:left;">
-            <span style="font-size:0.68rem; color:#94a3b8; text-transform:uppercase;">Contractual PO Qty</span><br>
-            <strong style="color:#38bdf8; font-size:1rem;">${poQty > 0 ? poQty.toLocaleString() : '—'}</strong>
+            <span style="font-size:0.65rem; color:#94a3b8; text-transform:uppercase;">Contractual PO Qty</span><br>
+            <strong style="color:#38bdf8; font-size:0.95rem;">${poQty > 0 ? poQty.toLocaleString() : '—'}</strong>
           </div>
         </div>
-        <div style="margin-top:18px; font-size:0.75rem; color:#64748b;">
+        <div style="margin-top:12px; font-size:0.72rem; color:#64748b;">
           <i class="fa-solid fa-circle-info" style="margin-right:4px;"></i> This item is actively linked to ongoing procurement workflows and will be enriched automatically upon catalog refresh.
         </div>
       </div>
@@ -8255,11 +8264,11 @@ function openItemIntelligence(itemCode) {
     const mult = unitEstEgp / unitHistEgp;
     const pct = (mult - 1.0) * 100.0;
     if (mult >= 1.25) {
-      inflationBadgeHtml = `<span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;" title="Estimated replacement budget is ${mult.toFixed(2)}x historical PO price (+${pct.toFixed(0)}%) due to currency realignment & price escalation"><i class="fa-solid fa-fire-flame-curved" style="color:#ef4444;"></i> ${mult.toFixed(2)}x Escalation (+${pct.toFixed(0)}%)</span>`;
+      inflationBadgeHtml = `<span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:800;" title="Estimated replacement budget is ${mult.toFixed(2)}x historical PO price (+${pct.toFixed(0)}%) due to currency realignment & price escalation"><i class="fa-solid fa-fire-flame-curved" style="color:#ef4444;"></i> ${mult.toFixed(2)}x Escalation (+${pct.toFixed(0)}%)</span>`;
     } else if (mult > 1.02) {
-      inflationBadgeHtml = `<span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;" title="+${pct.toFixed(1)}% inflation adjustment"><i class="fa-solid fa-arrow-trend-up"></i> +${pct.toFixed(1)}% Inflation</span>`;
+      inflationBadgeHtml = `<span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.4); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:800;" title="+${pct.toFixed(1)}% inflation adjustment"><i class="fa-solid fa-arrow-trend-up"></i> +${pct.toFixed(1)}% Inflation</span>`;
     } else {
-      inflationBadgeHtml = `<span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-solid fa-check"></i> Fresh Baseline</span>`;
+      inflationBadgeHtml = `<span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:700;"><i class="fa-solid fa-check"></i> Fresh Baseline</span>`;
     }
   }
 
@@ -8272,27 +8281,27 @@ function openItemIntelligence(itemCode) {
     const deltaEgp = lineTotEstEgp - lineTotHistEgp;
 
     lineTotalCostHtml = `
-      <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.25); border-radius:7px; padding:7px 10px; margin-top:4px; display:flex; flex-direction:column; gap:3px;">
+      <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.25); border-radius:6px; padding:4px 8px; margin-top:2px; display:flex; flex-direction:column; gap:2px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.72rem; color:#7dd3fc; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">
+          <span style="font-size:0.7rem; color:#7dd3fc; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">
             <i class="fa-solid fa-coins" style="margin-right:4px;"></i> Total Line Est. Budget:
           </span>
-          <span style="font-size:0.68rem; color:#94a3b8;">Requested: <strong style="color:#ffffff;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong></span>
+          <span style="font-size:0.65rem; color:#94a3b8;">Requested: <strong style="color:#ffffff;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong></span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:baseline;">
-          <span style="color:#ffffff; font-size:0.98rem; font-weight:900; font-family:'Outfit',sans-serif;">
-            ${lineTotEstEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span style="font-size:0.72rem; color:#38bdf8;">EGP</span>
+          <span style="color:#ffffff; font-size:0.92rem; font-weight:900; font-family:'Outfit',sans-serif;">
+            ${lineTotEstEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span style="font-size:0.7rem; color:#38bdf8;">EGP</span>
           </span>
           ${lineTotEstFc > 0 ? `
-          <span style="color:#a78bfa; font-size:0.75rem; font-weight:700;">
+          <span style="color:#a78bfa; font-size:0.72rem; font-weight:700;">
             (${lineTotEstFc.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(cleanCurr)})
           </span>` : ''}
         </div>
         ${(lineTotHistEgp > 0 && Math.abs(deltaEgp) > 0.01) ? `
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.66rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.08); padding-top:3px; margin-top:2px;">
-          <span>Historical PO Value: <strong style="color:#cbd5e1;">${lineTotHistEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong></span>
-          <span style="color:#fca5a5; font-weight:700;">Escalation Delta: ${deltaEgp >= 0 ? '+' : ''}${deltaEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
-        </div>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.64rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.08); padding-top:2px; margin-top:1px;">
+          <span>Historical PO: <strong style="color:#cbd5e1;">${lineTotHistEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong></span>
+          <span style="color:#fca5a5; font-weight:700;">Escalation: ${deltaEgp >= 0 ? '+' : ''}${deltaEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
+        </div>` : ''}}
       </div>
     `;
   }
@@ -8318,7 +8327,7 @@ function openItemIntelligence(itemCode) {
       else if (totalMonths < 60)  { ageColor = '#60a5fa'; ageBg = 'rgba(96,165,250,0.15)';  ageLabel = 'Established'; }
       else if (totalMonths < 120) { ageColor = '#fbbf24'; ageBg = 'rgba(251,191,36,0.15)';  ageLabel = 'Mature'; }
       else                         { ageColor = '#f87171'; ageBg = 'rgba(248,113,113,0.15)'; ageLabel = 'Legacy Code'; }
-      codeAgeBadgeHtml = `<span style="background:${ageBg};color:${ageColor};border:1px solid ${ageColor}40;padding:2px 8px;border-radius:5px;font-size:0.65rem;font-weight:800;">⏱ ${ageStr} · ${ageLabel}</span>`;
+      codeAgeBadgeHtml = `<span style="background:${ageBg};color:${ageColor};border:1px solid ${ageColor}40;padding:1px 6px;border-radius:4px;font-size:0.62rem;font-weight:800;">⏱ ${ageStr} · ${ageLabel}</span>`;
     }
   }
 
@@ -8335,143 +8344,127 @@ function openItemIntelligence(itemCode) {
   const benchmarkVal = wma > 0 ? wma : (avgConsAnnual > 0 ? avgConsAnnual : 0);
   const maxC = Math.max(cY1, cY2, cY3, benchmarkVal, 1);
 
-  // ── DYNAMIC YoY DELTAS & PILLAR VISUALS ──
-  const pillarMaxH = 46;
-  const hPillarY3 = Math.max(6, Math.round((cY3 / maxC) * pillarMaxH));
-  const hPillarY2 = Math.max(6, Math.round((cY2 / maxC) * pillarMaxH));
-  const hPillarY1 = Math.max(6, Math.round((cY1 / maxC) * pillarMaxH));
-  const wmaLineBottomPx = Math.min(55, Math.max(6, Math.round((benchmarkVal / maxC) * pillarMaxH)));
+  // ── DYNAMIC YoY DELTAS & PILLAR VISUALS (Ultra-Compact) ──
+  const pillarMaxH = 32;
+  const hPillarY3 = Math.max(5, Math.round((cY3 / maxC) * pillarMaxH));
+  const hPillarY2 = Math.max(5, Math.round((cY2 / maxC) * pillarMaxH));
+  const hPillarY1 = Math.max(5, Math.round((cY1 / maxC) * pillarMaxH));
+  const wmaLineBottomPx = Math.min(38, Math.max(4, Math.round((benchmarkVal / maxC) * pillarMaxH)));
 
   // Year 1 (2023-2024) Baseline
-  const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Baseline</span>';
+  const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;">Baseline</span>';
 
   // Year 2 (2024-2025)
   let tagY2 = '';
   let pillarGradY2 = 'linear-gradient(180deg, rgba(56, 189, 248, 0.9) 0%, rgba(14, 165, 233, 0.4) 60%, rgba(2, 132, 199, 0.1) 100%)';
   let pillarCapY2 = '#ffffff';
   let pillarBorderY2 = 'rgba(56, 189, 248, 0.6)';
-  let pillarShadowY2 = 'rgba(56, 189, 248, 0.25)';
-
+  let pillarShadowY2 = 'rgba(56, 189, 248, 0.3)';
   if (cY3 > 0) {
-    const d2 = ((cY2 - cY3) / cY3) * 100;
-    if (d2 < -1.0) {
-      tagY2 = `<span style="background:rgba(234,179,8,0.18); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;"><i class="fa-solid fa-arrow-down"></i> ${d2.toFixed(1)}% Dip</span>`;
-      pillarGradY2 = 'linear-gradient(180deg, rgba(234,179,8,0.85) 0%, rgba(202,138,4,0.35) 60%, rgba(161,98,7,0.1) 100%)';
-      pillarCapY2 = '#fde047';
-      pillarBorderY2 = 'rgba(234,179,8,0.6)';
-      pillarShadowY2 = 'rgba(234,179,8,0.25)';
-    } else if (d2 > 1.0) {
-      tagY2 = `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;"><i class="fa-solid fa-arrow-up"></i> +${d2.toFixed(1)}%</span>`;
+    const delta2 = ((cY2 - cY3) / cY3) * 100;
+    if (delta2 > 15) {
+      tagY2 = `<span style="background:rgba(239,68,68,0.18); color:#fca5a5; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;"><i class="fa-solid fa-arrow-trend-up"></i> +${Math.round(delta2)}%</span>`;
+      pillarGradY2 = 'linear-gradient(180deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.4) 60%, rgba(185, 28, 28, 0.1) 100%)';
+      pillarCapY2 = '#fca5a5';
+      pillarBorderY2 = 'rgba(239, 68, 68, 0.7)';
+      pillarShadowY2 = 'rgba(239, 68, 68, 0.35)';
+    } else if (delta2 < -15) {
+      tagY2 = `<span style="background:rgba(74,222,128,0.18); color:#86efac; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;"><i class="fa-solid fa-arrow-trend-down"></i> ${Math.round(delta2)}%</span>`;
+      pillarGradY2 = 'linear-gradient(180deg, rgba(34, 197, 94, 0.9) 0%, rgba(22, 163, 74, 0.4) 60%, rgba(21, 128, 61, 0.1) 100%)';
+      pillarCapY2 = '#86efac';
+      pillarBorderY2 = 'rgba(34, 197, 94, 0.7)';
+      pillarShadowY2 = 'rgba(34, 197, 94, 0.35)';
     } else {
-      tagY2 = `<span style="background:rgba(148,163,184,0.15); color:#cbd5e1; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Stable</span>`;
+      tagY2 = `<span style="background:rgba(56,189,248,0.15); color:#7dd3fc; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;">Stable</span>`;
     }
+  } else if (cY2 > 0) {
+    tagY2 = '<span style="background:rgba(56,189,248,0.18); color:#38bdf8; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;">Active</span>';
   } else {
-    tagY2 = cY2 > 0 ? `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;">Active</span>` : `<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">No Activity</span>`;
+    tagY2 = '<span style="color:#64748b; font-size:0.6rem;">0 burn</span>';
   }
 
-  // Year 3 (2025-2026 Current Last 12M)
+  // Year 3 (2025-2026 - Last 12 Months)
   let tagY1 = '';
-  let pillarGradY1 = 'linear-gradient(180deg, rgba(96,165,250,0.95) 0%, rgba(37,99,235,0.45) 60%, rgba(29,78,216,0.1) 100%)';
-  let pillarCapY1 = '#bfdbfe';
-  let pillarBorderY1 = 'rgba(96,165,250,0.8)';
-  let pillarShadowY1 = 'rgba(96,165,250,0.4)';
-
-  const baseForY1 = cY2 > 0 ? cY2 : (cY3 > 0 ? cY3 : 0);
-  if (baseForY1 > 0) {
-    const d1 = ((cY1 - baseForY1) / baseForY1) * 100;
-    if (d1 > 1.0) {
-      tagY1 = `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;"><i class="fa-solid fa-arrow-up"></i> +${d1.toFixed(1)}% Surge</span>`;
-    } else if (d1 < -1.0) {
-      tagY1 = `<span style="background:rgba(234,179,8,0.18); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;"><i class="fa-solid fa-arrow-down"></i> ${d1.toFixed(1)}%</span>`;
-      pillarGradY1 = 'linear-gradient(180deg, rgba(234,179,8,0.85) 0%, rgba(202,138,4,0.35) 60%, rgba(161,98,7,0.1) 100%)';
-      pillarCapY1 = '#fde047';
-      pillarBorderY1 = 'rgba(234,179,8,0.6)';
-      pillarShadowY1 = 'rgba(234,179,8,0.25)';
+  let pillarGradY1 = 'linear-gradient(180deg, rgba(99, 102, 241, 0.95) 0%, rgba(79, 70, 229, 0.45) 60%, rgba(67, 56, 202, 0.1) 100%)';
+  let pillarCapY1 = '#a5b4fc';
+  let pillarBorderY1 = 'rgba(99, 102, 241, 0.7)';
+  let pillarShadowY1 = 'rgba(99, 102, 241, 0.4)';
+  if (cY2 > 0) {
+    const delta1 = ((cY1 - cY2) / cY2) * 100;
+    if (delta1 > 15) {
+      tagY1 = `<span style="background:rgba(239,68,68,0.22); color:#fca5a5; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> +${Math.round(delta1)}% YoY</span>`;
+      pillarGradY1 = 'linear-gradient(180deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.45) 60%, rgba(185, 28, 28, 0.1) 100%)';
+      pillarCapY1 = '#fca5a5';
+      pillarBorderY1 = 'rgba(239, 68, 68, 0.8)';
+      pillarShadowY1 = 'rgba(239, 68, 68, 0.45)';
+    } else if (delta1 < -15) {
+      tagY1 = `<span style="background:rgba(74,222,128,0.22); color:#86efac; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${Math.round(delta1)}% YoY</span>`;
+      pillarGradY1 = 'linear-gradient(180deg, rgba(34, 197, 94, 0.95) 0%, rgba(22, 163, 74, 0.45) 60%, rgba(21, 128, 61, 0.1) 100%)';
+      pillarCapY1 = '#86efac';
+      pillarBorderY1 = 'rgba(34, 197, 94, 0.8)';
+      pillarShadowY1 = 'rgba(34, 197, 94, 0.45)';
     } else {
-      tagY1 = `<span style="background:rgba(56,189,248,0.18); color:#38bdf8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Steady Burn</span>`;
+      tagY1 = `<span style="background:rgba(99,102,241,0.2); color:#a5b4fc; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;">Consistent</span>`;
     }
+  } else if (cY1 > 0) {
+    tagY1 = '<span style="background:rgba(99,102,241,0.22); color:#a5b4fc; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:800;">Active Demand</span>';
   } else {
-    tagY1 = cY1 > 0 ? `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:800;"><i class="fa-solid fa-arrow-up"></i> Active Demand</span>` : `<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 6px; border-radius:4px; font-size:0.62rem; font-weight:700;">Zero Burn</span>`;
+    tagY1 = '<span style="color:#64748b; font-size:0.6rem;">Dormant (0)</span>';
   }
 
-  let runwayText = '—';
-  let runwayColor = '#6ee7b7';
-  if (stkTot === 0) {
-    runwayText = '0.00 M (Zero Stock / Stock-out)';
-    runwayColor = '#f87171';
-  } else if (intel.cover) {
-    if (String(intel.cover).toUpperCase().includes('INF')) {
-      runwayText = 'Infinite (> 36M Zero Burn)';
-      runwayColor = '#94a3b8';
-    } else {
-      const covVal = parseFloat(intel.cover);
-      if (covVal <= 1.0) {
-        runwayText = `${intel.cover} (Critical Low)`;
-        runwayColor = '#f87171';
-      } else if (covVal <= 3.0) {
-        runwayText = `${intel.cover} (Warning / Re-order Soon)`;
-        runwayColor = '#fde047';
-      } else {
-        runwayText = `${intel.cover} (Optimal Runway)`;
-        runwayColor = '#6ee7b7';
-      }
-    }
-  } else if (intel.cover_months !== null && intel.cover_months !== undefined) {
-    const cm = Number(intel.cover_months);
-    if (cm > 36) {
-      runwayText = '> 36 Months (Ultra High Cover)';
-      runwayColor = '#fbbf24';
-    } else if (cm <= 1.0) {
-      runwayText = `${cm.toFixed(1)} Months (Critical Low)`;
-      runwayColor = '#f87171';
-    } else if (cm <= 3.0) {
-      runwayText = `${cm.toFixed(1)} Months (Warning / Re-order Soon)`;
-      runwayColor = '#fde047';
-    } else {
-      runwayText = `${cm.toFixed(1)} Months (Optimal Range)`;
-      runwayColor = '#6ee7b7';
-    }
-  } else if (stkTot > 0 && wma === 0) {
-    runwayText = 'Infinite (> 36M Zero Burn)';
-    runwayColor = '#94a3b8';
-  }
-
-  // ── DYNAMIC TREND BADGE ──
+  // Trend Badge
   let trendBadgeHtml = '';
-  if (trend === 'declining' || trendLabel.includes('Fading') || trendLabel.includes('Dip')) {
-    trendBadgeHtml = `<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> ${escapeHtml(trendLabel)}</span>`;
-  } else if (trend === 'surging' || trendLabel.includes('Surge') || trendLabel.includes('+')) {
-    trendBadgeHtml = `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; border:1px solid rgba(52,211,153,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> ${escapeHtml(trendLabel)}</span>`;
+  if (trend === 'rising') {
+    trendBadgeHtml = '<span style="background:rgba(239,68,68,0.18); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-up"></i> Rising</span>';
+  } else if (trend === 'declining') {
+    trendBadgeHtml = '<span style="background:rgba(74,222,128,0.18); color:#86efac; border:1px solid rgba(74,222,128,0.4); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:800;"><i class="fa-solid fa-arrow-trend-down"></i> Fading</span>';
+  } else if (trend === 'stable') {
+    trendBadgeHtml = '<span style="background:rgba(56,189,248,0.15); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 6px; border-radius:4px; font-size:0.66rem; font-weight:700;"><i class="fa-solid fa-minus"></i> Steady</span>';
   } else {
-    trendBadgeHtml = `<span style="background:rgba(56,189,248,0.18); color:#38bdf8; border:1px solid rgba(56,189,248,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;"><i class="fa-solid fa-arrows-left-right"></i> ${escapeHtml(trendLabel)}</span>`;
+    trendBadgeHtml = '<span style="background:rgba(148,163,184,0.15); color:#cbd5e1; border:1px solid rgba(148,163,184,0.3); padding:1px 6px; border-radius:4px; font-size:0.66rem;">Dormant</span>';
+  }
+
+  // Runway & Stock Feasibility
+  let runwayText = '';
+  if (wmaMonthly > 0) {
+    const mos = stkTot / wmaMonthly;
+    if (mos === 0) {
+      runwayText = '<span style="color:#f87171; font-weight:800;"><i class="fa-solid fa-triangle-exclamation"></i> 0.0 Mos Stock (Stockout)</span>';
+    } else if (mos < 2) {
+      runwayText = `<span style="color:#fbbf24; font-weight:800;"><i class="fa-solid fa-clock"></i> ${mos.toFixed(1)} Mos Stock (Critical)</span>`;
+    } else {
+      runwayText = `<span style="color:#34d399; font-weight:700;"><i class="fa-solid fa-shield-halved"></i> ${mos.toFixed(1)} Mos Stock Coverage</span>`;
+    }
+  } else {
+    runwayText = stkTot > 0 ? '<span style="color:#cbd5e1;">Zero Burn Rate</span>' : '<span style="color:#f87171; font-weight:700;">Zero Stock / Inactive</span>';
   }
 
   let auditWarningHtml = '';
   if (prQty > 0) {
-    if (wma > 0 && prQty >= (wma * 2.5)) {
-      const ratio = (prQty / wma).toFixed(1);
+    if (wmaMonthly > 0 && stkTot >= (wmaMonthly * 6)) {
+      const overMonths = (stkTot / wmaMonthly).toFixed(1);
       auditWarningHtml = `
-        <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:0.85rem;"></i>
-          <span style="font-size:0.7rem; color:#fca5a5; font-weight:600;">
-            PR Qty (${prQty.toLocaleString()} ${uom}) is ${ratio}x higher than annual burn (${wma.toFixed(1)}/yr).
+        <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); padding:4px 8px; border-radius:5px; margin-top:2px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:0.75rem;"></i>
+          <span style="font-size:0.68rem; color:#fca5a5; font-weight:600;">
+            Surplus Alert: On-hand covers ${overMonths} months burn. Requisition might cause overstock.
           </span>
         </div>
       `;
-    } else if (intel.c3y === 0 && prQty > 0) {
+    } else if (wma === 0 && (cY1 + cY2 + cY3) === 0 && stkTot === 0) {
       auditWarningHtml = `
-        <div style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.35); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; font-size:0.85rem;"></i>
-          <span style="font-size:0.7rem; color:#fde047; font-weight:600;">
+        <div style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.35); padding:4px 8px; border-radius:5px; margin-top:2px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; font-size:0.75rem;"></i>
+          <span style="font-size:0.68rem; color:#fde047; font-weight:600;">
             Dead Stock Alert: PR requests ${prQty.toLocaleString()} ${uom}, but 0 consumption over past 3 years.
           </span>
         </div>
       `;
     } else {
       auditWarningHtml = `
-        <div style="background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); padding:6px 9px; border-radius:6px; margin-top:4px; display:flex; align-items:center; gap:6px;">
-          <i class="fa-solid fa-circle-check" style="color:#34d399; font-size:0.85rem;"></i>
-          <span style="font-size:0.7rem; color:#6ee7b7; font-weight:600;">
+        <div style="background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); padding:4px 8px; border-radius:5px; margin-top:2px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-circle-check" style="color:#34d399; font-size:0.75rem;"></i>
+          <span style="font-size:0.68rem; color:#6ee7b7; font-weight:600;">
             PR Qty (${prQty.toLocaleString()} ${uom}) aligns with annual burn (${wma.toFixed(1)}/yr).
           </span>
         </div>
@@ -8479,179 +8472,192 @@ function openItemIntelligence(itemCode) {
     }
   }
 
-  const plantShort = plantDisplay && plantDisplay.length > 58 ? plantDisplay.substring(0, 55) + '...' : plantDisplay;
-  document.getElementById("itemIntelTitle").textContent = `Item Intelligence • ${itemCode}`;
-  document.getElementById("itemIntelSubtitle").textContent = `${wh && wh !== '—' ? 'Warehouse: ' + wh + ' • ' : ''}${uom ? 'UOM: ' + uom + ' • ' : ''}${plantShort && plantShort !== '—' ? 'Main Plant: ' + plantShort : ''}`;
+  const plantShort = plantDisplay && plantDisplay.length > 55 ? plantDisplay.substring(0, 52) + '...' : plantDisplay;
+  
+  // ── Modal Header: Item Code + Shifted Description ──
+  document.getElementById("itemIntelTitle").innerHTML = `
+    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+      <span>Item Intelligence • <strong style="color:#38bdf8; font-family:monospace; font-size:1.05rem; letter-spacing:0.4px;">${escapeHtml(itemCode)}</strong></span>
+      ${desc && desc !== '—' ? `
+        <span style="font-size:0.8rem; color:#f8fafc; font-weight:700; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.35); padding:2px 10px; border-radius:6px; max-width:680px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:5px;" title="${escapeHtml(desc)}">
+          <i class="fa-solid fa-cube" style="color:#38bdf8; font-size:0.75rem;"></i> ${escapeHtml(desc)}
+        </span>
+      ` : ''}
+    </div>
+  `;
+
+  // ── Modal Subtitle: Warehouse • UOM • Main Plant ──
+  document.getElementById("itemIntelSubtitle").innerHTML = `
+    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px; font-size:0.72rem; color:#94a3b8;">
+      ${wh && wh !== '—' ? `<span><i class="fa-solid fa-warehouse" style="color:#64748b; margin-right:4px;"></i>Warehouse: <strong style="color:#ffffff;">${escapeHtml(wh)}</strong></span>` : ''}
+      ${uom ? `<span><i class="fa-solid fa-ruler-combined" style="color:#64748b; margin-right:4px;"></i>UOM: <strong style="color:#ffffff;">${escapeHtml(uom)}</strong></span>` : ''}
+      ${plantShort && plantShort !== '—' ? `<span><i class="fa-solid fa-industry" style="color:#64748b; margin-right:4px;"></i>Main Plant: <strong style="color:#ffffff;">${escapeHtml(plantShort)}</strong></span>` : ''}
+    </div>
+  `;
 
   document.getElementById("itemIntelContent").innerHTML = `
-    <!-- Item Header Description Banner (Ultra-Compact) -->
-    <div style="background:rgba(15,23,42,0.75); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px 12px; display:flex; align-items:center; gap:10px;">
-      <i class="fa-solid fa-cube" style="color:#38bdf8; font-size:0.85rem;"></i>
-      <span style="font-size:0.82rem; color:#f8fafc; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(desc)}">${escapeHtml(desc)}</span>
-    </div>
-
-    <!-- 3-Year Consumption Trajectory Chart (Neon Pillars) -->
-    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:0.9rem 1.1rem; position:relative;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:10px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
-        <span style="font-family:'Outfit',sans-serif; font-size:0.85rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;">
+    <!-- 3-Year Consumption Trajectory Chart (Neon Pillars - Ultra-Compact) -->
+    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.4rem 0.8rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem; flex-wrap:wrap; gap:6px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:3px;">
+        <span style="font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.4px; display:inline-flex; align-items:center; gap:5px;">
           <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Consumption Trajectory
         </span>
         ${benchmarkVal > 0 ? `
-        <span style="background:rgba(192,132,252,0.14); color:#c084fc; border:1px solid rgba(192,132,252,0.35); padding:2px 9px; border-radius:6px; font-size:0.7rem; font-weight:800; display:inline-flex; align-items:center; gap:5px;">
+        <span style="background:rgba(192,132,252,0.14); color:#c084fc; border:1px solid rgba(192,132,252,0.35); padding:1px 7px; border-radius:4px; font-size:0.66rem; font-weight:800; display:inline-flex; align-items:center; gap:4px;">
           <i class="fa-solid fa-chart-line"></i> Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr
         </span>` : ''}
       </div>
 
       <!-- Glassmorphic Neon Pillars Chart -->
       <div class="pillar-chart">
-        <!-- Average Benchmark Reference Line (Runs behind pillars, no overlapping badge) -->
+        <!-- Average Benchmark Reference Line -->
         ${benchmarkVal > 0 ? `
-        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 44}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
+        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 32}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
         ` : ''}
 
         <!-- Pillar 1: 2023 - 2024 -->
         <div class="pillar-col">
-          <div class="pillar-val">${cY3.toLocaleString()} <span style="font-size:0.7rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
+          <div class="pillar-val">${cY3.toLocaleString()} <span style="font-size:0.65rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
           <div class="pillar-bar-wrap">
-            <div class="pillar-bar" style="height:${hPillarY3}px; background:linear-gradient(180deg, rgba(56, 189, 248, 0.9) 0%, rgba(14, 165, 233, 0.4) 60%, rgba(2, 132, 199, 0.1) 100%); border:1px solid rgba(56, 189, 248, 0.6); box-shadow:0 0 22px rgba(56, 189, 248, 0.3), inset 0 2px 6px rgba(255, 255, 255, 0.5);" title="Period 2023 - 2024: ${cY3.toLocaleString()} ${escapeHtml(uom)} consumed">
-              <div class="pillar-cap" style="background:#ffffff; box-shadow:0 0 10px #ffffff;"></div>
+            <div class="pillar-bar" style="height:${hPillarY3}px; background:linear-gradient(180deg, rgba(56, 189, 248, 0.9) 0%, rgba(14, 165, 233, 0.4) 60%, rgba(2, 132, 199, 0.1) 100%); border:1px solid rgba(56, 189, 248, 0.6); box-shadow:0 0 16px rgba(56, 189, 248, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.5);" title="Period 2023 - 2024: ${cY3.toLocaleString()} ${escapeHtml(uom)} consumed">
+              <div class="pillar-cap" style="background:#ffffff; box-shadow:0 0 8px #ffffff;"></div>
             </div>
           </div>
           <div class="pillar-footer">
             <div class="pillar-yr">2023 – 2024</div>
             <div class="pillar-date">Sep 2023 – Aug 2024</div>
-            <div style="margin-top:3px;">${tagY3}</div>
+            <div style="margin-top:2px;">${tagY3}</div>
           </div>
         </div>
 
         <!-- Pillar 2: 2024 - 2025 -->
         <div class="pillar-col">
-          <div class="pillar-val">${cY2.toLocaleString()} <span style="font-size:0.7rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
+          <div class="pillar-val">${cY2.toLocaleString()} <span style="font-size:0.65rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
           <div class="pillar-bar-wrap">
-            <div class="pillar-bar" style="height:${hPillarY2}px; background:${pillarGradY2}; border:1px solid ${pillarBorderY2}; box-shadow:0 0 22px ${pillarShadowY2}, inset 0 2px 6px rgba(255, 255, 255, 0.5);" title="Period 2024 - 2025: ${cY2.toLocaleString()} ${escapeHtml(uom)} consumed">
-              <div class="pillar-cap" style="background:${pillarCapY2}; box-shadow:0 0 10px ${pillarCapY2};"></div>
+            <div class="pillar-bar" style="height:${hPillarY2}px; background:${pillarGradY2}; border:1px solid ${pillarBorderY2}; box-shadow:0 0 16px ${pillarShadowY2}, inset 0 2px 4px rgba(255, 255, 255, 0.5);" title="Period 2024 - 2025: ${cY2.toLocaleString()} ${escapeHtml(uom)} consumed">
+              <div class="pillar-cap" style="background:${pillarCapY2}; box-shadow:0 0 8px ${pillarCapY2};"></div>
             </div>
           </div>
           <div class="pillar-footer">
             <div class="pillar-yr">2024 – 2025</div>
             <div class="pillar-date">Sep 2024 – Aug 2025</div>
-            <div style="margin-top:3px;">${tagY2}</div>
+            <div style="margin-top:2px;">${tagY2}</div>
           </div>
         </div>
 
         <!-- Pillar 3: 2025 - 2026 -->
         <div class="pillar-col">
-          <div class="pillar-val" style="color:#60a5fa;">${cY1.toLocaleString()} <span style="font-size:0.7rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
+          <div class="pillar-val" style="color:#60a5fa;">${cY1.toLocaleString()} <span style="font-size:0.65rem; color:#94a3b8;">${escapeHtml(uom)}</span></div>
           <div class="pillar-bar-wrap">
-            <div class="pillar-bar" style="height:${hPillarY1}px; background:${pillarGradY1}; border:1px solid ${pillarBorderY1}; box-shadow:0 0 25px ${pillarShadowY1}, inset 0 2px 6px rgba(255, 255, 255, 0.5);" title="Period 2025 - 2026: ${cY1.toLocaleString()} ${escapeHtml(uom)} consumed (Last 12M Current)">
-              <div class="pillar-cap" style="background:${pillarCapY1}; box-shadow:0 0 12px ${pillarCapY1};"></div>
+            <div class="pillar-bar" style="height:${hPillarY1}px; background:${pillarGradY1}; border:1px solid ${pillarBorderY1}; box-shadow:0 0 18px ${pillarShadowY1}, inset 0 2px 4px rgba(255, 255, 255, 0.5);" title="Period 2025 - 2026: ${cY1.toLocaleString()} ${escapeHtml(uom)} consumed (Last 12M Current)">
+              <div class="pillar-cap" style="background:${pillarCapY1}; box-shadow:0 0 10px ${pillarCapY1};"></div>
             </div>
           </div>
           <div class="pillar-footer">
             <div class="pillar-yr" style="color:#38bdf8;">2025 – 2026</div>
-            <div class="pillar-date" style="color:#7dd3fc; font-weight:700;">Last 12 Months (Current)</div>
-            <div style="margin-top:3px;">${tagY1}</div>
+            <div class="pillar-date">Last 12 Months</div>
+            <div style="margin-top:2px;">${tagY1}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Actionable Procurement & Sourcing Panels (Zero-Scroll, Zero-Duplication) -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px;">
-      
-      <!-- Panel A: Inventory Health & Requisition Feasibility -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; justify-content:space-between;">
-          <span style="display:inline-flex; align-items:center; gap:6px;">
-            <i class="fa-solid fa-boxes-stacked"></i> Inventory Health & Feasibility
+    <!-- 2-Column Intelligence Grid (Compact) -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.45rem;">
+
+      <!-- Panel A: Inventory & Stock Coverage -->
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:7px 11px; display:flex; flex-direction:column; gap:3px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; justify-content:space-between;">
+          <span style="display:inline-flex; align-items:center; gap:5px;">
+            <i class="fa-solid fa-boxes-stacked"></i> Inventory & Stock Coverage
           </span>
-          <span style="background:rgba(0,0,0,0.3); padding:2px 7px; border-radius:4px; font-size:0.68rem; color:${runwayColor}; font-weight:800; border:1px solid rgba(255,255,255,0.06);">
+          <span style="font-size:0.72rem; font-weight:700;">
             ${runwayText}
           </span>
         </div>
         
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;">On-Hand Stock Balance:</span>
           <span style="font-weight:700;">
-            <strong style="color:${stkTot === 0 ? '#f87171' : '#34d399'}; font-size:0.88rem;">${stkTot.toLocaleString()}</strong> <span style="color:#94a3b8; font-size:0.72rem;">${escapeHtml(uom)}</span> <span style="color:#cbd5e1; font-size:0.72rem; margin-left:6px;">(${stkNew.toLocaleString()} New &bull; ${stkUsed.toLocaleString()} Used)</span>
+            <strong style="color:${stkTot === 0 ? '#f87171' : '#34d399'}; font-size:0.84rem;">${stkTot.toLocaleString()}</strong> <span style="color:#94a3b8; font-size:0.68rem;">${escapeHtml(uom)}</span> <span style="color:#cbd5e1; font-size:0.68rem; margin-left:4px;">(${stkNew.toLocaleString()} New • ${stkUsed.toLocaleString()} Used)</span>
           </span>
         </div>
 
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;">Safety Stock & Re-Order Point:</span>
           <span style="font-weight:700; color:#ffffff;">
-            ROP: <strong style="color:#38bdf8;">${rop > 0 ? rop.toLocaleString() : '—'}</strong> &bull; Min: <span style="color:#cbd5e1;">${minStock > 0 ? minStock.toLocaleString() : '0'}</span> &bull; Max: <span style="color:#cbd5e1;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</span>
+            ROP: <strong style="color:#38bdf8;">${rop > 0 ? rop.toLocaleString() : '—'}</strong> • Min: <span style="color:#cbd5e1;">${minStock > 0 ? minStock.toLocaleString() : '0'}</span> • Max: <span style="color:#cbd5e1;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</span>
           </span>
         </div>
 
         ${prQty > 0 ? `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:5px; border:1px solid rgba(255,255,255,0.06);">
-            <span style="color:#94a3b8; font-size:0.72rem;">Requested PR Qty:</span>
-            <strong style="color:#ffffff; font-size:0.82rem;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong>
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:3px 7px; border-radius:5px; border:1px solid rgba(255,255,255,0.06);">
+            <span style="color:#94a3b8; font-size:0.68rem;">Requested PR Qty:</span>
+            <strong style="color:#ffffff; font-size:0.78rem;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong>
           </div>
           ${auditWarningHtml}
         ` : `
-          <div style="font-size:0.72rem; color:#94a3b8; display:flex; align-items:center; gap:5px;">
+          <div style="font-size:0.68rem; color:#94a3b8; display:flex; align-items:center; gap:5px;">
             <i class="fa-solid fa-circle-check" style="color:#34d399;"></i>
-            <span>Feasibility Baseline: Verified against <strong>${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/mo</strong> demand velocity.</span>
+            <span>Feasibility: Verified against <strong>${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/mo</strong> velocity.</span>
           </div>
         `}
       </div>
 
       <!-- Panel B: Commercial Sourcing Baseline -->
-      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px; display:flex; flex-direction:column; gap:6px;">
-        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#a78bfa; display:flex; align-items:center; justify-content:space-between;">
-          <span style="display:inline-flex; align-items:center; gap:6px;">
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:7px 11px; display:flex; flex-direction:column; gap:3px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:800; color:#a78bfa; display:flex; align-items:center; justify-content:space-between;">
+          <span style="display:inline-flex; align-items:center; gap:5px;">
             <i class="fa-solid fa-handshake"></i> Commercial Sourcing Baseline
           </span>
           ${trendBadgeHtml}
         </div>
 
         <!-- Last Awarded Supplier -->
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-building" style="margin-right:4px; color:#64748b;"></i>Last Awarded Supplier:</span>
-          <span style="color:#38bdf8; font-weight:700; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
+          <span style="color:#38bdf8; font-weight:700; max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
         </div>
 
         <!-- Historical PO Unit Price -->
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:4px; color:#64748b;"></i>Historical PO Price:</span>
           <span style="color:#cbd5e1; font-weight:700;">${
             !isEgpCurr && poPriceOrigNum > 0
-              ? Number(poPriceOrigNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(cleanCurr) + (poPriceEgpNum > 0 ? ` <span style="color:#94a3b8; font-size:0.7rem;">(${Number(poPriceEgpNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP)</span>` : '')
+              ? Number(poPriceOrigNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(cleanCurr) + (poPriceEgpNum > 0 ? ` <span style="color:#94a3b8; font-size:0.66rem;">(${Number(poPriceEgpNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP)</span>` : '')
               : (poPriceEgpNum > 0 ? Number(poPriceEgpNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' EGP' : '—')
           }</span>
         </div>
 
         <!-- Current Unit Est. Replacement Value (ERP Standard Costing) -->
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-crosshairs" style="margin-right:4px; color:#38bdf8;"></i>Unit Est. Replacement:</span>
-          <span style="color:#34d399; font-weight:800; font-size:0.84rem;">
+          <span style="color:#34d399; font-weight:800; font-size:0.8rem;">
             ${unitEstEgp > 0 ? Number(unitEstEgp).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' EGP' : '—'}
-            ${!isEgpCurr && estReplacementForeign > 0 ? `<span style="color:#a78bfa; font-size:0.72rem; margin-left:4px;">[${Number(estReplacementForeign).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(cleanCurr)}]</span>` : ''}
+            ${!isEgpCurr && estReplacementForeign > 0 ? `<span style="color:#a78bfa; font-size:0.68rem; margin-left:4px;">[${Number(estReplacementForeign).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(cleanCurr)}]</span>` : ''}
           </span>
         </div>
 
         <!-- Macroeconomic Inflation / Escalation Multiplier -->
         ${inflationBadgeHtml ? `
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-scale-balanced" style="margin-right:4px; color:#64748b;"></i>Inflation Realignment:</span>
           ${inflationBadgeHtml}
         </div>` : ''}
 
         <!-- Last Purchase Date -->
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-days" style="margin-right:4px; color:#64748b;"></i>Last Purchase Date:</span>
           <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
         </div>
 
         <!-- Code Creation Date + Age Badge -->
         ${codeDateDisplay ? `
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; font-size:0.76rem; padding-top:4px; border-top:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; font-size:0.73rem; padding-top:2px; border-top:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-plus" style="margin-right:4px; color:#64748b;"></i>Code Created:</span>
           <span style="text-align:right;">
             <span style="color:#ffffff; font-weight:700;">${escapeHtml(codeDateDisplay)}</span>
-            <br>${codeAgeBadgeHtml}
+            <span style="margin-left:5px;">${codeAgeBadgeHtml}</span>
           </span>
         </div>` : ''}
 
@@ -8661,7 +8667,7 @@ function openItemIntelligence(itemCode) {
 
     </div>
 
-    <!-- ── CROSS-REFERENCE: OTHER OPEN PRs WITH THIS ITEM ── -->
+    <!-- ── CROSS-REFERENCE: OTHER OPEN PRs WITH THIS ITEM (Ultra-Compact) ── -->
     ${(() => {
       const xrefMatches = [];
       const currentPrNo = (typeof currentDossierTask !== 'undefined' && currentDossierTask && currentDossierTask.pr_no)
@@ -8669,7 +8675,6 @@ function openItemIntelligence(itemCode) {
         : null;
 
       (typeof ALL_TASKS !== 'undefined' ? ALL_TASKS : []).forEach(t => {
-        // Strictly exclude the current PR being inspected so only DIFFERENT/OTHER PRs appear
         if (currentPrNo && String(t.pr_no).trim() === currentPrNo) {
           return;
         }
@@ -8694,11 +8699,11 @@ function openItemIntelligence(itemCode) {
       });
 
       const xrefTotal = xrefMatches.length;
-      const xrefSlice = xrefMatches.slice(0, 10);
+      const xrefSlice = xrefMatches.slice(0, 8);
 
       if (xrefTotal === 0) {
-        return `<div style="margin-top:8px; padding:10px 14px; background:rgba(15,23,42,0.85); border:1px solid rgba(74,222,128,0.25); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.76rem; color:#4ade80;">
-          <i class="fa-solid fa-circle-check" style="font-size:0.9rem; color:#4ade80;"></i>
+        return `<div style="margin-top:2px; padding:6px 12px; background:rgba(15,23,42,0.85); border:1px solid rgba(74,222,128,0.25); border-radius:6px; display:flex; align-items:center; gap:8px; font-size:0.72rem; color:#4ade80;">
+          <i class="fa-solid fa-circle-check" style="font-size:0.82rem; color:#4ade80;"></i>
           <span><strong>Single Active Demand:</strong> No other open PRs across Suez Steel reference this item code.</span>
         </div>`;
       }
@@ -8713,49 +8718,49 @@ function openItemIntelligence(itemCode) {
           prDateDisp = prDateDisp.substring(0, 10);
         }
         return `<tr>
-          <td style="padding:4px 8px; white-space:nowrap;">
+          <td style="padding:2px 6px; white-space:nowrap;">
             <span onclick="closeItemIntelModalDirect();setTimeout(()=>openPrDossierModal('${r.pr_no}','${poArg}'),80);"
                   style="cursor:pointer; color:#38bdf8; font-weight:700; text-decoration:underline; text-underline-offset:2px;"
                   title="Click to open PR Dossier">
               ${escapeHtml(r.pr_no)}
             </span>
           </td>
-          <td style="padding:4px 8px; color:#94a3b8; white-space:nowrap;">${escapeHtml(prDateDisp)}</td>
-          <td style="padding:4px 8px; color:#94a3b8; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.task_stage)}">${escapeHtml(r.task_stage)}</td>
-          <td style="padding:4px 8px; color:#fbbf24; text-align:right; font-weight:600; white-space:nowrap;">${Number(r.pr_qty || 0).toLocaleString()}</td>
-          <td style="padding:4px 8px; color:${r.po_no !== '—' ? '#cbd5e1' : '#64748b'}; white-space:nowrap; font-family:monospace;">${escapeHtml(r.po_no)}</td>
-          <td style="padding:4px 8px; color:${r.bal_qty != null && r.bal_qty > 0 ? '#38bdf8' : '#64748b'}; text-align:right; font-weight:600; white-space:nowrap;">${r.bal_qty != null ? Number(r.bal_qty || 0).toLocaleString() : '—'}</td>
-          <td style="padding:4px 8px; text-align:right; white-space:nowrap;">${overdueCell}</td>
-          <td style="padding:4px 8px; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.plant)}"><span style="background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:4px; font-size:0.68rem; color:#cbd5e1;">${escapeHtml(r.plant)}</span></td>
-          <td style="padding:4px 8px; color:#cbd5e1; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.buyer)}">${escapeHtml(r.buyer)}</td>
-          <td style="padding:4px 8px; color:#94a3b8; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.entered_by)}">${escapeHtml(r.entered_by)}</td>
+          <td style="padding:2px 6px; color:#94a3b8; white-space:nowrap;">${escapeHtml(prDateDisp)}</td>
+          <td style="padding:2px 6px; color:#94a3b8; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.task_stage)}">${escapeHtml(r.task_stage)}</td>
+          <td style="padding:2px 6px; color:#fbbf24; text-align:right; font-weight:600; white-space:nowrap;">${Number(r.pr_qty || 0).toLocaleString()}</td>
+          <td style="padding:2px 6px; color:${r.po_no !== '—' ? '#cbd5e1' : '#64748b'}; white-space:nowrap; font-family:monospace;">${escapeHtml(r.po_no)}</td>
+          <td style="padding:2px 6px; color:${r.bal_qty != null && r.bal_qty > 0 ? '#38bdf8' : '#64748b'}; text-align:right; font-weight:600; white-space:nowrap;">${r.bal_qty != null ? Number(r.bal_qty || 0).toLocaleString() : '—'}</td>
+          <td style="padding:2px 6px; text-align:right; white-space:nowrap;">${overdueCell}</td>
+          <td style="padding:2px 6px; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.plant)}"><span style="background:rgba(255,255,255,0.06); padding:1px 5px; border-radius:3px; font-size:0.65rem; color:#cbd5e1;">${escapeHtml(r.plant)}</span></td>
+          <td style="padding:2px 6px; color:#cbd5e1; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.buyer)}">${escapeHtml(r.buyer)}</td>
+          <td style="padding:2px 6px; color:#94a3b8; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.entered_by)}">${escapeHtml(r.entered_by)}</td>
         </tr>`;
       }).join('');
 
-      const moreRow = xrefTotal > 10
-        ? `<tr><td colspan="10" style="padding:6px 8px; color:#64748b; font-style:italic; text-align:center; background:rgba(0,0,0,0.2);">+${xrefTotal - 10} more PR(s) not shown</td></tr>`
+      const moreRow = xrefTotal > 8
+        ? `<tr><td colspan="10" style="padding:4px 6px; color:#64748b; font-style:italic; text-align:center; background:rgba(0,0,0,0.2);">+${xrefTotal - 8} more PR(s) not shown</td></tr>`
         : '';
 
-      return `<div style="margin-top:8px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px 14px;">
-        <div style="font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:800; color:#fb923c; display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+      return `<div style="margin-top:3px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:5px 11px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#fb923c; display:flex; align-items:center; gap:5px; margin-bottom:3px;">
           <i class="fa-solid fa-arrows-rotate"></i> Other Open PRs — Same Item Code
-          <span style="color:#94a3b8; font-size:0.7rem; font-weight:400; margin-left:6px;">· click PR No. to inspect dossier</span>
-          <span style="margin-left:auto; background:rgba(251,146,60,0.15); color:#fb923c; border:1px solid rgba(251,146,60,0.3); padding:1px 8px; border-radius:5px; font-size:0.7rem;">${xrefTotal} Other PR${xrefTotal > 1 ? 's' : ''}</span>
+          <span style="color:#94a3b8; font-size:0.65rem; font-weight:400; margin-left:4px;">· click PR No. to inspect dossier</span>
+          <span style="margin-left:auto; background:rgba(251,146,60,0.15); color:#fb923c; border:1px solid rgba(251,146,60,0.3); padding:1px 5px; border-radius:4px; font-size:0.65rem;">${xrefTotal} Other PR${xrefTotal > 1 ? 's' : ''}</span>
         </div>
-        <div style="overflow-x:auto; max-width:100%;">
-          <table style="width:100%; border-collapse:collapse; font-size:0.72rem;">
-            <thead>
+        <div style="overflow-x:auto; max-height:100px; overflow-y:auto; max-width:100%;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.68rem;">
+            <thead style="position:sticky; top:0; background:rgba(15,23,42,0.95); z-index:1;">
               <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR No.</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR Date</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Stage</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">PR Qty</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PO No.</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Bal. Qty</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Overdue</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Plant</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Buyer</th>
-                <th style="padding:4px 8px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Entered By</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR No.</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR Date</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Stage</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">PR Qty</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PO No.</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Bal. Qty</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Overdue</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Plant</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Buyer</th>
+                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Entered By</th>
               </tr>
             </thead>
             <tbody>${rows}${moreRow}</tbody>
