@@ -7758,20 +7758,36 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       : null;
 
     const suppCode = l.supplier_code || '';
-    const suppDesc = l.supplier_desc || '';
-    const lastSupp = l.last_supplier || (intelObj ? intelObj.supplier : '') || '';
-    const soleSupp = l.sole_supplier_calc || (intelObj ? intelObj.sole_supplier_calc : '') || '';
-    const lastPrice = Number(l.last_po_price || (intelObj ? intelObj.po_price_egp : 0) || 0);
-    const lastCurr = l.last_po_curr || (intelObj ? intelObj.po_curr : 'EGP') || 'EGP';
+    const suppDesc = (l.supplier_desc || '').trim();
+    const lastSupp = (l.last_supplier || (intelObj ? intelObj.supplier : '') || '').trim();
+    const soleSupp = (l.sole_supplier_calc || (intelObj ? intelObj.sole_supplier_calc : '') || '').trim();
+
+    // Deduplicate: Compare cleaned alphanumeric strings between PR recommendation & Last Contracted Supplier
+    const cSuppDesc = suppDesc.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cLastSupp = lastSupp.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const isSameSupplier = cSuppDesc && cLastSupp && (
+      cSuppDesc === cLastSupp ||
+      cSuppDesc.includes(cLastSupp) ||
+      cLastSupp.includes(cSuppDesc) ||
+      (cSuppDesc.length > 5 && cLastSupp.length > 5 && cSuppDesc.slice(0, 8) === cLastSupp.slice(0, 8))
+    );
 
     const badges = [];
-    if (suppDesc || suppCode) {
-      const recLabel = suppDesc ? `${suppDesc}${suppCode ? ` (${suppCode})` : ''}` : `Code: ${suppCode}`;
-      badges.push(`<span style="background:rgba(168,85,247,0.18); color:#e9d5ff; border:1px solid rgba(168,85,247,0.4); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:700; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="PR Recommended Supplier by Plant Engineer"><i class="fa-solid fa-tag" style="color:#c084fc; font-size:0.58rem;"></i>PR Rec: ${escapeHtml(recLabel)}</span>`);
-    }
-    if (lastSupp && lastSupp !== '—') {
-      const priceTag = lastPrice > 0 ? ` (${Number(lastPrice).toLocaleString()} ${escapeHtml(lastCurr)})` : '';
-      badges.push(`<span style="background:rgba(56,189,248,0.14); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:600; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Last Contracted Supplier in PO History"><i class="fa-solid fa-building" style="color:#38bdf8; font-size:0.58rem;"></i>Last PO: ${escapeHtml(lastSupp)}${priceTag}</span>`);
+    if (isSameSupplier) {
+      // Clean unified single badge (no duplicate supplier name, no redundant price)
+      const suppName = suppDesc || lastSupp;
+      const fullLabel = suppCode ? `${suppName} (${suppCode})` : suppName;
+      badges.push(`<span style="background:rgba(168,85,247,0.18); color:#e9d5ff; border:1px solid rgba(168,85,247,0.4); padding:1px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="PR Recommended & Last Contracted PO Supplier"><i class="fa-solid fa-tag" style="color:#c084fc; font-size:0.58rem;"></i>${escapeHtml(fullLabel)}</span>`);
+    } else {
+      // Distinct vendors or only one present
+      if (suppDesc || suppCode) {
+        const recLabel = suppDesc ? `${suppDesc}${suppCode ? ` (${suppCode})` : ''}` : `Code: ${suppCode}`;
+        const prefix = (lastSupp && lastSupp !== '—') ? 'Rec: ' : '';
+        badges.push(`<span style="background:rgba(168,85,247,0.18); color:#e9d5ff; border:1px solid rgba(168,85,247,0.4); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:700; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="PR Recommended Supplier by Plant Engineer"><i class="fa-solid fa-tag" style="color:#c084fc; font-size:0.58rem;"></i>${prefix}${escapeHtml(recLabel)}</span>`);
+      }
+      if (lastSupp && lastSupp !== '—') {
+        badges.push(`<span style="background:rgba(56,189,248,0.14); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:600; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Last Contracted Supplier in PO History"><i class="fa-solid fa-building" style="color:#38bdf8; font-size:0.58rem;"></i>Last PO: ${escapeHtml(lastSupp)}</span>`);
+      }
     }
     if (soleSupp && soleSupp !== '—') {
       badges.push(`<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:800; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Single-Source / Sole Supplier"><i class="fa-solid fa-lock" style="color:#eab308; font-size:0.58rem;"></i>Sole Supplier: ${escapeHtml(soleSupp)}</span>`);
