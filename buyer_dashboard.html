@@ -7634,8 +7634,52 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     </span>`;
   }
 
+  // Compute Requisition Totals & Financial Valuation
+  let totalPrQty = 0;
+  let totalBalQty = 0;
+  let prTotalEstBudgetEgp = 0;
+  let prTotalHistBaselineEgp = 0;
+  let linesWithPricingCount = 0;
+
+  (t.lines || []).forEach(l => {
+    const lPrQ = Number(l.pr_qty || 0);
+    const lBalQ = Number(l.bal_qty || 0);
+    totalPrQty += lPrQ;
+    totalBalQty += lBalQ;
+
+    const intelObj = (typeof STOCK_INTEL_MAP !== 'undefined' && STOCK_INTEL_MAP && l.item_code)
+      ? STOCK_INTEL_MAP[l.item_code]
+      : null;
+
+    if (intelObj && lPrQ > 0) {
+      const unitEst = Number(intelObj.est_replacement_local || intelObj.po_price_egp || 0);
+      const unitHist = Number(intelObj.po_price_egp || 0);
+      if (unitEst > 0) {
+        prTotalEstBudgetEgp += (lPrQ * unitEst);
+        linesWithPricingCount++;
+      }
+      if (unitHist > 0) {
+        prTotalHistBaselineEgp += (lPrQ * unitHist);
+      }
+    }
+  });
+
+  let prEscalationPill = '';
+  if (prTotalEstBudgetEgp > 0 && prTotalHistBaselineEgp > 0) {
+    const prMult = prTotalEstBudgetEgp / prTotalHistBaselineEgp;
+    if (prMult >= 1.25) {
+      prEscalationPill = `<span style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:1px 6px; border-radius:4px; font-size:0.65rem; font-weight:800; margin-left:6px;" title="Macroeconomic Escalation: ${prMult.toFixed(2)}x vs historical PO baseline"><i class="fa-solid fa-fire-flame-curved" style="color:#ef4444;"></i> ${prMult.toFixed(2)}x</span>`;
+    }
+  }
+
   if (subEl) {
     subEl.innerHTML = `
+      <span class="dossier-pill" style="border-color:rgba(167,139,250,0.45); background:rgba(167,139,250,0.12);" title="Total Estimated Requisition Budget based on Current ERP Replacement Standard Costing">
+        <i class="fa-solid fa-calculator" style="color:#c084fc; font-size:0.75rem;"></i>
+        <span class="pill-lbl" style="color:#e9d5ff;">Est. PR Budget:</span>
+        <strong style="color:#ffffff; font-size:0.82rem;">${prTotalEstBudgetEgp > 0 ? prTotalEstBudgetEgp.toLocaleString('en-US', {maximumFractionDigits:0}) + ' EGP' : 'TBD'}</strong>
+        ${prEscalationPill}
+      </span>
       <span class="dossier-pill" style="border-color:rgba(56,189,248,0.3); background:rgba(56,189,248,0.08);" title="Plant / Project">
         <i class="fa-solid fa-industry" style="color:#38bdf8; font-size:0.75rem;"></i>
         <span class="pill-lbl">Plant:</span>
@@ -8016,6 +8060,25 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
             </tr>
           </thead>
           <tbody>${linesHtml}</tbody>
+          <tfoot>
+            <tr style="background:rgba(15,23,42,0.95); border-top:2px solid rgba(255,255,255,0.15); font-family:'Outfit',sans-serif;">
+              <td colspan="3" style="padding:10px 10px; color:#f8fafc; font-weight:800; font-size:0.82rem;">
+                <i class="fa-solid fa-coins" style="color:#fbbf24; margin-right:6px;"></i> Total Requisition Valuation (${(t.lines || []).length} items):
+              </td>
+              <td style="text-align:right; font-weight:900; color:#ffffff; padding:10px 8px; font-size:0.88rem;">
+                ${totalPrQty.toLocaleString()}
+              </td>
+              <td colspan="8" style="padding:10px 12px; text-align:right;">
+                ${prTotalHistBaselineEgp > 0 ? `
+                <span style="color:#94a3b8; font-size:0.76rem; margin-right:12px;">
+                  Historical PO Baseline: <strong style="color:#cbd5e1;">${prTotalHistBaselineEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong>
+                </span>` : ''}
+                <span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:4px 12px; border-radius:6px; font-weight:900; font-size:0.85rem; display:inline-flex; align-items:center; gap:6px;">
+                  <i class="fa-solid fa-chart-line" style="color:#34d399;"></i> Total Est. PR Budget: ${prTotalEstBudgetEgp > 0 ? prTotalEstBudgetEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' EGP' : 'TBD (Sourcing)'}
+                </span>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -8179,6 +8242,61 @@ function openItemIntelligence(itemCode) {
   const poCurr = intel.po_curr || intel.last_po_currency || 'EGP';
   const poDate = intel.po_date || intel.last_po_date || '—';
   const codeDate = intel.code_date || '';
+  const estReplacementLocal = Number(intel.est_replacement_local || 0);
+  const estReplacementForeign = Number(intel.est_replacement_foreign || 0);
+  const poPriceEgpNum = Number(poPrice || 0);
+  const poPriceOrigNum = Number(poPriceOrig || 0);
+
+  // ── INFLATION REALIGNMENT & MULTIPLIER ──
+  let inflationBadgeHtml = '';
+  let inflationMult = 0;
+  let inflationPct = 0;
+  if (estReplacementLocal > 0 && poPriceEgpNum > 0) {
+    inflationMult = estReplacementLocal / poPriceEgpNum;
+    inflationPct = (inflationMult - 1.0) * 100.0;
+    if (inflationMult >= 1.25) {
+      inflationBadgeHtml = `<span style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.5); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;" title="Estimated replacement budget is ${inflationMult.toFixed(2)}x historical PO price (+${inflationPct.toFixed(0)}%) due to currency realignment & price escalation"><i class="fa-solid fa-fire-flame-curved" style="color:#ef4444;"></i> ${inflationMult.toFixed(2)}x Escalation (+${inflationPct.toFixed(0)}%)</span>`;
+    } else if (inflationMult > 1.03) {
+      inflationBadgeHtml = `<span style="background:rgba(234,179,8,0.2); color:#fde047; border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:800;" title="+${inflationPct.toFixed(1)}% standard inflation adjustment"><i class="fa-solid fa-arrow-trend-up"></i> +${inflationPct.toFixed(1)}% Inflation</span>`;
+    } else {
+      inflationBadgeHtml = `<span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-solid fa-check"></i> Fresh Baseline</span>`;
+    }
+  }
+
+  // ── TOTAL LINE ESTIMATED BUDGET (Requested Qty x Unit Rate) ──
+  let lineTotalCostHtml = '';
+  if (prQty > 0 && (estReplacementLocal > 0 || poPriceEgpNum > 0)) {
+    const unitRateEgp = estReplacementLocal > 0 ? estReplacementLocal : poPriceEgpNum;
+    const lineTotEstEgp = prQty * unitRateEgp;
+    const lineTotHistEgp = prQty * poPriceEgpNum;
+    const lineTotEstFc = (estReplacementForeign > 0 && poCurr && poCurr.toUpperCase() !== 'EGP') ? (prQty * estReplacementForeign) : 0;
+    const deltaEgp = lineTotEstEgp - lineTotHistEgp;
+
+    lineTotalCostHtml = `
+      <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.25); border-radius:7px; padding:7px 10px; margin-top:4px; display:flex; flex-direction:column; gap:3px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.72rem; color:#7dd3fc; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">
+            <i class="fa-solid fa-coins" style="margin-right:4px;"></i> Total Line Est. Budget:
+          </span>
+          <span style="font-size:0.68rem; color:#94a3b8;">Requested: <strong style="color:#ffffff;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <span style="color:#ffffff; font-size:0.98rem; font-weight:900; font-family:'Outfit',sans-serif;">
+            ${lineTotEstEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span style="font-size:0.72rem; color:#38bdf8;">EGP</span>
+          </span>
+          ${lineTotEstFc > 0 ? `
+          <span style="color:#a78bfa; font-size:0.75rem; font-weight:700;">
+            (${lineTotEstFc.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(poCurr)})
+          </span>` : ''}
+        </div>
+        ${(lineTotHistEgp > 0 && deltaEgp > 0) ? `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.66rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.08); padding-top:3px; margin-top:2px;">
+          <span>Historical PO Value: <strong style="color:#cbd5e1;">${lineTotHistEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong></span>
+          <span style="color:#fca5a5; font-weight:700;">Escalation Delta: +${deltaEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
+        </div>` : ''}
+      </div>
+    `;
+  }
 
   // ── CODE AGE BADGE ──
   let codeAgeBadgeHtml = '';
@@ -8495,26 +8613,35 @@ function openItemIntelligence(itemCode) {
           <span style="color:#38bdf8; font-weight:700; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
         </div>
 
-        <!-- Last PO Unit Price (original currency) -->
+        <!-- Historical PO Unit Price -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-          <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:4px; color:#64748b;"></i>Last PO Unit Price:</span>
-          <span style="color:#34d399; font-weight:800;">${
-            poPriceOrig !== null && poPriceOrig > 0
-              ? Number(poPriceOrig).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(poCurr)
-              : (poPrice !== null && poPrice !== undefined && poPrice > 0
-                  ? Number(poPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(poCurr)
-                  : '—')
+          <span style="color:#94a3b8;"><i class="fa-solid fa-tag" style="margin-right:4px; color:#64748b;"></i>Historical PO Price:</span>
+          <span style="color:#cbd5e1; font-weight:700;">${
+            poPriceOrigNum > 0
+              ? Number(poPriceOrigNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ' + escapeHtml(poCurr) + (poPriceEgpNum > 0 && poCurr && poCurr.toUpperCase() !== 'EGP' ? ` <span style="color:#94a3b8; font-size:0.7rem;">(${Number(poPriceEgpNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP)</span>` : '')
+              : (poPriceEgpNum > 0 ? Number(poPriceEgpNum).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' EGP' : '—')
           }</span>
         </div>
 
-        <!-- EGP Equivalent (only if currency is not already EGP) -->
-        ${poCurr && poCurr.toUpperCase() !== 'EGP' && poPrice !== null && poPrice !== undefined && poPrice > 0 ? `
+        <!-- Current Unit Est. Replacement Value (ERP Standard Costing) -->
+        ${estReplacementLocal > 0 ? `
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
-          <span style="color:#94a3b8;"><i class="fa-solid fa-coins" style="margin-right:4px; color:#64748b;"></i>EGP Equivalent:</span>
-          <span style="color:#fbbf24; font-weight:800;">${Number(poPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
+          <span style="color:#94a3b8;"><i class="fa-solid fa-crosshairs" style="margin-right:4px; color:#38bdf8;"></i>Unit Est. Replacement:</span>
+          <span style="color:#34d399; font-weight:800; font-size:0.84rem;">
+            ${Number(estReplacementLocal).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP
+            ${estReplacementForeign > 0 && poCurr && poCurr.toUpperCase() !== 'EGP' ? `<span style="color:#a78bfa; font-size:0.72rem; margin-left:4px;">[${Number(estReplacementForeign).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(poCurr)}]</span>` : ''}
+          </span>
         </div>` : ''}
 
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; ${codeDateDisplay ? '' : ''}">
+        <!-- Macroeconomic Inflation / Escalation Multiplier -->
+        ${inflationBadgeHtml ? `
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-scale-balanced" style="margin-right:4px; color:#64748b;"></i>Inflation Realignment:</span>
+          ${inflationBadgeHtml}
+        </div>` : ''}
+
+        <!-- Last Purchase Date -->
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.76rem; padding-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-calendar-days" style="margin-right:4px; color:#64748b;"></i>Last Purchase Date:</span>
           <span style="color:#ffffff; font-weight:700;">${escapeHtml(poDate)}</span>
         </div>
@@ -8528,6 +8655,9 @@ function openItemIntelligence(itemCode) {
             <br>${codeAgeBadgeHtml}
           </span>
         </div>` : ''}
+
+        <!-- Line Total Estimated Budget Block -->
+        ${lineTotalCostHtml}
       </div>
 
     </div>
