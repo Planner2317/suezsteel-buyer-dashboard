@@ -3767,6 +3767,7 @@
 <script>
 const ALL_TASKS = window.ALL_TASKS;
 const LIFECYCLE_STORE = window.LIFECYCLE_STORE;
+const STOCK_INTEL_MAP = window.STOCK_INTEL_MAP || {};
 const SCORECARDS = window.SCORECARDS;
 const BUYERS_LIST = window.BUYERS_LIST;
 const BUYER_SEARCH_META = window.BUYER_SEARCH_META;
@@ -9505,8 +9506,7 @@ Requisition Reference: PR #${escapeHtml(prNo)}
 Plant / Project: ${escapeHtml(plant)}
 Target Delivery: Required within standard lead time
 
-${lines.map((l, idx) => `${idx + 1}. [${l.item_code}] ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'}`).join('
-')}
+${lines.map((l, idx) => `${idx + 1}. [${l.item_code}] ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'}`).join('\n')}
 
 Please specify:
 1. Unit Price & Currency (FOB / CIF / Delivered Suez)
@@ -9547,8 +9547,7 @@ Requisition Reference: PR #${prNo}
 Plant / Project: ${plant}
 
 ITEMS LIST:
-${lines.map((l, idx) => `${idx + 1}. Item Code: ${l.item_code} | Description: ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'} | Plant: ${plant}`).join('
-')}
+${lines.map((l, idx) => `${idx + 1}. Item Code: ${l.item_code} | Description: ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'} | Plant: ${plant}`).join('\n')}
 
 COMMERCIAL & TECHNICAL REQUIREMENTS:
 1. Unit Price & Currency (FOB / CIF / Delivered Suez)
