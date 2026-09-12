@@ -7790,7 +7790,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       ? STOCK_INTEL_MAP[l.item_code]
       : null;
     const wmaVal = Number(l.wma || l.wma_annual || (lineIntel ? lineIntel.wma_annual : 0) || 0);
-    const itemTrend = strNormalize(l.trend || (lineIntel ? lineIntel.trend : '')).toLowerCase();
+    const itemTrend = String(l.trend || (lineIntel ? lineIntel.trend : '') || '').trim().toLowerCase();
     const rawTrendLabel = l.trend_label || (lineIntel ? lineIntel.trend_label : '');
 
     let avgConsHtml = '<span style="color:#64748b; font-size:0.75rem;">—</span>';
