@@ -3533,7 +3533,7 @@
         <div style="position:absolute; bottom:10px; right:12px; z-index:20;">
           <div id="inspectionQuickCard" class="inspection-quick-card" onclick="openDelayModal('Under Technical Inspection')" title="Click to inspect shipments under plant technical inspection" style="margin:0;">
             <span class="inspection-dot"></span>
-            <span><strong style="color:#ffffff;">98 Under Technical Inspection</strong> &bull; In Warehouse (Decision Pending)</span>
+            <span><strong style="color:#ffffff;">97 Under Technical Inspection</strong> &bull; In Warehouse (Decision Pending)</span>
             <span class="inspection-btn"><i class="fa-solid fa-microscope"></i> Inspect</span>
           </div>
         </div>
@@ -3593,7 +3593,7 @@
                 🟠 Overdue Delivery
               </div>
               <div id="st5-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,820 out of 3,999 item lines in this stage (70.5%) currently have 0 stock across 641 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,820 Zero-Stock Lines (70.5% &bull; 641 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,821 out of 4,000 item lines in this stage (70.5%) currently have 0 stock across 642 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,821 Zero-Stock Lines (70.5% &bull; 642 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3759,6 +3759,10 @@
 </div>
 
 <script src="data/metadata.js"></script>
+<script src="data/stock_intel_0.js"></script>
+<script src="data/stock_intel_1.js"></script>
+<script src="data/stock_intel_2.js"></script>
+<script src="data/stock_intel_3.js"></script>
 <script src="data/raw_xlsx_0.js"></script>
 <script src="data/raw_xlsx_1.js"></script>
 <script src="data/l4_data.js"></script>
@@ -7891,7 +7895,14 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     }
 
     let insHtml = '<span style="color:#64748b;">—</span>';
-    if (insQ > 0) {
+    if (l.is_returned) {
+      insHtml = `
+        <strong style="color:#ef4444; font-size:0.88rem;">${insQ.toLocaleString()}</strong>
+        <div style="margin-top:2px;">
+          <span style="background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:1px 5px; border-radius:4px; font-weight:800; font-size:0.63rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Goods inspected on ${escapeHtml(l.ins_date || '')} and returned to supplier via ${escapeHtml(l.ret_doc || 'RET')} on ${escapeHtml(l.ret_date || '')}"><i class="fa-solid fa-rotate-left" style="color:#ef4444;"></i> Returned to Supplier (${escapeHtml(l.ret_doc || 'RET')})</span>
+        </div>
+      `;
+    } else if (insQ > 0) {
       if (srvQ === 0 && rejQ === 0) {
         // Pure active technical inspection: goods in warehouse, 0 accepted, 0 rejected yet
         insHtml = `
@@ -8022,7 +8033,9 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       return { isDone: isDone, isCurrent: isCurrent, days: d9, label: isDone ? 'Supplier Delivery (Delivered)' : 'Supplier Delivery' };
     }
     if (stepKey === 'D10') {
-      if (currentStage === 'Under Technical Inspection' || t.is_under_inspection) {
+      if (t.is_returned) {
+        return { isDone: true, isCurrent: false, days: 0, label: 'Returned to Supplier' };
+      } else if (currentStage === 'Under Technical Inspection' || t.is_under_inspection) {
         return { isDone: false, isCurrent: true, days: 0, isHeld: true, label: 'Technical Inspection' };
       } else if (Number(t.total_srv_qty || 0) > 0 || Number(t.total_rej_qty || 0) > 0) {
         return { isDone: true, isCurrent: false, days: 0, label: 'Technical Inspection' };
@@ -8090,7 +8103,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <span>Total Items: <strong style="color:#ffffff;">${(t.lines || []).length}</strong></span> &bull; 
         <span>Remaining Balance: <strong style="color:#fda4af;">${(t.total_bal_qty || 0).toLocaleString()} Units</strong></span>
         ${(t.total_rej_qty || 0) > 0 ? `&bull; <span style="color:#ef4444; font-weight:800; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="Technical Rejections: Vendor claim or replacement notice required (${Number(t.total_rej_qty).toLocaleString()} rejected out of ${(t.total_bal_qty || 0).toLocaleString()} open balance)"><i class="fa-solid fa-triangle-exclamation"></i> ${Number(t.total_rej_qty).toLocaleString()} Technical Rejection (of ${(t.total_bal_qty || 0).toLocaleString()} Bal)</span>` : ''}
-        ${t.is_under_inspection ? `&bull; <span style="color:#fde047; font-weight:800; background:rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="In Warehouse / Undergoing Technical Inspection by Plant Engineering"><i class="fa-solid fa-microscope"></i> ${Number(t.total_ins_pending || t.total_ins_qty).toLocaleString()} In Technical Inspection</span>` : ((t.total_ins_qty || 0) > 0 && !(t.total_ins_pending || 0) ? `&bull; <span style="color:#34d399; font-weight:700; background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check"></i> Technical Inspection Accomplished (${Number(t.total_ins_qty).toLocaleString()} Units)</span>` : '')}
+        ${t.is_returned ? `&bull; <span style="color:#ef4444; font-weight:800; background:rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="Goods inspected & returned to supplier via ${escapeHtml(t.ret_doc || 'RET')} on ${escapeHtml(t.ret_date || '')}"><i class="fa-solid fa-rotate-left"></i> Returned to Supplier (${escapeHtml(t.ret_doc || 'RET')})</span>` : (t.is_under_inspection ? `&bull; <span style="color:#fde047; font-weight:800; background:rgba(234,179,8,0.18); border:1px solid rgba(234,179,8,0.4); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;" title="In Warehouse / Undergoing Technical Inspection by Plant Engineering"><i class="fa-solid fa-microscope"></i> ${Number(t.total_ins_pending || t.total_ins_qty).toLocaleString()} In Technical Inspection</span>` : ((t.total_ins_qty || 0) > 0 && !(t.total_ins_pending || 0) ? `&bull; <span style="color:#34d399; font-weight:700; background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.35); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;"><i class="fa-solid fa-circle-check"></i> Technical Inspection Accomplished (${Number(t.total_ins_qty).toLocaleString()} Units)</span>` : ''))}
       </div>
     </div>
 
