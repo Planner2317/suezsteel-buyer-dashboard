@@ -747,10 +747,10 @@
     /* DEPARTMENT MULTI-SELECT COMBOBOX IN HEADER TIER 2 */
     .header-dept-combobox {
       position: relative;
-      min-width: 270px;
-      max-width: 380px;
-      flex: 0 1 auto;
-      margin: 0 10px;
+      min-width: clamp(150px, 12vw, 210px);
+      max-width: 260px;
+      flex: 1 1 auto;
+      margin: 0;
       font-family: 'Outfit', sans-serif;
     }
     .header-dept-combobox .buyer-combobox-trigger {
@@ -1538,16 +1538,18 @@
     .l4-quick-card {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       background: rgba(168, 85, 247, 0.12);
       border: 1px solid rgba(168, 85, 247, 0.45);
-      border-radius: 8px;
-      padding: 4px 10px;
-      font-size: clamp(0.68rem, 0.82vw, 0.75rem);
+      border-radius: 7px;
+      padding: clamp(2px, 0.4vh, 4px) clamp(6px, 0.7vw, 9px);
+      font-size: clamp(0.64rem, 0.74vw, 0.70rem);
       color: #e9d5ff;
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      white-space: nowrap;
+      min-height: 28px;
     }
 
     .l4-quick-card:hover {
@@ -2622,10 +2624,11 @@
     .primary-filters-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex: 1 1 auto;
       flex-wrap: nowrap;
-      overflow-x: auto;
+      overflow: visible;
+      min-width: 0;
     }
 
     /* Compact combobox triggers for 28-30px height */
@@ -2996,7 +2999,7 @@
 
         <!-- 2. BUYER COMBOBOX -->
         <!-- 2. BUYER MULTI-SELECT COMBOBOX -->
-        <div class="buyer-combobox-wrapper" id="buyerComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
+        <div class="buyer-combobox-wrapper" id="buyerComboboxContainer" style="flex:1.2 1 200px; min-width:clamp(160px, 14vw, 240px); max-width:320px;">
           <div class="buyer-combobox-trigger" id="buyerComboboxTrigger" onclick="toggleBuyerCombobox(event)">
             <div class="combobox-trigger-left">
               <span class="combobox-lead-tag"><i class="fa-solid fa-user-check"></i> Buyer:</span>
@@ -3056,7 +3059,7 @@
 
         <!-- 3. ORIGIN COMBOBOX -->
         <!-- 4. ORDER TYPE / ORIGIN COMBOBOX (FOREIGN VS LOCAL) -->
-        <div class="buyer-combobox-wrapper" id="orderTypeComboboxContainer" style="flex:1 1 320px; min-width:280px; max-width:480px;">
+        <div class="buyer-combobox-wrapper" id="orderTypeComboboxContainer" style="flex:1 1 150px; min-width:clamp(130px, 11vw, 180px); max-width:230px;">
           <div class="buyer-combobox-trigger" id="orderTypeComboboxTrigger" onclick="toggleOrderTypeCombobox(event)">
             <div class="combobox-trigger-left">
               <span class="combobox-lead-tag" style="background:rgba(56,189,248,0.18); color:#7dd3fc; border-color:rgba(56,189,248,0.35);"><i class="fa-solid fa-globe"></i> Origin:</span>
@@ -7166,19 +7169,19 @@ function updateL4QuickCard() {
   if (totalLines > 0) {
     l4Card.style.opacity = '1';
     const zeroBadge = zeroLines > 0
-      ? `<span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>${zeroLines} Zero-Stock</span>`
-      : `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:700; margin-left:4px;"><i class="fa-solid fa-circle-check" style="color:#10b981; margin-right:2px;"></i>0 Zero-Stock</span>`;
+      ? `<span style="background:rgba(239,68,68,0.3); color:#fca5a5; font-size:0.66rem; padding:1px 5px; border-radius:4px; font-weight:700; margin-left:3px; white-space:nowrap;"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; margin-right:2px;"></i>${zeroLines} Zero-Stock</span>`
+      : `<span style="background:rgba(52,211,153,0.2); color:#6ee7b7; font-size:0.66rem; padding:1px 5px; border-radius:4px; font-weight:700; margin-left:3px; white-space:nowrap;"><i class="fa-solid fa-circle-check" style="color:#10b981; margin-right:2px;"></i>0 Zero-Stock</span>`;
 
     l4Card.innerHTML = `
       <span class="l4-dot"></span>
-      <span><strong style="color:#ffffff;">${uniquePRs} PR${uniquePRs > 1 ? 's' : ''} (${totalLines} Line${totalLines > 1 ? 's' : ''})</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending Stock Control L4</span> ${zeroBadge}</span>
+      <span style="white-space:nowrap;"><strong style="color:#ffffff;">${uniquePRs} PR${uniquePRs > 1 ? 's' : ''} (${totalLines} L)</strong> &bull; <span style="color:#c084fc; font-weight:700;">Pending L4</span> ${zeroBadge}</span>
       <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect L4</span>
     `;
   } else {
     l4Card.style.opacity = '0.7';
     l4Card.innerHTML = `
       <span class="l4-dot" style="background:#64748b; box-shadow:none;"></span>
-      <span><strong style="color:#cbd5e1;">0 PRs (0 Lines)</strong> &bull; <span style="color:#94a3b8; font-weight:600;">Pending Stock Control L4</span> <span style="background:rgba(100,116,139,0.2); color:#94a3b8; font-size:0.68rem; padding:1px 6px; border-radius:4px; font-weight:600; margin-left:4px;"><i class="fa-solid fa-check" style="color:#64748b; margin-right:2px;"></i>0 Zero-Stock</span></span>
+      <span style="white-space:nowrap;"><strong style="color:#cbd5e1;">0 PRs</strong> &bull; <span style="color:#94a3b8; font-weight:600;">Pending L4</span></span>
       <span class="l4-btn" style="background:rgba(100,116,139,0.2); border-color:rgba(100,116,139,0.3); color:#94a3b8;"><i class="fa-solid fa-list-check"></i> Inspect L4</span>
     `;
   }
