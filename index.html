@@ -8244,6 +8244,8 @@ function openItemIntelligence(itemCode) {
   const poCurr = intel.po_curr || intel.last_po_currency || 'EGP';
   const poDate = intel.po_date || intel.last_po_date || '—';
   const codeDate = intel.code_date || '';
+  const controller = (intel.controller || '').trim();
+  const installedQty = Number(intel.installed_qty || 0);
 
   // ── Currency Normalization ──
   const rawCurr = (poCurr || intel.last_po_currency || 'EGP').trim();
@@ -8559,39 +8561,61 @@ function openItemIntelligence(itemCode) {
     <!-- 2-Column Intelligence Grid (Compact) -->
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.45rem;">
 
-      <!-- Panel A: Inventory & Stock Coverage -->
+      <!-- Panel A: Inventory & Operational Coverage -->
       <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:7px 11px; display:flex; flex-direction:column; gap:3px;">
         <div style="font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; justify-content:space-between;">
           <span style="display:inline-flex; align-items:center; gap:5px;">
-            <i class="fa-solid fa-boxes-stacked"></i> Inventory & Stock Coverage
+            <i class="fa-solid fa-boxes-stacked"></i> Inventory & Operational Coverage
           </span>
           <span style="font-size:0.72rem; font-weight:700;">
             ${runwayText}
           </span>
         </div>
         
+        <!-- On-Hand Stock Balance -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
-          <span style="color:#94a3b8;">On-Hand Stock Balance:</span>
+          <span style="color:#94a3b8;"><i class="fa-solid fa-warehouse" style="margin-right:4px; color:#64748b;"></i>On-Hand Stock Balance:</span>
           <span style="font-weight:700;">
             <strong style="color:${stkTot === 0 ? '#f87171' : '#34d399'}; font-size:0.84rem;">${stkTot.toLocaleString()}</strong> <span style="color:#94a3b8; font-size:0.68rem;">${escapeHtml(uom)}</span> <span style="color:#cbd5e1; font-size:0.68rem; margin-left:4px;">(${stkNew.toLocaleString()} New • ${stkUsed.toLocaleString()} Used)</span>
           </span>
         </div>
 
+        <!-- Material Controller -->
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
-          <span style="color:#94a3b8;">Safety Stock & Re-Order Point:</span>
-          <span style="font-weight:700; color:#ffffff;">
-            ROP: <strong style="color:#38bdf8;">${rop > 0 ? rop.toLocaleString() : '—'}</strong> • Min: <span style="color:#cbd5e1;">${minStock > 0 ? minStock.toLocaleString() : '0'}</span> • Max: <span style="color:#cbd5e1;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</span>
+          <span style="color:#94a3b8;"><i class="fa-solid fa-user-gear" style="margin-right:4px; color:#64748b;"></i>Inventory Controller:</span>
+          <span style="color:${controller ? '#38bdf8' : '#64748b'}; font-weight:700;">
+            ${controller ? `<span style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); padding:1px 6px; border-radius:4px; font-size:0.68rem;">${escapeHtml(controller)}</span>` : '—'}
           </span>
         </div>
 
+        <!-- Installed Qty in Plant Machinery Base -->
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-gears" style="margin-right:4px; color:#64748b;"></i>Installed in Plant Base:</span>
+          <span style="font-weight:700;">
+            ${installedQty > 0 ? `
+              <strong style="color:#60a5fa; font-size:0.82rem;">${installedQty.toLocaleString()}</strong> <span style="color:#94a3b8; font-size:0.68rem;">${escapeHtml(uom)} active</span>
+              <span style="color:#cbd5e1; font-size:0.68rem; margin-left:4px;">(${stkTot > 0 ? (stkTot / installedQty).toFixed(1) + 'x Backup' : '<span style="color:#f87171;">0x Backup</span>'})</span>
+            ` : `<span style="color:#64748b;">—</span>`}
+          </span>
+        </div>
+
+        <!-- Ordering Policy: Min -> ROP -> Max -->
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-sliders" style="margin-right:4px; color:#64748b;"></i>Ordering Policy:</span>
+          <span style="font-weight:700; color:#ffffff;">
+            Min: <span style="color:#cbd5e1;">${minStock > 0 ? minStock.toLocaleString() : '0'}</span> • ROP: <strong style="color:#38bdf8;">${rop > 0 ? rop.toLocaleString() : '—'}</strong> • Max: <span style="color:#cbd5e1;">${maxStock > 0 ? maxStock.toLocaleString() : '—'}</span>
+          </span>
+        </div>
+
+        <!-- Requested PR Qty -->
         ${prQty > 0 ? `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:3px 7px; border-radius:5px; border:1px solid rgba(255,255,255,0.06);">
-            <span style="color:#94a3b8; font-size:0.68rem;">Requested PR Qty:</span>
+          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:3px 7px; border-radius:5px; border:1px solid rgba(255,255,255,0.06); margin-top:1px;">
+            <span style="color:#94a3b8; font-size:0.68rem;"><i class="fa-solid fa-cart-shopping" style="margin-right:4px; color:#38bdf8;"></i>Requested PR Qty:</span>
             <strong style="color:#ffffff; font-size:0.78rem;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong>
           </div>
           ${auditWarningHtml}
         ` : `
-          <div style="font-size:0.68rem; color:#94a3b8; display:flex; align-items:center; gap:5px;">
+          <div style="font-size:0.68rem; color:#94a3b8; display:flex; align-items:center; gap:5px; margin-top:2px;">
             <i class="fa-solid fa-circle-check" style="color:#34d399;"></i>
             <span>Feasibility: Verified against <strong>${wmaMonthly.toLocaleString(undefined, {minimumFractionDigits:1, maximumFractionDigits:1})} ${escapeHtml(uom)}/mo</strong> velocity.</span>
           </div>
