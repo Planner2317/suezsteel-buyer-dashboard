@@ -222,26 +222,26 @@
        DELIVERY PROGRESS BARS (Stage 5 & 6)
     ══════════════════════════════════════════════════════════ */
     .progress-wrap {
-      margin-top: 7px;
-      padding: 6px 10px 5px 10px;
+      margin-top: clamp(2px, 0.35vh, 4px);
+      padding: clamp(2px, 0.3vh, 4px) clamp(5px, 0.6vw, 8px);
       border-top: 1px solid rgba(255,255,255,0.08);
       background: rgba(0, 0, 0, 0.16);
-      border-radius: 8px;
+      border-radius: 6px;
     }
     .progress-label-row {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.73rem; color: var(--text-sub); margin-bottom: 5px;
+      font-size: clamp(0.62rem, 0.74vw, 0.70rem); color: var(--text-sub); margin-bottom: 2px;
       font-family: 'Outfit', sans-serif;
     }
     .progress-label-row span:first-child { color: #34d399; font-weight: 700; }
     .progress-label-row span:last-child  { color: #ea580c; font-weight: 700; }
     .progress-track {
-      height: 8px; border-radius: 10px;
+      height: clamp(4px, 0.55vh, 6px); border-radius: 6px;
       background: rgba(255,255,255,0.08);
       overflow: hidden;
     }
     .progress-fill {
-      height: 100%; border-radius: 10px;
+      height: 100%; border-radius: 6px;
       background: linear-gradient(90deg, #059669, #34d399);
       transition: width 0.5s ease;
     }
@@ -249,18 +249,18 @@
        SEGMENTED SLA AGING MICRO-TRACKS & DELAY VISUALIZATION
     ══════════════════════════════════════════════════════════ */
     .sla-track-wrap {
-      margin-top: 7px;
-      padding: 6px 10px 5px 10px;
+      margin-top: clamp(2px, 0.35vh, 4px);
+      padding: clamp(2px, 0.3vh, 4px) clamp(5px, 0.6vw, 8px);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(0, 0, 0, 0.16);
-      border-radius: 8px;
+      border-radius: 6px;
     }
     .sla-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.74rem;
-      margin-bottom: 5px;
+      font-size: clamp(0.62rem, 0.74vw, 0.70rem);
+      margin-bottom: 2px;
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
     }
@@ -268,12 +268,20 @@
       font-weight: 700;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+    }
+    .sla-legend-row-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: clamp(0.60rem, 0.70vw, 0.66rem);
+      color: #cbd5e1;
+      font-weight: 600;
     }
     .sla-bar-segmented {
       display: flex;
-      height: 8px;
-      border-radius: 6px;
+      height: clamp(4px, 0.55vh, 6px);
+      border-radius: 4px;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.06);
       gap: 2px;
@@ -289,43 +297,36 @@
     .sla-seg-red    { background: linear-gradient(90deg, #ef4444, #f43f5e); }
 
     .sla-legend-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.73rem;
-      color: #cbd5e1;
-      margin-top: 5px;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 600;
+      display: none;
     }
     .sla-legend-item {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 3px;
     }
     .sla-dot-mini {
-      width: 7.5px;
-      height: 7.5px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       display: inline-block;
       flex-shrink: 0;
     }
-    .sla-dot-green  { background: #34d399; box-shadow: 0 0 5px rgba(52,211,153,0.6); }
-    .sla-dot-yellow { background: #fbbf24; box-shadow: 0 0 5px rgba(251,191,36,0.6); }
-    .sla-dot-orange { background: #fb923c; box-shadow: 0 0 5px rgba(251,146,60,0.6); }
-    .sla-dot-red    { background: #f43f5e; box-shadow: 0 0 5px rgba(244,63,94,0.6); }
+    .sla-dot-green  { background: #34d399; box-shadow: 0 0 4px rgba(52,211,153,0.6); }
+    .sla-dot-yellow { background: #fbbf24; box-shadow: 0 0 4px rgba(251,191,36,0.6); }
+    .sla-dot-orange { background: #fb923c; box-shadow: 0 0 4px rgba(251,146,60,0.6); }
+    .sla-dot-red    { background: #f43f5e; box-shadow: 0 0 4px rgba(244,63,94,0.6); }
 
     .delay-drill-btn {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 5px;
-      padding: 2px 7px;
-      font-size: 0.62rem;
+      padding: 1px 6px;
+      font-size: 0.60rem;
       color: var(--text-sub);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       transition: all 0.2s;
     }
     .delay-drill-btn:hover {
@@ -334,13 +335,13 @@
       color: #ffffff;
     }
 
-
-
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      min-height: 100%;
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+      box-sizing: border-box;
     }
 
     body {
@@ -350,60 +351,62 @@
         radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%);
       color: var(--text-main);
-      padding: clamp(6px, 1.2vh, 16px) clamp(10px, 1.5vw, 24px);
-      line-height: 1.4;
+      padding: clamp(3px, 0.6vh, 6px) clamp(8px, 1vw, 14px);
+      line-height: 1.35;
       box-sizing: border-box;
       transition: all 0.2s ease;
     }
 
-    /* By default on screens with adequate height, lock to single-screen fit */
-    @media (min-width: 1024px) and (min-height: 560px) {
-      body.view-fit {
-        overflow: hidden;
-        height: 100vh;
-      }
-      body.view-fit .dashboard-container {
-        height: calc(100vh - clamp(12px, 2.4vh, 32px));
-        max-height: calc(100vh - clamp(12px, 2.4vh, 32px));
-      }
-      body.view-fit .main-section {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-      }
-      body.view-fit .lifecycle-3col-grid {
-        flex: 1;
-        min-height: 0;
-      }
-      body.view-fit .stage-col {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-      body.view-fit .stage-card {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-      body.view-fit .chart-container-box {
-        height: 100%;
-        min-height: 0;
-      }
+    /* Global Single-Screen Fit Architecture */
+    body.view-fit {
+      overflow: hidden;
+      height: 100vh;
+      max-height: 100vh;
+    }
+    body.view-fit .dashboard-container {
+      height: 100%;
+      max-height: 100%;
+    }
+    body.view-fit .main-section {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    body.view-fit .lifecycle-3col-grid {
+      flex: 1;
+      min-height: 0;
+      height: 100%;
+    }
+    body.view-fit .stage-col {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    body.view-fit .stage-card {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    body.view-fit .chart-container-box {
+      height: 100%;
+      min-height: 0;
     }
 
     /* Body View Modes */
     body.view-compact {
-      font-size: 0.92em;
+      font-size: 0.90em;
     }
     body.view-compact .stage-card {
-      padding: 4px 8px !important;
+      padding: 3px 6px !important;
     }
     body.view-compact .header-banner-prepo, 
     body.view-compact .header-banner-openpo {
-      padding: 3px 8px !important;
+      padding: 2px 6px !important;
     }
     body.view-expanded {
       overflow-y: auto !important;
@@ -415,26 +418,30 @@
     }
 
     .dashboard-container {
-      max-width: 1720px;
+      max-width: 1760px;
       margin: 0 auto;
+      height: 100%;
+      max-height: 100%;
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1.1vh, 14px);
+      gap: clamp(3px, 0.5vh, 6px);
       box-sizing: border-box;
+      overflow: hidden;
       transition: gap 0.2s ease;
     }
 
-    /* HEADER BAR (2-TIER BALANCED ARCHITECTURE) */
+    /* HEADER BAR (2-TIER HIGH-DENSITY BALANCED ARCHITECTURE) */
     header {
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: clamp(6px, 0.9vh, 10px) clamp(12px, 1.4vw, 20px);
+      border-radius: 11px;
+      padding: clamp(3px, 0.45vh, 6px) clamp(8px, 1vw, 14px);
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      gap: clamp(3px, 0.4vh, 5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .header-tier-top {
@@ -442,6 +449,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      gap: 8px;
     }
 
     .header-tier-bottom {
@@ -449,23 +457,25 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      padding-top: 6px;
+      padding-top: clamp(2px, 0.3vh, 4px);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       flex-wrap: nowrap;
+      gap: 8px;
     }
 
-        .btn-zero-stock-toggle {
+    .btn-zero-stock-toggle {
       background: rgba(15, 23, 42, 0.7);
       border: 1px solid rgba(239, 68, 68, 0.45);
       color: #f1f5f9;
-      padding: clamp(3px, 0.5vh, 5px) clamp(7px, 0.8vw, 10px);
-      border-radius: 8px;
-      font-size: clamp(0.68rem, 0.8vw, 0.75rem);
+      padding: clamp(2px, 0.4vh, 4px) clamp(6px, 0.7vw, 9px);
+      border-radius: 7px;
+      font-size: clamp(0.66rem, 0.76vw, 0.72rem);
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      min-height: 28px;
       transition: all 0.2s ease;
       white-space: nowrap;
     }
@@ -478,21 +488,22 @@
       background: rgba(239, 68, 68, 0.3) !important;
       border-color: #ef4444 !important;
       color: #ffffff !important;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.45);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
     }
 
     .btn-zero-stock-export {
       background: rgba(16, 185, 129, 0.14);
       border: 1px solid rgba(16, 185, 129, 0.45);
       color: #6ee7b7;
-      padding: clamp(3px, 0.5vh, 5px) clamp(7px, 0.8vw, 10px);
-      border-radius: 8px;
-      font-size: clamp(0.68rem, 0.8vw, 0.75rem);
+      padding: clamp(2px, 0.4vh, 4px) clamp(6px, 0.7vw, 9px);
+      border-radius: 7px;
+      font-size: clamp(0.66rem, 0.76vw, 0.72rem);
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      min-height: 28px;
       transition: all 0.2s ease;
       white-space: nowrap;
     }
@@ -500,26 +511,26 @@
       background: rgba(16, 185, 129, 0.26);
       border-color: #10b981;
       transform: translateY(-1px);
-      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
     }
 
     /* ── Header Info Icon Tooltip ─────────────────────── */
     .hdr-info-wrap {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       position: relative;
     }
     .hdr-info-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 16px;
-      height: 16px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       background: rgba(167,139,250,0.18);
       color: #a78bfa;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-style: normal;
       cursor: help;
       flex-shrink: 0;
@@ -534,18 +545,18 @@
     .hdr-info-tooltip {
       display: none;
       position: absolute;
-      top: calc(100% + 8px);
+      top: calc(100% + 6px);
       left: 50%;
       transform: translateX(-50%);
       background: #1e1e2e;
       border: 1px solid rgba(167,139,250,0.35);
       border-radius: 8px;
-      padding: 10px 13px;
-      min-width: 240px;
-      max-width: 300px;
+      padding: 8px 11px;
+      min-width: 220px;
+      max-width: 280px;
       color: #e2e8f0;
-      font-size: 0.78rem;
-      line-height: 1.55;
+      font-size: 0.74rem;
+      line-height: 1.45;
       z-index: 9999;
       box-shadow: 0 8px 24px rgba(0,0,0,0.55);
       pointer-events: none;
@@ -554,10 +565,10 @@
     .hdr-info-tooltip::before {
       content: '';
       position: absolute;
-      top: -6px;
+      top: -5px;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 0 6px 6px 6px;
+      border-width: 0 5px 5px 5px;
       border-style: solid;
       border-color: transparent transparent rgba(167,139,250,0.35) transparent;
     }
@@ -570,25 +581,25 @@
     .header-priority-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid rgba(167, 139, 250, 0.35);
-      border-radius: 8px;
-      padding: 3px 8px;
-      min-height: 32px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border-radius: 7px;
+      padding: 2px 7px;
+      min-height: 28px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
       transition: all 0.2s ease;
     }
     .header-priority-pill:hover {
       border-color: rgba(167, 139, 250, 0.65);
     }
     .header-priority-pill label {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
       color: #cbd5e1;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       margin: 0;
       cursor: pointer;
     }
@@ -597,7 +608,7 @@
       border: none;
       color: #f8fafc;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.74rem;
+      font-size: 0.70rem;
       font-weight: 800;
       outline: none;
       cursor: pointer;
@@ -606,33 +617,33 @@
       background: #0f172a;
       color: #f8fafc;
       font-weight: 700;
-      padding: 4px 8px;
+      padding: 3px 6px;
     }
     .header-priority-pill.active-p1 {
       background: rgba(239, 68, 68, 0.25) !important;
       border-color: #ef4444 !important;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.45);
     }
     .header-priority-pill.active-p2 {
       background: rgba(245, 158, 11, 0.25) !important;
       border-color: #f59e0b !important;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
     }
     .header-priority-pill.active-p3 {
       background: rgba(56, 189, 248, 0.25) !important;
       border-color: #38bdf8 !important;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
     }
 
     .p-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       display: inline-block;
     }
-    .dot-p1 { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
-    .dot-p2 { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
-    .dot-p3 { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; }
+    .dot-p1 { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    .dot-p2 { background: #f59e0b; box-shadow: 0 0 5px #f59e0b; }
+    .dot-p3 { background: #38bdf8; box-shadow: 0 0 5px #38bdf8; }
 
 .header-actions-right {
       display: flex;
@@ -2523,10 +2534,10 @@
       -webkit-backdrop-filter: blur(20px);
       background: rgba(9, 13, 22, 0.92) !important;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 6px 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      border-radius: 11px;
+      padding: clamp(3px, 0.45vh, 5px) clamp(8px, 1vw, 14px);
+      margin-bottom: 0 !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
       position: relative;
     }
 
@@ -2535,34 +2546,34 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      gap: 12px;
-      padding-bottom: 6px;
+      gap: 8px;
+      padding-bottom: clamp(2px, 0.3vh, 4px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .header-title-cluster {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-shrink: 0;
     }
 
     .header-title-cluster i {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       color: var(--accent-cyan);
       background: rgba(56, 189, 248, 0.12);
-      padding: 6px 8px;
-      border-radius: 8px;
+      padding: 4px 7px;
+      border-radius: 7px;
       border: 1px solid rgba(56, 189, 248, 0.3);
     }
 
     .header-title-cluster h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
+      font-size: clamp(0.85rem, 0.98vw, 0.96rem);
       font-weight: 800;
       color: #ffffff;
       margin: 0;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -2570,25 +2581,25 @@
     }
 
     .header-live-badge {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 800;
       color: #38bdf8;
       background: rgba(56, 189, 248, 0.15);
       border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 1px 7px;
-      border-radius: 12px;
+      padding: 1px 6px;
+      border-radius: 10px;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       letter-spacing: 0.3px;
     }
 
     .live-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: #38bdf8;
-      box-shadow: 0 0 6px #38bdf8;
+      box-shadow: 0 0 5px #38bdf8;
       animation: pulse-dot 2s infinite;
     }
 
@@ -2597,40 +2608,39 @@
       50% { opacity: 0.4; transform: scale(1.3); }
     }
 
-
-
     /* ── Tier 2: Streamlined Filter Toolbar ── */
     .header-tier-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      gap: 10px;
-      padding-top: 6px;
+      gap: 8px;
+      padding-top: clamp(2px, 0.3vh, 4px);
       flex-wrap: nowrap;
     }
 
     .primary-filters-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex: 1 1 auto;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
     }
 
-    /* Compact combobox triggers for 34px height */
+    /* Compact combobox triggers for 28-30px height */
     .primary-filters-row .buyer-combobox-trigger {
-      padding: 3px 10px !important;
-      min-height: 32px !important;
-      border-radius: 8px !important;
-      font-size: 0.74rem !important;
+      padding: 2px 8px !important;
+      min-height: 28px !important;
+      border-radius: 7px !important;
+      font-size: 0.70rem !important;
     }
     .primary-filters-row .combobox-lead-tag {
-      font-size: 0.7rem !important;
-      padding: 1px 5px !important;
+      font-size: 0.68rem !important;
+      padding: 1px 4px !important;
     }
     .primary-filters-row .combobox-current-val strong {
-      font-size: 0.74rem !important;
+      font-size: 0.70rem !important;
     }
     .primary-filters-row .combobox-tag-badge {
       display: none !important;
@@ -2640,21 +2650,21 @@
     .header-year-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: rgba(15, 23, 42, 0.85);
       border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 8px;
-      padding: 3px 10px;
-      min-height: 32px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border-radius: 7px;
+      padding: 2px 7px;
+      min-height: 28px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
     .header-year-pill label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
       color: var(--accent-cyan);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       cursor: pointer;
     }
     .header-year-dropdown {
@@ -2662,7 +2672,7 @@
       border: none;
       color: #f8fafc;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.70rem;
       font-weight: 800;
       outline: none;
       cursor: pointer;
@@ -2677,15 +2687,15 @@
       background: rgba(30, 41, 59, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: #cbd5e1;
-      padding: 4px 11px;
-      min-height: 32px;
-      border-radius: 8px;
-      font-size: 0.74rem;
+      padding: 2px 9px;
+      min-height: 28px;
+      border-radius: 7px;
+      font-size: 0.70rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.2s ease;
       white-space: nowrap;
       font-family: 'Outfit', sans-serif;
@@ -2700,15 +2710,15 @@
       background: rgba(56, 189, 248, 0.2) !important;
       border-color: var(--accent-cyan) !important;
       color: #ffffff !important;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
     }
     .more-filters-active-chip {
       background: #0284c7;
       color: #ffffff;
-      font-size: 0.62rem;
+      font-size: 0.60rem;
       font-weight: 900;
-      padding: 1px 6px;
-      border-radius: 10px;
+      padding: 1px 5px;
+      border-radius: 8px;
     }
 
     /* "Reset All" Button */
@@ -2716,15 +2726,15 @@
       background: rgba(239, 68, 68, 0.14);
       border: 1px solid rgba(239, 68, 68, 0.4);
       color: #fca5a5;
-      padding: 4px 11px;
-      min-height: 32px;
-      border-radius: 8px;
-      font-size: 0.74rem;
+      padding: 2px 9px;
+      min-height: 28px;
+      border-radius: 7px;
+      font-size: 0.70rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: all 0.2s ease;
       white-space: nowrap;
       font-family: 'Outfit', sans-serif;
@@ -2734,7 +2744,7 @@
       border-color: #ef4444;
       color: #ffffff;
       transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+      box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
     }
 
     /* "More Filters" Popover Drawer */
@@ -2745,8 +2755,8 @@
       right: 14px;
       background: rgba(15, 23, 42, 0.98);
       border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 12px;
-      padding: 12px 16px;
+      border-radius: 11px;
+      padding: 10px 14px;
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
       z-index: 1000;
       backdrop-filter: blur(24px);
@@ -2888,7 +2898,7 @@
       <div style="display:inline-flex; align-items:center; gap:8px;">
         <!-- Zero-Stock Filter Toggle -->
         <div class="hdr-info-wrap">
-          <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle">
+          <button id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" title="Filter dashboard by zero warehouse stock">
             <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
             <span>Zero-Stock</span>
             <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">11,045 Lines (73.0%)</span>
@@ -2898,32 +2908,7 @@
               <strong>⚠ Zero-Stock counts LINE ITEMS</strong><br>
               11,045 individual item rows (across all PRs)<br>
               currently have 0 qty in warehouse.<br>
-              <span style="opacity:0.7;font-size:0.75em;">This is different from the Priority count which counts whole PRs.</span>
-            </span>
-          </span>
-        </div>
-
-        <!-- Consumption-Driven Priority Dropdown Selector -->
-        <div class="hdr-info-wrap">
-          <div class="header-priority-pill" id="prioritySelectorWrap">
-            <label for="prioritySelector">
-              <i class="fa-solid fa-layer-group" style="color:#a78bfa; font-size:0.75rem;"></i>
-              <span>Priority:</span>
-            </label>
-            <select id="prioritySelector" class="header-priority-dropdown" onchange="onPriorityDropdownChange(this.value)">
-              <option value="ALL">All Priorities</option>
-              <option value="P1" id="p1Opt">🔴 P1 Critical (1,511)</option>
-              <option value="P2" id="p2Opt">🟠 P2 Active (1,617)</option>
-              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (825)</option>
-            </select>
-          </div>
-          <span class="hdr-info-icon" tabindex="0">ⓘ
-            <span class="hdr-info-tooltip">
-              <strong>🗂 Priority counts WHOLE PRs</strong><br>
-              P1/P2/P3 numbers = Purchase Requests grouped by urgency.<br>
-              One PR can have many lines — so these totals<br>
-              won't match the Zero-Stock line count above.<br>
-              <span style="opacity:0.7;font-size:0.75em;">Zero-Stock = lines &nbsp;|&nbsp; Priority = PRs</span>
+              <span style="opacity:0.7;font-size:0.75em;">Zero-Stock = item lines &nbsp;|&nbsp; Priority = whole PRs</span>
             </span>
           </span>
         </div>
@@ -2940,7 +2925,6 @@
           <span><strong style="color:#ffffff;">97 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
           <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect</span>
         </div>
-
 
         <!-- View Mode & Fullscreen -->
         <div class="view-mode-bar">
@@ -3113,8 +3097,32 @@
           </div>
         </div>
 
-        <!-- 4. PR YEAR SELECTOR -->
-                <!-- PR YEAR SELECTOR -->
+        <!-- 4. CONSUMPTION-DRIVEN PRIORITY DROPDOWN SELECTOR -->
+        <div class="hdr-info-wrap">
+          <div class="header-priority-pill" id="prioritySelectorWrap" title="Filter entire dashboard by PR Priority">
+            <label for="prioritySelector">
+              <i class="fa-solid fa-layer-group" style="color:#a78bfa; font-size:0.70rem;"></i>
+              <span>Priority:</span>
+            </label>
+            <select id="prioritySelector" class="header-priority-dropdown" onchange="onPriorityDropdownChange(this.value)">
+              <option value="ALL">All Priorities</option>
+              <option value="P1" id="p1Opt">🔴 P1 Critical (1,511)</option>
+              <option value="P2" id="p2Opt">🟠 P2 Active (1,617)</option>
+              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (825)</option>
+            </select>
+          </div>
+          <span class="hdr-info-icon" tabindex="0">ⓘ
+            <span class="hdr-info-tooltip">
+              <strong>🗂 Priority counts WHOLE PRs</strong><br>
+              P1/P2/P3 numbers = Purchase Requests grouped by urgency.<br>
+              One PR can have many lines — so these totals<br>
+              won't match the Zero-Stock line count above.<br>
+              <span style="opacity:0.7;font-size:0.75em;">Zero-Stock = item lines &nbsp;|&nbsp; Priority = whole PRs</span>
+            </span>
+          </span>
+        </div>
+
+        <!-- 5. PR YEAR SELECTOR -->
         <div class="header-year-pill" id="yearSelectorWrap" title="Filter entire dashboard by PR Creation Year">
           <label for="yearSelector">
             <i class="fa-regular fa-calendar-days"></i>
@@ -3403,33 +3411,33 @@
         <div id="stageCard1" class="stage-card card-theme-st1">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🔴 TS Confirmed (Ready to Issue PO)
               </div>
-              <div id="st1-zero-badge" style="margin-top:5px;">
+              <div id="st1-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="808 out of 1,140 item lines in this stage (70.9%) currently have 0 stock across 205 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 808 Zero-Stock Lines (70.9% &bull; 205 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st1); font-family:'Outfit',sans-serif;" id="st1-val">7 PRs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('TS Confirmed (Pending PO)')" title="Inspect Stage 1 Tasks" style="background:rgba(239,68,68,0.22); border:1px solid rgba(239,68,68,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('TS Confirmed (Pending PO)')" style="color:var(--color-st1);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st1); font-family:'Outfit',sans-serif;" id="st1-val">7 PRs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('TS Confirmed (Pending PO)')" title="Inspect Stage 1 Tasks" style="background:rgba(239,68,68,0.22); border:1px solid rgba(239,68,68,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('TS Confirmed (Pending PO)')" style="color:var(--color-st1); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
           
           <!-- SLA Delay Track -->
           <div class="sla-track-wrap">
             <div class="sla-header-row">
-              <span class="sla-avg-tag" style="color:var(--color-st1);" id="st1-delay-tag"><i class="fa-solid fa-triangle-exclamation"></i> Avg Delay After TS Confirmation: 13.1d</span>
+              <span class="sla-avg-tag" style="color:var(--color-st1);" id="st1-delay-tag"><i class="fa-solid fa-triangle-exclamation"></i> Avg Delay: 13.1d</span>
+              <div class="sla-legend-row-inline">
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st1-leg-g">1 (&le;7d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st1-leg-y">4 (8–14d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st1-leg-r">2 (&gt;14d)</span></span>
+              </div>
             </div>
             <div class="sla-bar-segmented" id="st1-sla-bar">
               <div class="sla-seg sla-seg-green" id="st1-seg-green" style="width:14.3%;" title="1 PR ≤7d"></div>
               <div class="sla-seg sla-seg-yellow" id="st1-seg-yellow" style="width:57.1%;" title="4 PRs 8–14d"></div>
               <div class="sla-seg sla-seg-red" id="st1-seg-red" style="width:28.6%;" title="2 PRs >14d"></div>
-            </div>
-            <div class="sla-legend-row" id="st1-sla-legend">
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st1-leg-g">1 (&le;7d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st1-leg-y">4 (8–14d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st1-leg-r">2 (&gt;14d Critical)</span></span>
             </div>
           </div>
         </div>
@@ -3438,33 +3446,33 @@
         <div id="stageCard2" class="stage-card card-theme-st2">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🟣 Sourcing / RFQ (No Offers)
               </div>
-              <div id="st2-zero-badge" style="margin-top:5px;">
+              <div id="st2-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,866 out of 3,838 item lines in this stage (74.7%) currently have 0 stock across 796 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,866 Zero-Stock Lines (74.7% &bull; 796 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st2); font-family:'Outfit',sans-serif;" id="st2-val">28 PRs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Sourcing / RFQ')" title="Inspect Stage 2 Tasks" style="background:rgba(139,92,246,0.25); border:1px solid rgba(139,92,246,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Sourcing / RFQ')" style="color:var(--color-st2);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st2); font-family:'Outfit',sans-serif;" id="st2-val">28 PRs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Sourcing / RFQ')" title="Inspect Stage 2 Tasks" style="background:rgba(139,92,246,0.25); border:1px solid rgba(139,92,246,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Sourcing / RFQ')" style="color:var(--color-st2); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
           
           <!-- SLA Delay Track -->
           <div class="sla-track-wrap">
             <div class="sla-header-row">
-              <span class="sla-avg-tag" style="color:var(--color-st2);" id="st2-delay-tag"><i class="fa-solid fa-clock"></i> Avg Sourcing Duration: 24.2d</span>
+              <span class="sla-avg-tag" style="color:var(--color-st2);" id="st2-delay-tag"><i class="fa-solid fa-clock"></i> Avg Sourcing: 24.2d</span>
+              <div class="sla-legend-row-inline">
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st2-leg-g">17 (&le;7d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st2-leg-y">7 (8–14d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st2-leg-r">4 (&gt;14d)</span></span>
+              </div>
             </div>
             <div class="sla-bar-segmented" id="st2-sla-bar">
               <div class="sla-seg sla-seg-green" id="st2-seg-green" style="width:60.7%;" title="17 PRs ≤21d"></div>
               <div class="sla-seg sla-seg-yellow" id="st2-seg-yellow" style="width:25.0%;" title="7 PRs 22–45d"></div>
               <div class="sla-seg sla-seg-red" id="st2-seg-red" style="width:14.3%;" title="4 PRs >45d"></div>
-            </div>
-            <div class="sla-legend-row" id="st2-sla-legend">
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st2-leg-g">17 (&le;7d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st2-leg-y">7 (8–14d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st2-leg-r">4 (&gt;14d Critical)</span></span>
             </div>
           </div>
         </div>
@@ -3473,33 +3481,33 @@
         <div id="stageCard3" class="stage-card card-theme-st3">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🟡 Offers Under Plant Evaluation
               </div>
-              <div id="st3-zero-badge" style="margin-top:5px;">
+              <div id="st3-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="730 out of 1,020 item lines in this stage (71.6%) currently have 0 stock across 130 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 730 Zero-Stock Lines (71.6% &bull; 130 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st3); font-family:'Outfit',sans-serif;" id="st3-val">4 PRs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('TS Review in Plant')" title="Inspect Stage 3 Tasks" style="background:rgba(234,179,8,0.25); border:1px solid rgba(234,179,8,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('TS Review in Plant')" style="color:var(--color-st3);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st3); font-family:'Outfit',sans-serif;" id="st3-val">4 PRs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('TS Review in Plant')" title="Inspect Stage 3 Tasks" style="background:rgba(234,179,8,0.25); border:1px solid rgba(234,179,8,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('TS Review in Plant')" style="color:var(--color-st3); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
 
           <!-- SLA Plant Review Track -->
           <div class="sla-track-wrap">
             <div class="sla-header-row">
-              <span class="sla-avg-tag" style="color:var(--color-st3);" id="st3-delay-tag"><i class="fa-solid fa-clock"></i> Avg Plant Evaluation: 0d</span>
+              <span class="sla-avg-tag" style="color:var(--color-st3);" id="st3-delay-tag"><i class="fa-solid fa-clock"></i> Avg Plant Eval: 0d</span>
+              <div class="sla-legend-row-inline">
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st3-leg-g">0 (≤7d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st3-leg-y">0 (8–14d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st3-leg-r">0 (&gt;14d)</span></span>
+              </div>
             </div>
             <div class="sla-bar-segmented" id="st3-sla-bar">
               <div class="sla-seg sla-seg-green"  id="st3-seg-green"  style="width:33.3%;" title="PRs ≤7d"></div>
               <div class="sla-seg sla-seg-yellow" id="st3-seg-yellow" style="width:33.3%;" title="PRs 8–14d"></div>
               <div class="sla-seg sla-seg-red"    id="st3-seg-red"    style="width:33.4%;" title="PRs >14d"></div>
-            </div>
-            <div class="sla-legend-row" id="st3-sla-legend">
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st3-leg-g">0 (≤7d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st3-leg-y">0 (8–14d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st3-leg-r">0 (&gt;14d Critical)</span></span>
             </div>
           </div>
         </div>
@@ -3543,33 +3551,33 @@
         <div id="stageCard4" class="stage-card card-theme-st4">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🔵 PO not Confirmed
               </div>
-              <div id="st4-zero-badge" style="margin-top:5px;">
+              <div id="st4-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1,242 out of 1,651 item lines in this stage (75.2%) currently have 0 stock across 375 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1,242 Zero-Stock Lines (75.2% &bull; 375 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st4); font-family:'Outfit',sans-serif;" id="st4-val">9 POs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Draft PO Approval')" title="Inspect Stage 4 Tasks" style="background:rgba(56,189,248,0.25); border:1px solid rgba(56,189,248,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Draft PO Approval')" style="color:var(--color-st4);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st4); font-family:'Outfit',sans-serif;" id="st4-val">9 POs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Draft PO Approval')" title="Inspect Stage 4 Tasks" style="background:rgba(56,189,248,0.25); border:1px solid rgba(56,189,248,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Draft PO Approval')" style="color:var(--color-st4); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
 
           <!-- SLA SC Approval Track -->
           <div class="sla-track-wrap">
             <div class="sla-header-row">
-              <span class="sla-avg-tag" style="color:var(--color-st4);" id="st4-delay-tag"><i class="fa-solid fa-hourglass-half"></i> Avg SC Approval Pending: 0d</span>
+              <span class="sla-avg-tag" style="color:var(--color-st4);" id="st4-delay-tag"><i class="fa-solid fa-hourglass-half"></i> Avg SC Approval: 0d</span>
+              <div class="sla-legend-row-inline">
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st4-leg-g">0 (≤7d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st4-leg-y">0 (8–30d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st4-leg-r">0 (&gt;30d)</span></span>
+              </div>
             </div>
             <div class="sla-bar-segmented" id="st4-sla-bar">
               <div class="sla-seg sla-seg-green"  id="st4-seg-green"  style="width:33.3%;" title="POs ≤7d"></div>
               <div class="sla-seg sla-seg-yellow" id="st4-seg-yellow" style="width:33.3%;" title="POs 8–30d"></div>
               <div class="sla-seg sla-seg-red"    id="st4-seg-red"    style="width:33.4%;" title="POs >30d"></div>
-            </div>
-            <div class="sla-legend-row" id="st4-sla-legend">
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-green"></span> <span id="st4-leg-g">0 (≤7d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st4-leg-y">0 (8–30d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st4-leg-r">0 (&gt;30d Critical)</span></span>
             </div>
           </div>
         </div>
@@ -3578,16 +3586,16 @@
         <div id="stageCard5" class="stage-card card-theme-st5">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🟠 Overdue Delivery
               </div>
-              <div id="st5-zero-badge" style="margin-top:5px;">
+              <div id="st5-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,820 out of 3,999 item lines in this stage (70.5%) currently have 0 stock across 641 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,820 Zero-Stock Lines (70.5% &bull; 641 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st5); font-family:'Outfit',sans-serif;" id="st5-val">28 POs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Supplier Overdue')" title="Inspect Stage 5 Tasks" style="background:rgba(234,88,12,0.28); border:1px solid rgba(234,88,12,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Supplier Overdue')" style="color:var(--color-st5);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st5); font-family:'Outfit',sans-serif;" id="st5-val">28 POs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('Supplier Overdue')" title="Inspect Stage 5 Tasks" style="background:rgba(234,88,12,0.28); border:1px solid rgba(234,88,12,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('Supplier Overdue')" style="color:var(--color-st5); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
 
@@ -3595,25 +3603,25 @@
           <div class="progress-wrap" id="st5-progress-wrap">
             <div class="progress-label-row">
               <span id="st5-recv-label">✅ Received: 758 Units (52.3%)</span>
-              <span id="st5-pend-label">⏳ Still Pending: 1,558 Units (47.7%)</span>
+              <span id="st5-pend-label">⏳ Pending: 1,558 Units (47.7%)</span>
             </div>
             <div class="progress-track"><div class="progress-fill" id="st5-fill" style="width:52.3%"></div></div>
           </div>
           
           <!-- SLA Overdue Severity Track -->
-          <div class="sla-track-wrap" style="margin-top:6px;">
+          <div class="sla-track-wrap">
             <div class="sla-header-row">
               <span class="sla-avg-tag" style="color:var(--color-st5);" id="st5-delay-tag"><i class="fa-solid fa-fire-flame-curved"></i> Avg Overdue: +248.0d Late</span>
+              <div class="sla-legend-row-inline">
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st5-leg-y">5 (1–30d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-orange"></span> <span id="st5-leg-o">5 (31–90d)</span></span>
+                <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st5-leg-r">18 (&gt;90d)</span></span>
+              </div>
             </div>
             <div class="sla-bar-segmented" id="st5-sla-bar">
               <div class="sla-seg sla-seg-yellow" id="st5-seg-yellow" style="width:17.9%;" title="5 POs 1–30d"></div>
               <div class="sla-seg sla-seg-orange" id="st5-seg-orange" style="width:17.9%;" title="5 POs 31–90d"></div>
               <div class="sla-seg sla-seg-red" id="st5-seg-red" style="width:64.2%;" title="18 POs >90d"></div>
-            </div>
-            <div class="sla-legend-row" id="st5-sla-legend">
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-yellow"></span> <span id="st5-leg-y">5 (1–30d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-orange"></span> <span id="st5-leg-o">5 (31–90d)</span></span>
-              <span class="sla-legend-item"><span class="sla-dot-mini sla-dot-red"></span> <span id="st5-leg-r">18 (&gt;90d Critical)</span></span>
             </div>
           </div>
         </div>
@@ -3622,28 +3630,25 @@
         <div id="stageCard6" class="stage-card card-theme-st6">
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="font-weight:800; color:#ffffff; font-size:0.88rem; font-family:'Outfit',sans-serif; line-height:1.2; padding-top:2px;">
+              <div style="font-weight:800; color:#ffffff; font-size:clamp(0.76rem, 0.88vw, 0.84rem); font-family:'Outfit',sans-serif; line-height:1.2; padding-top:1px;">
                 🟢 On-Track Delivery
               </div>
-              <div id="st6-zero-badge" style="margin-top:5px;">
+              <div id="st6-zero-badge" style="margin-top:2px;">
                 <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,102 out of 2,840 item lines in this stage (74.0%) currently have 0 stock across 586 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,102 Zero-Stock Lines (74.0% &bull; 586 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:1.2rem; font-weight:800; color:var(--color-st6); font-family:'Outfit',sans-serif;" id="st6-val">37 POs</div>
-              <div style="display:flex; gap:5px; justify-content:flex-end; align-items:center; margin-top:3px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('On-Track Delivery')" title="Inspect Stage 6 Tasks" style="background:rgba(52,211,153,0.22); border:1px solid rgba(52,211,153,0.5); color:#ffffff; padding:2px 8px; border-radius:6px; font-size:0.68rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('On-Track Delivery')" style="color:var(--color-st6);"><i class="fa-solid fa-file-excel"></i> Export</button></div>
+              <div style="font-size:clamp(0.98rem, 1.15vw, 1.18rem); font-weight:800; color:var(--color-st6); font-family:'Outfit',sans-serif;" id="st6-val">37 POs</div>
+              <div style="display:flex; gap:4px; justify-content:flex-end; align-items:center; margin-top:2px;"><button class="btn-stage-inspect" onclick="event.stopPropagation(); openDelayModal('On-Track Delivery')" title="Inspect Stage 6 Tasks" style="background:rgba(52,211,153,0.22); border:1px solid rgba(52,211,153,0.5); color:#ffffff; padding:1px 6px; border-radius:5px; font-size:0.65rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:3px;"><i class="fa-solid fa-bolt" style="color:#fcd34d;"></i> Inspect</button><button class="btn-stage-export" onclick="event.stopPropagation(); exportStageDirect('On-Track Delivery')" style="color:var(--color-st6); padding:1px 6px; font-size:0.65rem;"><i class="fa-solid fa-file-excel"></i> Export</button></div>
             </div>
           </div>
 
           <!-- Delivery Progress & Factual Statement -->
-          <div class="progress-wrap" id="st6-progress-wrap" style="margin-top:7px;">
-            <div style="font-size:0.73rem; font-weight:600; color:#cbd5e1; margin-bottom:5px; display:flex; align-items:center; gap:6px; font-family:'Outfit',sans-serif;">
-              <i class="fa-solid fa-boxes-stacked" style="color:var(--color-st6);"></i>
-              <span id="st6-statement-text">• 4 Foreign • 12 Local | 0 Partially Delivered | 2 Due within 30 Days</span>
-            </div>
-            <div class="progress-label-row">
-              <span id="st6-recv-label">✅ Received: 0 Units (0%)</span>
-              <span id="st6-pend-label">⏳ Pending: 237 Units (100%)</span>
+          <div class="progress-wrap" id="st6-progress-wrap">
+            <div class="progress-label-row" style="margin-bottom:2px;">
+              <span id="st6-recv-label">✅ Recv: 0 Units (0%)</span>
+              <span id="st6-statement-text" style="color:#94a3b8; font-size:clamp(0.58rem, 0.68vw, 0.64rem);">• 4 Foreign • 12 Local | 0 Part | 2 Due ≤30d</span>
+              <span id="st6-pend-label">⏳ Pend: 237 Units (100%)</span>
             </div>
             <div class="progress-track"><div class="progress-fill" id="st6-fill" style="width:0%"></div></div>
           </div>
@@ -7292,8 +7297,8 @@ function renderLifecycleCards() {
   if (st5Fill) {
     const pct5 = d.st5_pct || 0;
     st5Fill.style.width = pct5 + '%';
-    st5Recv.textContent = `✅ Received: ${(d.st5_srv_qty || 0).toLocaleString()} Units (${pct5}%)`;
-    st5Pend.textContent = `⏳ Pending: ${(d.st5_units || 0).toLocaleString()} Units (${d.st5_pct_bal || 100}%)`;
+    st5Recv.textContent = `✅ Recv: ${(d.st5_srv_qty || 0).toLocaleString()} (${pct5}%)`;
+    st5Pend.textContent = `⏳ Pend: ${(d.st5_units || 0).toLocaleString()} (${d.st5_pct_bal || 100}%)`;
   }
 
   const st6Fill  = document.getElementById("st6-fill");
@@ -7303,15 +7308,15 @@ function renderLifecycleCards() {
   if (st6Fill) {
     const pct6 = d.st6_pct || 0;
     st6Fill.style.width = pct6 + '%';
-    st6Recv.textContent = `✅ Received: ${(d.st6_srv_qty || 0).toLocaleString()} Units (${pct6}%)`;
-    st6Pend.textContent = `⏳ Pending: ${(d.st6_units || 0).toLocaleString()} Units (${d.st6_pct_bal || 100}%)`;
+    st6Recv.textContent = `✅ Recv: ${(d.st6_srv_qty || 0).toLocaleString()} (${pct6}%)`;
+    st6Pend.textContent = `⏳ Pend: ${(d.st6_units || 0).toLocaleString()} (${d.st6_pct_bal || 100}%)`;
   }
   if (st6Stmt) {
     const fCnt = d.st6_foreign !== undefined ? d.st6_foreign : 0;
     const lCnt = d.st6_local !== undefined ? d.st6_local : 0;
     const pCnt = d.st6_partial || 0;
     const dSoon = d.st6_due_soon !== undefined ? d.st6_due_soon : 0;
-    st6Stmt.textContent = `• ${fCnt} Foreign • ${lCnt} Local | ${pCnt} Partially Delivered | ${dSoon} Due within 30 Days`;
+    st6Stmt.textContent = `• ${fCnt} Foreign • ${lCnt} Local | ${pCnt} Part | ${dSoon} Due ≤30d`;
   }
 
   // ── SLA DELAY MICRO-TRACKS (Stages 1, 2, 3, 4, 5) ──────────────────────
@@ -7319,48 +7324,48 @@ function renderLifecycleCards() {
   const st1DelayTag = document.getElementById("st1-delay-tag");
   if (st1DelayTag) {
     st1DelayTag.innerHTML = (d.st1_avg_days || 0) > 7 
-      ? `<i class="fa-solid fa-triangle-exclamation"></i> Avg Delay After TS Confirmation: ${d.st1_avg_days}d`
-      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> Avg PO Creation: ${d.st1_avg_days}d (On SLA)`;
+      ? `<i class="fa-solid fa-triangle-exclamation"></i> Avg Delay: ${d.st1_avg_days}d`
+      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> On SLA (${d.st1_avg_days}d)`;
     setSlaSegWidths('st1', d.st1_fresh || 0, d.st1_moderate || 0, d.st1_critical || 0);
     document.getElementById("st1-leg-g").textContent = `${d.st1_fresh || 0} (≤7d)`;
     document.getElementById("st1-leg-y").textContent = `${d.st1_moderate || 0} (8–14d)`;
-    document.getElementById("st1-leg-r").textContent = `${d.st1_critical || 0} (>14d Critical)`;
+    document.getElementById("st1-leg-r").textContent = `${d.st1_critical || 0} (>14d)`;
   }
 
   // Stage 2 SLA Track (Sourcing Lead Time)
   const st2DelayTag = document.getElementById("st2-delay-tag");
   if (st2DelayTag) {
     st2DelayTag.innerHTML = (d.st2_avg_days || 0) > 7
-      ? `<i class="fa-solid fa-clock"></i> Avg Sourcing Duration: ${d.st2_avg_days}d`
-      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> Avg Sourcing: ${d.st2_avg_days}d (On SLA)`;
+      ? `<i class="fa-solid fa-clock"></i> Avg Sourcing: ${d.st2_avg_days}d`
+      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> On SLA (${d.st2_avg_days}d)`;
     setSlaSegWidths('st2', d.st2_fresh || 0, d.st2_moderate || 0, d.st2_critical || 0);
     document.getElementById("st2-leg-g").textContent = `${d.st2_fresh || 0} (≤7d)`;
     document.getElementById("st2-leg-y").textContent = `${d.st2_moderate || 0} (8–14d)`;
-    document.getElementById("st2-leg-r").textContent = `${d.st2_critical || 0} (>14d Critical)`;
+    document.getElementById("st2-leg-r").textContent = `${d.st2_critical || 0} (>14d)`;
   }
 
   // Stage 3 SLA Track (Plant Evaluation Duration)
   const st3DelayTag = document.getElementById("st3-delay-tag");
   if (st3DelayTag) {
     st3DelayTag.innerHTML = (d.st3_avg_days || 0) > 7
-      ? `<i class="fa-solid fa-clock"></i> Avg Plant Evaluation: ${d.st3_avg_days}d`
-      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> Avg Plant Evaluation: ${d.st3_avg_days}d (On SLA)`;
+      ? `<i class="fa-solid fa-clock"></i> Avg Plant Eval: ${d.st3_avg_days}d`
+      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> On SLA (${d.st3_avg_days}d)`;
     setSlaSegWidths('st3', d.st3_fresh || 0, d.st3_moderate || 0, d.st3_critical || 0);
     document.getElementById("st3-leg-g").textContent = `${d.st3_fresh || 0} (≤7d)`;
     document.getElementById("st3-leg-y").textContent = `${d.st3_moderate || 0} (8–14d)`;
-    document.getElementById("st3-leg-r").textContent = `${d.st3_critical || 0} (>14d Critical)`;
+    document.getElementById("st3-leg-r").textContent = `${d.st3_critical || 0} (>14d)`;
   }
 
   // Stage 4 SLA Track (SC Approval Backlog)
   const st4DelayTag = document.getElementById("st4-delay-tag");
   if (st4DelayTag) {
     st4DelayTag.innerHTML = (d.st4_avg_days || 0) > 7
-      ? `<i class="fa-solid fa-hourglass-half"></i> Avg SC Approval Pending: ${d.st4_avg_days}d`
-      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> Avg SC Approval: ${d.st4_avg_days}d (On SLA)`;
+      ? `<i class="fa-solid fa-hourglass-half"></i> Avg SC Approval: ${d.st4_avg_days}d`
+      : `<i class="fa-solid fa-circle-check" style="color:#34d399;"></i> On SLA (${d.st4_avg_days}d)`;
     setSlaSegWidths('st4', d.st4_fresh || 0, d.st4_moderate || 0, d.st4_critical || 0);
     document.getElementById("st4-leg-g").textContent = `${d.st4_fresh || 0} (≤7d)`;
     document.getElementById("st4-leg-y").textContent = `${d.st4_moderate || 0} (8–30d)`;
-    document.getElementById("st4-leg-r").textContent = `${d.st4_critical || 0} (>30d Critical)`;
+    document.getElementById("st4-leg-r").textContent = `${d.st4_critical || 0} (>30d)`;
   }
 
   // Stage 5 SLA Overdue Track
@@ -7370,7 +7375,7 @@ function renderLifecycleCards() {
     setSlaSegWidths('st5', d.st5_tier1 || 0, d.st5_tier2 || 0, d.st5_tier3 || 0);
     document.getElementById("st5-leg-y").textContent = `${d.st5_tier1 || 0} (1–30d)`;
     document.getElementById("st5-leg-o").textContent = `${d.st5_tier2 || 0} (31–90d)`;
-    document.getElementById("st5-leg-r").textContent = `${d.st5_tier3 || 0} (>90d Critical)`;
+    document.getElementById("st5-leg-r").textContent = `${d.st5_tier3 || 0} (>90d)`;
   }
 
   // ── DYNAMIC STAGE CARD DIMMING (SYNCHRONIZED WITH CIRCLE) ────────────────
