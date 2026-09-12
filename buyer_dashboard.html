@@ -7619,23 +7619,36 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
   }
 
   let priorityPill = '';
-  if (t.priority === 'P1') {
+  const pVal = (t.priority || '').toUpperCase();
+  if (pVal === 'P1') {
     priorityPill = `<span class="dossier-pill" style="border-color:rgba(239,68,68,0.5); background:rgba(239,68,68,0.18);" title="P1 Critical Stock-Out (Surging Demand)">
       <span class="p-dot dot-p1"></span>
       <span class="pill-lbl" style="color:#fca5a5;">Priority:</span>
       <strong style="color:#f87171;">P1 Critical</strong>
     </span>`;
-  } else if (t.priority === 'P2') {
+  } else if (pVal === 'P2') {
     priorityPill = `<span class="dossier-pill" style="border-color:rgba(249,115,22,0.5); background:rgba(249,115,22,0.18);" title="P2 Active Stock-Out (Steady Demand)">
       <span class="p-dot dot-p2"></span>
       <span class="pill-lbl" style="color:#fdba74;">Priority:</span>
       <strong style="color:#fb923c;">P2 Active</strong>
     </span>`;
-  } else if (t.priority === 'P3') {
+  } else if (pVal === 'P3') {
     priorityPill = `<span class="dossier-pill" style="border-color:rgba(234,179,8,0.5); background:rgba(234,179,8,0.18);" title="P3 Pre-Stockout Alert (Stock below ROP)">
       <span class="p-dot dot-p3"></span>
       <span class="pill-lbl" style="color:#fde047;">Priority:</span>
       <strong style="color:#facc15;">P3 Near-Zero</strong>
+    </span>`;
+  } else if (pVal === 'P4' || pVal === 'DORMANT') {
+    priorityPill = `<span class="dossier-pill" style="border-color:rgba(148,163,184,0.4); background:rgba(148,163,184,0.12);" title="P4 Dormant Requisition (Zero Historical Consumption / Ample Stock)">
+      <span class="p-dot" style="background:#94a3b8;"></span>
+      <span class="pill-lbl" style="color:#94a3b8;">Priority:</span>
+      <strong style="color:#cbd5e1;">P4 Dormant</strong>
+    </span>`;
+  } else if (pVal) {
+    priorityPill = `<span class="dossier-pill" style="border-color:rgba(52,211,153,0.4); background:rgba(52,211,153,0.12);" title="Normal Stock Replenishment">
+      <span class="p-dot" style="background:#34d399;"></span>
+      <span class="pill-lbl" style="color:#6ee7b7;">Priority:</span>
+      <strong style="color:#34d399;">Normal Stock</strong>
     </span>`;
   }
 
@@ -7773,35 +7786,46 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     }
 
     // Avg Consumption Column (Weighted 3-Year Annualized Average & Velocity Trend)
-    const wmaVal = Number(l.wma_annual || 0);
+    const lineIntel = (typeof STOCK_INTEL_MAP !== 'undefined' && STOCK_INTEL_MAP && l.item_code)
+      ? STOCK_INTEL_MAP[l.item_code]
+      : null;
+    const wmaVal = Number(l.wma || l.wma_annual || (lineIntel ? lineIntel.wma_annual : 0) || 0);
+    const itemTrend = strNormalize(l.trend || (lineIntel ? lineIntel.trend : '')).toLowerCase();
+    const rawTrendLabel = l.trend_label || (lineIntel ? lineIntel.trend_label : '');
+
     let avgConsHtml = '<span style="color:#64748b; font-size:0.75rem;">—</span>';
     if (wmaVal > 0) {
       let badgeBg = 'rgba(168,85,247,0.15)';
       let badgeBorder = 'rgba(168,85,247,0.35)';
       let badgeColor = '#c084fc';
       let trendIcon = 'fa-arrow-right';
-      if (l.trend === 'surging') {
+      let dispLabel = rawTrendLabel || 'Steady';
+
+      if (['surging', 'rising', 'accelerating'].includes(itemTrend)) {
         badgeBg = 'rgba(239,68,68,0.2)';
         badgeBorder = 'rgba(239,68,68,0.45)';
         badgeColor = '#fca5a5';
         trendIcon = 'fa-arrow-trend-up';
-      } else if (l.trend === 'steady') {
+        if (!rawTrendLabel) dispLabel = '+Rising';
+      } else if (['steady', 'stable'].includes(itemTrend)) {
         badgeBg = 'rgba(56,189,248,0.18)';
         badgeBorder = 'rgba(56,189,248,0.4)';
         badgeColor = '#7dd3fc';
         trendIcon = 'fa-arrows-left-right';
-      } else if (l.trend === 'fading') {
+        if (!rawTrendLabel) dispLabel = 'Steady';
+      } else if (['fading', 'declining'].includes(itemTrend)) {
         badgeBg = 'rgba(234,179,8,0.18)';
         badgeBorder = 'rgba(234,179,8,0.4)';
         badgeColor = '#fde047';
         trendIcon = 'fa-arrow-trend-down';
+        if (!rawTrendLabel) dispLabel = '-Fading';
       }
       const formattedWma = wmaVal >= 10 ? Math.round(wmaVal).toLocaleString() : wmaVal.toFixed(1);
       avgConsHtml = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
           <strong style="color:#c084fc; font-size:0.85rem;" title="3-Year Weighted Moving Average (WMA 3:2:1): ${formattedWma} units/year">${formattedWma} <span style="font-size:0.62rem; color:#a78bfa; font-weight:600;">/yr</span></strong>
-          <span style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder}; padding:1px 5px; border-radius:4px; font-weight:700; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="${escapeHtml(l.trend_label || '')}">
-            <i class="fa-solid ${trendIcon}" style="font-size:0.58rem;"></i> ${escapeHtml(l.trend_label || '')}
+          <span style="background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder}; padding:1px 5px; border-radius:4px; font-weight:700; font-size:0.6rem; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="${escapeHtml(dispLabel)}">
+            <i class="fa-solid ${trendIcon}" style="font-size:0.58rem;"></i> ${escapeHtml(dispLabel)}
           </span>
         </div>
       `;
