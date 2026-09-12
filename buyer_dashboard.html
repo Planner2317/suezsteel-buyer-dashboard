@@ -7721,6 +7721,12 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       </span>
       ${originPill}
       ${priorityPill}
+      ${t.nb_rfq > 0 ? `
+      <span class="dossier-pill" style="border-color:rgba(52,211,153,0.4); background:rgba(52,211,153,0.12);" title="Number of RFQs Issued to Suppliers">
+        <i class="fa-solid fa-paper-plane" style="color:#34d399; font-size:0.75rem;"></i>
+        <span class="pill-lbl" style="color:#6ee7b7;">RFQ:</span>
+        <strong style="color:#34d399;">${t.nb_rfq} Sent</strong>
+      </span>` : ''}
       <span class="dossier-pill" style="border-color:rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);" title="Current Workflow Stage">
         <span class="pill-lbl" style="margin-right:2px;">Stage:</span>
         ${getStageBadge(t.task_stage, t.is_partial, t.is_under_inspection)}
@@ -7737,6 +7743,31 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     const rowClass = isMatched ? 'class="modal-matched-row"' : '';
     const matchBadge = isMatched ? `<span class="badge" style="background:#eab308; color:#0f172a; font-weight:900; font-size:0.6rem; padding:1px 5px; border-radius:3px; margin-right:5px;"><i class="fa-solid fa-wand-magic-sparkles"></i> MATCH</span>` : '';
     const descDisplay = isMatched ? highlightKeyword(l.item_desc || '—', activeQuery) : escapeHtml(l.item_desc || '—');
+
+    const intelObj = (typeof STOCK_INTEL_MAP !== 'undefined' && STOCK_INTEL_MAP && l.item_code)
+      ? STOCK_INTEL_MAP[l.item_code]
+      : null;
+
+    const suppCode = l.supplier_code || '';
+    const suppDesc = l.supplier_desc || '';
+    const lastSupp = l.last_supplier || (intelObj ? intelObj.supplier : '') || '';
+    const soleSupp = l.sole_supplier_calc || (intelObj ? intelObj.sole_supplier_calc : '') || '';
+    const lastPrice = Number(l.last_po_price || (intelObj ? intelObj.po_price_egp : 0) || 0);
+    const lastCurr = l.last_po_curr || (intelObj ? intelObj.po_curr : 'EGP') || 'EGP';
+
+    const badges = [];
+    if (suppDesc || suppCode) {
+      const recLabel = suppDesc ? `${suppDesc}${suppCode ? ` (${suppCode})` : ''}` : `Code: ${suppCode}`;
+      badges.push(`<span style="background:rgba(168,85,247,0.18); color:#e9d5ff; border:1px solid rgba(168,85,247,0.4); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:700; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="PR Recommended Supplier by Plant Engineer"><i class="fa-solid fa-tag" style="color:#c084fc; font-size:0.58rem;"></i>PR Rec: ${escapeHtml(recLabel)}</span>`);
+    }
+    if (lastSupp && lastSupp !== '—') {
+      const priceTag = lastPrice > 0 ? ` (${Number(lastPrice).toLocaleString()} ${escapeHtml(lastCurr)})` : '';
+      badges.push(`<span style="background:rgba(56,189,248,0.14); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:600; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Last Contracted Supplier in PO History"><i class="fa-solid fa-building" style="color:#38bdf8; font-size:0.58rem;"></i>Last PO: ${escapeHtml(lastSupp)}${priceTag}</span>`);
+    }
+    if (soleSupp && soleSupp !== '—') {
+      badges.push(`<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:800; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Single-Source OEM / Exclusive Agent"><i class="fa-solid fa-lock" style="color:#eab308; font-size:0.58rem;"></i>Sole OEM: ${escapeHtml(soleSupp)}</span>`);
+    }
+    const suppBadgesHtml = badges.length > 0 ? `<div style="margin-top:4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">${badges.join('')}</div>` : '';
 
     const prQ = Number(l.pr_qty || 0);
     const poQ = Number(l.po_qty || 0);
@@ -7884,7 +7915,10 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       <tr ${rowClass} style="border-bottom:1px solid rgba(255,255,255,0.06);">
         <td style="font-weight:700; color:var(--accent-cyan); text-align:center; padding:9px 8px;">${idx + 1}</td>
         <td style="font-weight:700; color:#38bdf8; font-family:'Outfit',sans-serif; padding:9px 8px; white-space:nowrap;">${itemCodeCell}</td>
-        <td style="color:#e2e8f0; font-weight:500; padding:9px 8px; line-height:1.35;">${descDisplay}</td>
+        <td style="color:#e2e8f0; font-weight:500; padding:9px 8px; line-height:1.35;">
+          ${descDisplay}
+          ${suppBadgesHtml}
+        </td>
         <td style="text-align:right; font-weight:700; color:#ffffff; padding:9px 8px;">${prQ.toLocaleString()}</td>
         <td style="text-align:right; color:#94a3b8; padding:9px 8px;">${poQ > 0 ? poQ.toLocaleString() : '—'}</td>
         <td style="text-align:right; padding:9px 8px;">${insHtml}</td>
@@ -8026,6 +8060,11 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <button class="dossier-btn-action escalate" onclick="openEscalationDraft('${t.pr_no}', '${t.po_no || ''}')" title="Generate customized follow-up message addressed to assigned buyer">
           <i class="fa-solid fa-paper-plane"></i> Draft Buyer Follow-Up
         </button>
+        ${(isPrePO || !t.has_po || t.task_stage === 'Pending Stock Control L4' || t.task_stage === 'Draft PO Approval') ? `
+        <button class="dossier-btn-action" onclick="openRfqModal('${t.pr_no}')" style="background:linear-gradient(135deg, rgba(168,85,247,0.35), rgba(59,130,246,0.35)); border:1px solid rgba(168,85,247,0.6); color:#ffffff; font-weight:700;" title="Generate RFQ Email & Excel Package for Suppliers">
+          <i class="fa-solid fa-bolt" style="color:#c084fc;"></i> ⚡ Generate RFQ Package
+        </button>
+        ` : ''}
       </div>
       <div style="font-size:0.72rem; color:#94a3b8; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <span>Total Items: <strong style="color:#ffffff;">${(t.lines || []).length}</strong></span> &bull; 
@@ -8271,6 +8310,16 @@ function openItemIntelligence(itemCode) {
   const codeDate = intel.code_date || '';
   const controller = (intel.controller || '').trim();
   const installedQty = Number(intel.installed_qty || 0);
+  const soleCalc = (intel.sole_supplier_calc || '').trim();
+  const soleManual = (intel.sole_supplier_manual || '').trim();
+  const soleDisp = soleCalc || soleManual || '';
+
+  let sourcingChannelHtml = '<span style="color:#64748b; font-size:0.7rem;">—</span>';
+  if (soleDisp) {
+    sourcingChannelHtml = `<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 7px; border-radius:4px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="Single-Source OEM / Exclusive Agent"><i class="fa-solid fa-lock" style="font-size:0.62rem; color:#eab308;"></i>Sole OEM: ${escapeHtml(soleDisp)}</span>`;
+  } else if (supplier && supplier !== '—') {
+    sourcingChannelHtml = `<span style="background:rgba(52,211,153,0.15); color:#6ee7b7; border:1px solid rgba(52,211,153,0.35); padding:1px 7px; border-radius:4px; font-weight:700; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="Competitive Multi-Source Bidding Available"><i class="fa-solid fa-globe" style="font-size:0.62rem; color:#10b981;"></i>Multi-Source / Open Market</span>`;
+  }
 
   // ── Currency Normalization ──
   const rawCurr = (poCurr || intel.last_po_currency || 'EGP').trim();
@@ -8660,6 +8709,12 @@ function openItemIntelligence(itemCode) {
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
           <span style="color:#94a3b8;"><i class="fa-solid fa-building" style="margin-right:4px; color:#64748b;"></i>Last Awarded Supplier:</span>
           <span style="color:#38bdf8; font-weight:700; max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(supplier)}">${escapeHtml(supplier)}</span>
+        </div>
+
+        <!-- Sourcing Channel / OEM Strategy -->
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.73rem; padding-bottom:2px; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <span style="color:#94a3b8;"><i class="fa-solid fa-handshake-angle" style="margin-right:4px; color:#64748b;"></i>Sourcing Channel:</span>
+          <span>${sourcingChannelHtml}</span>
         </div>
 
         <!-- Historical PO Unit Price -->
@@ -9295,6 +9350,265 @@ async function exportZeroStockMatrix() {
     showToast(`Exported Zero-Stock Matrix: ${fileName}`);
   } catch(e) {
     alert("Export failed: " + e.message);
+  }
+}
+
+
+// ── 1-CLICK RFQ PACKAGE GENERATOR (Outlook Email + Excel Template) ────────
+function openRfqModal(prNo) {
+  let t = null;
+  if (typeof ALL_TASKS !== 'undefined') {
+    t = ALL_TASKS.find(x => String(x.pr_no) === String(prNo));
+  }
+  if (!t && typeof L4_TASKS_BY_PR !== 'undefined' && L4_TASKS_BY_PR[prNo]) {
+    t = L4_TASKS_BY_PR[prNo];
+  }
+  if (!t) {
+    showToast('Requisition record not found for RFQ.');
+    return;
+  }
+
+  const modalEl = document.getElementById("itemModal");
+  const modalContent = document.getElementById("modalContent");
+  const titleEl = document.getElementById("modalTitle");
+
+  if (!modalEl || !modalContent) return;
+
+  const lines = t.lines || [];
+  const plant = t.project || 'Suez Steel Plant';
+  const buyer = t.buyer || 'Procurement Team';
+  const prDate = t.pr_date || new Date().toISOString().slice(0, 10);
+  const reqBy = t.requested_by || 'Plant Engineering';
+
+  // Sourcing intelligence & recommended vendor discovery
+  const suggestedSuppliers = new Set();
+  const lastSuppliers = new Set();
+  const soleSuppliers = new Set();
+
+  lines.forEach(l => {
+    const intelObj = (typeof STOCK_INTEL_MAP !== 'undefined' && STOCK_INTEL_MAP && l.item_code)
+      ? STOCK_INTEL_MAP[l.item_code]
+      : null;
+    const sDesc = l.supplier_desc || '';
+    const lSupp = l.last_supplier || (intelObj ? intelObj.supplier : '');
+    const sSole = l.sole_supplier_calc || (intelObj ? intelObj.sole_supplier_calc : '');
+
+    if (sDesc && sDesc !== '—') suggestedSuppliers.add(sDesc);
+    if (lSupp && lSupp !== '—') lastSuppliers.add(lSupp);
+    if (sSole && sSole !== '—') soleSuppliers.add(sSole);
+  });
+
+  if (t.supplier_desc && t.supplier_desc !== '—') suggestedSuppliers.add(t.supplier_desc);
+  if (t.supplier && t.supplier !== '—' && !t.supplier.includes('Not Awarded')) lastSuppliers.add(t.supplier);
+
+  const isSole = soleSuppliers.size > 0;
+
+  if (titleEl) {
+    titleEl.innerHTML = `<i class="fa-solid fa-bolt" style="color:#c084fc;"></i> RFQ Package Generator: <span style="color:#ffffff;">PR #${escapeHtml(prNo)} (${escapeHtml(plant)})</span>`;
+  }
+
+  // Build Table of Items for RFQ Email & Display
+  const rfqItemsRows = lines.map((l, idx) => {
+    const itCode = l.item_code || '—';
+    const itDesc = l.item_desc || l.desc || '—';
+    const itQty = l.pr_qty || l.qty || l.bal_qty || 0;
+    const itUnit = l.unit || 'PC';
+    return `
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+        <td style="padding:8px; text-align:center; font-weight:700; color:#38bdf8;">${idx + 1}</td>
+        <td style="padding:8px; font-weight:700; color:#ffffff; font-family:'Consolas',monospace;">${escapeHtml(itCode)}</td>
+        <td style="padding:8px; color:#e2e8f0; font-size:0.78rem;">${escapeHtml(itDesc)}</td>
+        <td style="padding:8px; text-align:right; font-weight:800; color:#34d399; font-size:0.82rem;">${Number(itQty).toLocaleString()}</td>
+        <td style="padding:8px; text-align:center; color:#94a3b8; font-size:0.75rem;">${escapeHtml(itUnit)}</td>
+        <td style="padding:8px; color:#a5b4fc; font-size:0.75rem;">${escapeHtml(plant)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  modalContent.innerHTML = `
+    <!-- Sourcing Profile Cards -->
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:1rem;">
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(168,85,247,0.35); border-radius:8px; padding:8px 12px;">
+        <div style="font-size:0.68rem; color:var(--text-sub); font-weight:800; text-transform:uppercase;">PR Recommended Supplier</div>
+        <div style="font-size:0.88rem; font-weight:800; color:#e9d5ff; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${Array.from(suggestedSuppliers).join(', ') || 'None specified in PR'}">
+          ${suggestedSuppliers.size > 0 ? Array.from(suggestedSuppliers).join(', ') : '<span style="color:#64748b; font-weight:500;">None specified in PR</span>'}
+        </div>
+        <div style="font-size:0.65rem; color:#94a3b8; margin-top:2px;">Requested by: ${escapeHtml(reqBy)}</div>
+      </div>
+
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(56,189,248,0.35); border-radius:8px; padding:8px 12px;">
+        <div style="font-size:0.68rem; color:var(--text-sub); font-weight:800; text-transform:uppercase;">Last Contracted Supplier</div>
+        <div style="font-size:0.88rem; font-weight:800; color:#7dd3fc; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${Array.from(lastSuppliers).join(', ') || 'No previous PO history'}">
+          ${lastSuppliers.size > 0 ? Array.from(lastSuppliers).join(', ') : '<span style="color:#64748b; font-weight:500;">No previous PO history</span>'}
+        </div>
+        <div style="font-size:0.65rem; color:#94a3b8; margin-top:2px;">Historical baseline from PO database</div>
+      </div>
+
+      <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(234,179,8,0.35); border-radius:8px; padding:8px 12px;">
+        <div style="font-size:0.68rem; color:var(--text-sub); font-weight:800; text-transform:uppercase;">Sourcing Strategy</div>
+        <div style="font-size:0.88rem; font-weight:800; color:#fde047; margin-top:2px;">
+          ${isSole ? `<i class="fa-solid fa-lock" style="margin-right:4px;"></i>Sole OEM (${Array.from(soleSuppliers).join(', ')})` : `<i class="fa-solid fa-globe" style="margin-right:4px;"></i>Competitive Multi-Quote`}
+        </div>
+        <div style="font-size:0.65rem; color:#94a3b8; margin-top:2px;">${isSole ? 'Direct OEM negotiation recommended' : 'Target at least 3 supplier quotations'}</div>
+      </div>
+    </div>
+
+    <!-- RFQ Action Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(30,41,59,0.7); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); margin-bottom:1rem; flex-wrap:wrap; gap:10px;">
+      <div style="font-size:0.8rem; font-weight:700; color:#ffffff;">
+        <i class="fa-solid fa-paper-plane" style="color:#c084fc; margin-right:6px;"></i> Ready-to-Send RFQ Package (${lines.length} Line Items)
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="dossier-btn-action primary" onclick="copyRfqEmailToClipboard('${escapeHtml(prNo)}')" style="background:#2563eb; color:#ffffff; font-weight:700; font-size:0.75rem; padding:6px 14px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; border:none;">
+          <i class="fa-solid fa-copy"></i> Copy RFQ for Outlook
+        </button>
+        <button class="dossier-btn-action" onclick="downloadRfqExcel('${escapeHtml(prNo)}')" style="background:#10b981; color:#ffffff; font-weight:700; font-size:0.75rem; padding:6px 14px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; border:none;">
+          <i class="fa-solid fa-file-excel"></i> Download RFQ Excel Sheet
+        </button>
+        <button class="dossier-btn-action" onclick="openPrDossierModal('${escapeHtml(prNo)}', '${escapeHtml(t.po_no || '')}', isDossierOpenedFromDelayModal)" style="background:rgba(255,255,255,0.08); color:#cbd5e1; font-weight:700; font-size:0.75rem; padding:6px 12px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; border:1px solid rgba(255,255,255,0.15);">
+          <i class="fa-solid fa-arrow-left"></i> Back to Dossier
+        </button>
+      </div>
+    </div>
+
+    <!-- RFQ Items Table Preview -->
+    <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:8px; overflow:hidden; max-height:300px; overflow-y:auto; margin-bottom:1rem;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.78rem;">
+        <thead>
+          <tr style="background:rgba(30,41,59,0.9); color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1); text-align:left;">
+            <th style="padding:8px; text-align:center;">#</th>
+            <th style="padding:8px;">Item Code</th>
+            <th style="padding:8px;">Description & Specifications</th>
+            <th style="padding:8px; text-align:right;">Req Qty</th>
+            <th style="padding:8px; text-align:center;">Unit</th>
+            <th style="padding:8px;">Delivery Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rfqItemsRows}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Email Preview Box -->
+    <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px 16px;">
+      <div style="font-size:0.72rem; font-weight:800; color:#a78bfa; text-transform:uppercase; margin-bottom:6px;">
+        <i class="fa-solid fa-envelope" style="margin-right:4px;"></i> Outlook Email Preview
+      </div>
+      <div id="rfqEmailTextPreview" style="font-family:'Consolas',monospace; font-size:0.75rem; color:#cbd5e1; background:rgba(0,0,0,0.3); padding:10px; border-radius:6px; line-height:1.5; white-space:pre-wrap; max-height:160px; overflow-y:auto; border:1px solid rgba(255,255,255,0.05);">Subject: Request for Quotation (RFQ) - Suez Steel Co. - Requisition #${escapeHtml(prNo)} (${escapeHtml(plant)})
+
+Dear Sourcing Partner,
+
+Please provide your best formal commercial and technical quotation (FOB / CIF / Delivered Suez Steel Plant) for the following items:
+
+Requisition Reference: PR #${escapeHtml(prNo)}
+Plant / Project: ${escapeHtml(plant)}
+Target Delivery: Required within standard lead time
+
+${lines.map((l, idx) => `${idx + 1}. [${l.item_code}] ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'}`).join('
+')}
+
+Please specify:
+1. Unit Price & Currency (FOB / CIF / Delivered Suez)
+2. Delivery Lead Time & Country of Origin / Brand
+3. Payment Terms & Quotation Validity (Min 30-60 Days)
+4. Technical Datasheet / Compliance (if applicable)
+
+Best regards,
+Procurement Department
+Suez Steel Company
+      </div>
+    </div>
+  `;
+
+  modalEl.style.display = 'flex';
+}
+
+function copyRfqEmailToClipboard(prNo) {
+  let t = null;
+  if (typeof ALL_TASKS !== 'undefined') {
+    t = ALL_TASKS.find(x => String(x.pr_no) === String(prNo));
+  }
+  if (!t && typeof L4_TASKS_BY_PR !== 'undefined' && L4_TASKS_BY_PR[prNo]) {
+    t = L4_TASKS_BY_PR[prNo];
+  }
+  if (!t) return;
+
+  const lines = t.lines || [];
+  const plant = t.project || 'Suez Steel Plant';
+
+  const plainText = `Subject: Request for Quotation (RFQ) - Suez Steel Co. - Requisition #${prNo} (${plant})
+
+Dear Sourcing Partner,
+
+Please provide your best formal commercial and technical quotation (FOB / CIF / Delivered Suez Steel Plant) for the following items:
+
+Requisition Reference: PR #${prNo}
+Plant / Project: ${plant}
+
+ITEMS LIST:
+${lines.map((l, idx) => `${idx + 1}. Item Code: ${l.item_code} | Description: ${l.item_desc || l.desc} | Qty: ${l.pr_qty || l.qty || l.bal_qty} ${l.unit || 'PC'} | Plant: ${plant}`).join('
+')}
+
+COMMERCIAL & TECHNICAL REQUIREMENTS:
+1. Unit Price & Currency (FOB / CIF / Delivered Suez)
+2. Delivery Lead Time & Country of Origin / Brand
+3. Quotation Validity (Minimum 30-60 Days) & Payment Terms
+4. Technical Datasheets / Certificates of Origin (if applicable)
+
+Best regards,
+Procurement Department
+Suez Steel Company`;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(plainText).then(() => {
+      showToast('✅ RFQ Email copied to clipboard! Ready to paste into Outlook.');
+    }).catch(() => {
+      fallbackCopyText(plainText);
+    });
+  } else {
+    fallbackCopyText(plainText);
+  }
+}
+
+function downloadRfqExcel(prNo) {
+  let t = null;
+  if (typeof ALL_TASKS !== 'undefined') {
+    t = ALL_TASKS.find(x => String(x.pr_no) === String(prNo));
+  }
+  if (!t && typeof L4_TASKS_BY_PR !== 'undefined' && L4_TASKS_BY_PR[prNo]) {
+    t = L4_TASKS_BY_PR[prNo];
+  }
+  if (!t) return;
+
+  const lines = t.lines || [];
+  const plant = t.project || 'Suez Steel Plant';
+
+  const exportRows = lines.map((l, idx) => ({
+    'Line #': idx + 1,
+    'Item Code': l.item_code || '',
+    'Description & Technical Specifications': l.item_desc || l.desc || '',
+    'Req Qty': l.pr_qty || l.qty || l.bal_qty || 0,
+    'Unit': l.unit || 'PC',
+    'Plant / Project': plant,
+    'Vendor Unit Price (Fill)': '',
+    'Currency (EGP/EUR/USD)': '',
+    'Delivery Lead Time (Days)': '',
+    'Brand / Country of Origin': '',
+    'Vendor Remarks': ''
+  }));
+
+  if (typeof XLSX !== 'undefined') {
+    const ws = XLSX.utils.json_to_sheet(exportRows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `RFQ_PR_${prNo}`);
+    
+    const cleanPlant = plant.replace(/[^a-zA-Z0-9]/g, '_');
+    const fileName = `SuezSteel_RFQ_PR_${prNo}_${cleanPlant}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    showToast(`📊 Downloaded RFQ Excel Template: ${fileName}`);
+  } else {
+    alert('SheetJS Excel library is loading, please try again in a moment.');
   }
 }
 
