@@ -2783,27 +2783,28 @@
     }
     .btn-more-filters-done:hover { background: #0369a1; }
 
-    /* ── Item Intelligence Neon Pillars Chart (Ultra-Compact) ── */
+    /* ── Item Intelligence Neon Pillars Chart (Centered & Balanced) ── */
     .pillar-chart {
       display: flex;
       justify-content: space-around;
       align-items: flex-end;
-      height: 92px;
-      padding: 10px 14px 0;
+      max-width: 480px;
+      margin: 0 auto;
+      height: 94px;
+      padding: 16px 12px 0;
       position: relative;
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-top: 0.2rem;
     }
     .pillar-col {
       display: flex;
       flex-direction: column;
       align-items: center;
-      flex: 1;
+      width: 120px;
       position: relative;
     }
     .pillar-bar-wrap {
       position: relative;
-      width: 46px;
+      width: 44px;
       display: flex;
       justify-content: center;
       align-items: flex-end;
@@ -2833,28 +2834,32 @@
       font-size: 0.72rem;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
       position: relative;
       z-index: 3;
-      background: rgba(11, 19, 43, 0.85);
-      padding: 1px 5px;
+      background: rgba(15, 23, 42, 0.92);
+      padding: 1px 6px;
       border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.1);
       display: inline-block;
+      white-space: nowrap;
     }
     .pillar-footer {
       margin-top: 3px;
       text-align: center;
     }
     .pillar-yr {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 800;
       color: #ffffff;
+      white-space: nowrap;
     }
     .pillar-date {
       font-size: 0.58rem;
       color: #94a3b8;
       margin-top: 0px;
+      white-space: nowrap;
     }
 
   </style>
@@ -8041,11 +8046,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
           <i class="fa-solid fa-list-check" style="color:#38bdf8;"></i> Technical Requisition Line Items (${(t.lines || []).length} items)
         </h4>
         ${prTotalEstBudgetEgp > 0 ? `
-        <div style="display:inline-flex; align-items:center; gap:8px;">
-          ${prTotalHistBaselineEgp > 0 ? `
-          <span style="color:#94a3b8; font-size:0.75rem;">
-            Historical Baseline: <strong style="color:#cbd5e1;">${prTotalHistBaselineEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong>
-          </span>` : ''}
+        <div style="display:inline-flex; align-items:center;">
           <span style="background:rgba(52,211,153,0.18); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:3px 10px; border-radius:6px; font-weight:800; font-size:0.82rem; display:inline-flex; align-items:center; gap:5px;" title="Consolidated estimated requisition budget based on current standard replacement cost">
             <i class="fa-solid fa-chart-line" style="color:#34d399;"></i> Total Est. PR Budget: ${prTotalEstBudgetEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP
           </span>
@@ -8272,36 +8273,29 @@ function openItemIntelligence(itemCode) {
     }
   }
 
-  // ── TOTAL LINE ESTIMATED BUDGET (Requested Qty x Unit Rate) ──
+  // ── TOTAL LINE ESTIMATED BUDGET (Requested Qty x Unit Rate - Clean View) ──
   let lineTotalCostHtml = '';
   if (prQty > 0 && unitEstEgp > 0) {
     const lineTotEstEgp = prQty * unitEstEgp;
-    const lineTotHistEgp = prQty * unitHistEgp;
     const lineTotEstFc = (!isEgpCurr && estReplacementForeign > 0) ? (prQty * estReplacementForeign) : 0;
-    const deltaEgp = lineTotEstEgp - lineTotHistEgp;
 
     lineTotalCostHtml = `
-      <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.25); border-radius:6px; padding:4px 8px; margin-top:2px; display:flex; flex-direction:column; gap:2px;">
+      <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.25); border-radius:6px; padding:5px 9px; margin-top:3px; display:flex; flex-direction:column; gap:2px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:0.7rem; color:#7dd3fc; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">
             <i class="fa-solid fa-coins" style="margin-right:4px;"></i> Total Line Est. Budget:
           </span>
-          <span style="font-size:0.65rem; color:#94a3b8;">Requested: <strong style="color:#ffffff;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong></span>
+          <span style="font-size:0.66rem; color:#94a3b8;">Requested: <strong style="color:#ffffff;">${prQty.toLocaleString()} ${escapeHtml(uom)}</strong></span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:baseline;">
-          <span style="color:#ffffff; font-size:0.92rem; font-weight:900; font-family:'Outfit',sans-serif;">
-            ${lineTotEstEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span style="font-size:0.7rem; color:#38bdf8;">EGP</span>
+          <span style="color:#34d399; font-size:0.95rem; font-weight:900; font-family:'Outfit',sans-serif;">
+            ${lineTotEstEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} <span style="font-size:0.72rem; color:#38bdf8;">EGP</span>
           </span>
           ${lineTotEstFc > 0 ? `
-          <span style="color:#a78bfa; font-size:0.72rem; font-weight:700;">
+          <span style="color:#a78bfa; font-size:0.74rem; font-weight:700;">
             (${lineTotEstFc.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} ${escapeHtml(cleanCurr)})
           </span>` : ''}
         </div>
-        ${(lineTotHistEgp > 0 && Math.abs(deltaEgp) > 0.01) ? `
-        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.64rem; color:#94a3b8; border-top:1px dashed rgba(255,255,255,0.08); padding-top:2px; margin-top:1px;">
-          <span>Historical PO: <strong style="color:#cbd5e1;">${lineTotHistEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</strong></span>
-          <span style="color:#fca5a5; font-weight:700;">Escalation: ${deltaEgp >= 0 ? '+' : ''}${deltaEgp.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} EGP</span>
-        </div>` : ''}}
       </div>
     `;
   }
@@ -8344,12 +8338,12 @@ function openItemIntelligence(itemCode) {
   const benchmarkVal = wma > 0 ? wma : (avgConsAnnual > 0 ? avgConsAnnual : 0);
   const maxC = Math.max(cY1, cY2, cY3, benchmarkVal, 1);
 
-  // ── DYNAMIC YoY DELTAS & PILLAR VISUALS (Ultra-Compact) ──
-  const pillarMaxH = 32;
+  // ── DYNAMIC YoY DELTAS & PILLAR VISUALS (Balanced Proportions) ──
+  const pillarMaxH = 34;
   const hPillarY3 = Math.max(5, Math.round((cY3 / maxC) * pillarMaxH));
   const hPillarY2 = Math.max(5, Math.round((cY2 / maxC) * pillarMaxH));
   const hPillarY1 = Math.max(5, Math.round((cY1 / maxC) * pillarMaxH));
-  const wmaLineBottomPx = Math.min(38, Math.max(4, Math.round((benchmarkVal / maxC) * pillarMaxH)));
+  const wmaLineBottomPx = Math.min(36, Math.max(4, Math.round((benchmarkVal / maxC) * pillarMaxH)));
 
   // Year 1 (2023-2024) Baseline
   const tagY3 = '<span style="background:rgba(148,163,184,0.15); color:#94a3b8; padding:1px 5px; border-radius:3px; font-size:0.6rem; font-weight:700;">Baseline</span>';
@@ -8496,9 +8490,9 @@ function openItemIntelligence(itemCode) {
   `;
 
   document.getElementById("itemIntelContent").innerHTML = `
-    <!-- 3-Year Consumption Trajectory Chart (Neon Pillars - Ultra-Compact) -->
-    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.4rem 0.8rem; position:relative;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.2rem; flex-wrap:wrap; gap:6px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:3px;">
+    <!-- 3-Year Consumption Trajectory Chart (Centered & Cleanly Spaced) -->
+    <div style="background:rgba(11,19,43,0.7); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.45rem 0.8rem 0.6rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; flex-wrap:wrap; gap:6px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:4px;">
         <span style="font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:800; color:#ffffff; text-transform:uppercase; letter-spacing:0.4px; display:inline-flex; align-items:center; gap:5px;">
           <i class="fa-solid fa-chart-column" style="color:#38bdf8;"></i> 3-Year Consumption Trajectory
         </span>
@@ -8508,11 +8502,11 @@ function openItemIntelligence(itemCode) {
         </span>` : ''}
       </div>
 
-      <!-- Glassmorphic Neon Pillars Chart -->
+      <!-- Centered Glassmorphic Neon Pillars Chart -->
       <div class="pillar-chart">
-        <!-- Average Benchmark Reference Line -->
+        <!-- Average Benchmark Reference Line (Inside Centered Chart Bounds) -->
         ${benchmarkVal > 0 ? `
-        <div style="position:absolute; left:0; right:0; bottom:${wmaLineBottomPx + 32}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
+        <div style="position:absolute; left:8px; right:8px; bottom:${wmaLineBottomPx + 28}px; border-top:1.5px dashed rgba(192,132,252,0.6); pointer-events:none; z-index:1;" title="Annual WMA Benchmark: ${benchmarkVal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} ${escapeHtml(uom)}/yr"></div>
         ` : ''}
 
         <!-- Pillar 1: 2023 - 2024 -->
