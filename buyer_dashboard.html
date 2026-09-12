@@ -7556,7 +7556,7 @@ function getFilteredTaskList() {
 
 let isDossierOpenedFromDelayModal = false;
 let currentDossierTask = null;
-let isDossierCardsExpanded = false;
+let isDossierCardsExpanded = true;
 
 function toggleDossierCards() {
   isDossierCardsExpanded = !isDossierCardsExpanded;
@@ -7607,7 +7607,7 @@ function closeDossierModalDirect() {
     if (icon) icon.className = 'fa-solid fa-expand';
   }
   currentDossierTask = null;
-  isDossierCardsExpanded = false;
+  isDossierCardsExpanded = true;
 }
 
 function getStageBadge(stageName, isPartial, isUnderInspection) {
@@ -7653,7 +7653,7 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
     return;
   }
   currentDossierTask = t;
-  isDossierCardsExpanded = false;
+  isDossierCardsExpanded = true;
 
   const titleEl = document.getElementById("dossierTitle");
   const subEl = document.getElementById("dossierSubtitle");
@@ -8181,8 +8181,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
   }).join("");
 
   document.getElementById("dossierContent").innerHTML = `
-    <!-- Compact Linear Lifecycle Tracker (Default 28px) -->
-    <div id="dossierCompactJourneyContainer" style="display:flex; align-items:center; justify-content:space-between; gap:8px; background:rgba(15,23,42,0.7); padding:4px 10px; border-radius:7px; border:1px solid rgba(255,255,255,0.06); overflow-x:auto; flex-shrink:0;">
+    <!-- Compact Linear Lifecycle Tracker (Hidden by default, available on toggle) -->
+    <div id="dossierCompactJourneyContainer" style="display:none; align-items:center; justify-content:space-between; gap:8px; background:rgba(15,23,42,0.7); padding:4px 10px; border-radius:7px; border:1px solid rgba(255,255,255,0.06); overflow-x:auto; flex-shrink:0;">
       <div style="display:flex; align-items:center; gap:3px; flex-shrink:0;">
         <span style="font-size:0.68rem; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; display:inline-flex; align-items:center; gap:4px;">
           <i class="fa-solid fa-route"></i> Lifecycle:
@@ -8194,8 +8194,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       </div>
     </div>
 
-    <!-- Optional Expanded 9-Card Stepper Grid (Hidden by default) -->
-    <div id="dossierFullJourneyContainer" style="display:none; flex-direction:column; gap:6px; flex-shrink:0;">
+    <!-- Expanded 9-Card Stepper Grid (Default view) -->
+    <div id="dossierFullJourneyContainer" style="display:flex; flex-direction:column; gap:6px; flex-shrink:0;">
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <span style="font-size:0.72rem; font-weight:800; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px;">
           <i class="fa-solid fa-route" style="margin-right:5px;"></i> End-to-End Procurement Lifecycle Journey:
@@ -8221,8 +8221,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
       </div>
     </div>
 
-    <!-- Diagnostic & Operational Strip (28px) -->
-    <div id="dossierDiagnosticStrip" style="background:rgba(15,23,42,0.85); padding:4px 10px; border-radius:7px; border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; gap:8px; overflow-x:auto; font-size:0.72rem; flex-shrink:0;">
+    <!-- Diagnostic & Operational Strip (Hidden by default in Full Journey mode) -->
+    <div id="dossierDiagnosticStrip" style="background:rgba(15,23,42,0.85); padding:4px 10px; border-radius:7px; border:1px solid rgba(255,255,255,0.08); display:none; align-items:center; justify-content:space-between; gap:8px; overflow-x:auto; font-size:0.72rem; flex-shrink:0;">
       <div style="display:flex; align-items:center; gap:10px; flex-shrink:0; white-space:nowrap;">
         <span><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; margin-right:4px;"></i><span style="color:#94a3b8;">Bottleneck:</span> <strong style="color:#fde047;">${escapeHtml(t.primary_bottleneck || 'On-Track')}</strong></span>
         <span style="color:rgba(255,255,255,0.18);">|</span>
@@ -8262,8 +8262,8 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         <button class="dossier-btn-action escalate" onclick="openEscalationDraft('${t.pr_no}', '${t.po_no || ''}')" title="Draft follow-up email/message" style="padding:3px 8px; font-size:0.68rem;">
           <i class="fa-solid fa-paper-plane"></i> Draft Follow-Up
         </button>
-        <button class="dossier-btn-action" id="dossierCardsToggleBtn" onclick="toggleDossierCards()" title="Toggle full journey cards and detailed metrics" style="padding:3px 8px; font-size:0.68rem; background:rgba(255,255,255,0.06);">
-          <i class="fa-solid fa-table-cells-large"></i> Full Journey
+        <button class="dossier-btn-action" id="dossierCardsToggleBtn" onclick="toggleDossierCards()" title="Collapse to Compact Bar view" style="padding:3px 8px; font-size:0.68rem; background:rgba(255,255,255,0.06);">
+          <i class="fa-solid fa-compress"></i> Compact Bar
         </button>
       </div>
     </div>
@@ -9848,7 +9848,7 @@ function openL4Modal() {
 }
 let currentDelayModalSearch = '';
 let currentDelayModalDeliveryFilter = 'ALL';
-let isStageModalCardsExpanded = false;
+let isStageModalCardsExpanded = true;
 
 function toggleStageModalCards() {
   isStageModalCardsExpanded = !isStageModalCardsExpanded;
@@ -9861,6 +9861,10 @@ function setDelayModalDeliveryFilter(filterVal) {
 }
 
 function openDelayModal(stageName, filterTier, deliveryFilter) {
+  const modalEl = document.getElementById("itemModal");
+  if (!modalEl || modalEl.style.display !== "flex") {
+    isStageModalCardsExpanded = true;
+  }
   currentDelayModalStage = stageName;
   currentDelayModalTier = filterTier || 'ALL';
   currentDelayModalDeliveryFilter = deliveryFilter || 'ALL';
@@ -9875,7 +9879,7 @@ function openDelayModal(stageName, filterTier, deliveryFilter) {
   }
 
   renderDelayModalView();
-  document.getElementById("itemModal").style.display = "flex";
+  if (modalEl) modalEl.style.display = "flex";
 }
 
 function onDelayModalSearch(val) {
@@ -10558,6 +10562,7 @@ function closeModalDirect() {
   currentDelayModalStage = null;
   currentDelayModalSearch = '';
   currentDelayModalDeliveryFilter = 'ALL';
+  isStageModalCardsExpanded = true;
 }
 
 // ── 1. 100% Reliable Native Download of Original Styled 5-Sheet Master Excel ──
