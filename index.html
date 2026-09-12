@@ -8803,13 +8803,40 @@ function openItemIntelligence(itemCode) {
 
     </div>
 
-    <!-- ── CROSS-REFERENCE: OTHER OPEN PRs WITH THIS ITEM (Ultra-Compact) ── -->
+    <!-- ── CROSS-REFERENCE: DEMAND CONSOLIDATION & SAME ITEM BENCHMARK ── -->
     ${(() => {
       const xrefMatches = [];
       const currentPrNo = (typeof currentDossierTask !== 'undefined' && currentDossierTask && currentDossierTask.pr_no)
         ? String(currentDossierTask.pr_no).trim()
         : null;
 
+      // Current PR Benchmark Object
+      let currentPrRowData = null;
+      if (typeof currentDossierTask !== 'undefined' && currentDossierTask && currentDossierTask.pr_no) {
+        let curLinePrQty = prQty;
+        let curLineBalQty = prQty;
+        if (currentDossierTask.lines) {
+          const lMatch = currentDossierTask.lines.find(l => l.item_code === itemCode);
+          if (lMatch) {
+            curLinePrQty = Number(lMatch.pr_qty || 0);
+            curLineBalQty = lMatch.bal_qty != null ? Number(lMatch.bal_qty) : curLinePrQty;
+          }
+        }
+        currentPrRowData = {
+          pr_no: currentDossierTask.pr_no,
+          po_no: currentDossierTask.po_no || '—',
+          pr_date: currentDossierTask.pr_date || '—',
+          plant: currentDossierTask.department || '—',
+          buyer: currentDossierTask.buyer || '—',
+          entered_by: currentDossierTask.entered_by || '—',
+          task_stage: currentDossierTask.task_stage || '—',
+          pr_qty: curLinePrQty,
+          bal_qty: curLineBalQty,
+          overdue: currentDossierTask.overdue_days || 0
+        };
+      }
+
+      // Find other PRs matching the item code
       (typeof ALL_TASKS !== 'undefined' ? ALL_TASKS : []).forEach(t => {
         if (currentPrNo && String(t.pr_no).trim() === currentPrNo) {
           return;
@@ -8837,14 +8864,50 @@ function openItemIntelligence(itemCode) {
       const xrefTotal = xrefMatches.length;
       const xrefSlice = xrefMatches.slice(0, 8);
 
-      if (xrefTotal === 0) {
-        return `<div style="margin-top:2px; padding:6px 12px; background:rgba(15,23,42,0.85); border:1px solid rgba(74,222,128,0.25); border-radius:6px; display:flex; align-items:center; gap:8px; font-size:0.72rem; color:#4ade80;">
-          <i class="fa-solid fa-circle-check" style="font-size:0.82rem; color:#4ade80;"></i>
-          <span><strong>Single Active Demand:</strong> No other open PRs across Suez Steel reference this item code.</span>
-        </div>`;
+      const curQty = currentPrRowData ? Number(currentPrRowData.pr_qty || 0) : 0;
+      const otherQty = xrefMatches.reduce((acc, r) => acc + Number(r.pr_qty || 0), 0);
+      const totalOpenDemand = curQty + otherQty;
+      const totalPrCount = (currentPrRowData ? 1 : 0) + xrefTotal;
+
+      // Build Current PR Row (Pinned Benchmark)
+      let curRowHtml = '';
+      if (currentPrRowData) {
+        let curPrDateDisp = currentPrRowData.pr_date;
+        if (curPrDateDisp && curPrDateDisp !== '—' && curPrDateDisp.length >= 10) {
+          curPrDateDisp = curPrDateDisp.substring(0, 10);
+        }
+        const curOverdueCell = currentPrRowData.overdue > 0
+          ? `<span style="color:#f87171; font-weight:800;">${currentPrRowData.overdue}d</span>`
+          : `<span style="color:#4ade80; font-weight:700;">—</span>`;
+
+        curRowHtml = `
+          <tr style="background:linear-gradient(90deg, rgba(14,165,233,0.22) 0%, rgba(99,102,241,0.18) 100%); border-bottom:1.5px solid rgba(56,189,248,0.4); box-shadow:inset 0 0 12px rgba(56,189,248,0.15);">
+            <td style="padding:4px 6px; white-space:nowrap;">
+              <span style="background:linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color:#ffffff; font-size:0.60rem; font-weight:900; padding:1px 5px; border-radius:3px; margin-right:4px; text-transform:uppercase; letter-spacing:0.3px; display:inline-flex; align-items:center; gap:3px;">
+                <i class="fa-solid fa-location-dot" style="font-size:0.55rem;"></i> CURRENT PR
+              </span>
+              <strong style="color:#ffffff; font-family:'Outfit',sans-serif; font-size:0.75rem;">${escapeHtml(currentPrRowData.pr_no)}</strong>
+              <span style="color:#7dd3fc; font-size:0.62rem; margin-left:3px; font-weight:600;">(Active)</span>
+            </td>
+            <td style="padding:4px 6px; color:#ffffff; font-weight:700; white-space:nowrap;">${escapeHtml(curPrDateDisp)}</td>
+            <td style="padding:4px 6px; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(currentPrRowData.task_stage)}">
+              <span style="background:rgba(56,189,248,0.2); color:#7dd3fc; border:1px solid rgba(56,189,248,0.45); padding:1px 6px; border-radius:4px; font-weight:700; font-size:0.66rem;">${escapeHtml(currentPrRowData.task_stage)}</span>
+            </td>
+            <td style="padding:4px 6px; color:#38bdf8; text-align:right; font-weight:800; font-size:0.75rem; white-space:nowrap;">${Number(currentPrRowData.pr_qty || 0).toLocaleString()}</td>
+            <td style="padding:4px 6px; color:${currentPrRowData.po_no !== '—' ? '#34d399' : '#64748b'}; white-space:nowrap; font-family:monospace; font-weight:700;">${escapeHtml(currentPrRowData.po_no)}</td>
+            <td style="padding:4px 6px; color:${currentPrRowData.bal_qty != null && currentPrRowData.bal_qty > 0 ? '#38bdf8' : '#64748b'}; text-align:right; font-weight:800; white-space:nowrap;">${currentPrRowData.bal_qty != null ? Number(currentPrRowData.bal_qty || 0).toLocaleString() : '—'}</td>
+            <td style="padding:4px 6px; text-align:right; white-space:nowrap;">${curOverdueCell}</td>
+            <td style="padding:4px 6px; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(currentPrRowData.plant)}">
+              <span style="background:rgba(255,255,255,0.12); padding:1px 6px; border-radius:3px; font-size:0.66rem; color:#ffffff; font-weight:700;">${escapeHtml(currentPrRowData.plant)}</span>
+            </td>
+            <td style="padding:4px 6px; color:#ffffff; font-weight:700; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(currentPrRowData.buyer)}">${escapeHtml(currentPrRowData.buyer)}</td>
+            <td style="padding:4px 6px; color:#cbd5e1; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(currentPrRowData.entered_by)}">${escapeHtml(currentPrRowData.entered_by)}</td>
+          </tr>
+        `;
       }
 
-      const rows = xrefSlice.map(r => {
+      // Build Other PR rows
+      const otherRows = xrefSlice.map(r => {
         const overdueCell = r.overdue > 0
           ? `<span style="color:#f87171; font-weight:700;">${r.overdue}d</span>`
           : `<span style="color:#4ade80;">—</span>`;
@@ -8853,23 +8916,28 @@ function openItemIntelligence(itemCode) {
         if (prDateDisp && prDateDisp !== '—' && prDateDisp.length >= 10) {
           prDateDisp = prDateDisp.substring(0, 10);
         }
-        return `<tr>
-          <td style="padding:2px 6px; white-space:nowrap;">
+        const isDiffPlant = currentPrRowData && r.plant !== currentPrRowData.plant;
+        return `<tr style="border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.15s ease;" onmouseover="this.style.background='rgba(56,189,248,0.08)'" onmouseout="this.style.background='transparent'">
+          <td style="padding:3px 6px; white-space:nowrap;">
             <span onclick="closeItemIntelModalDirect();setTimeout(()=>openPrDossierModal('${r.pr_no}','${poArg}'),80);"
-                  style="cursor:pointer; color:#38bdf8; font-weight:700; text-decoration:underline; text-underline-offset:2px;"
+                  style="cursor:pointer; color:#38bdf8; font-weight:700; text-decoration:underline; text-underline-offset:2px; display:inline-flex; align-items:center; gap:4px;"
                   title="Click to open PR Dossier">
-              ${escapeHtml(r.pr_no)}
+              <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.58rem; color:#94a3b8;"></i> ${escapeHtml(r.pr_no)}
             </span>
           </td>
-          <td style="padding:2px 6px; color:#94a3b8; white-space:nowrap;">${escapeHtml(prDateDisp)}</td>
-          <td style="padding:2px 6px; color:#94a3b8; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.task_stage)}">${escapeHtml(r.task_stage)}</td>
-          <td style="padding:2px 6px; color:#fbbf24; text-align:right; font-weight:600; white-space:nowrap;">${Number(r.pr_qty || 0).toLocaleString()}</td>
-          <td style="padding:2px 6px; color:${r.po_no !== '—' ? '#cbd5e1' : '#64748b'}; white-space:nowrap; font-family:monospace;">${escapeHtml(r.po_no)}</td>
-          <td style="padding:2px 6px; color:${r.bal_qty != null && r.bal_qty > 0 ? '#38bdf8' : '#64748b'}; text-align:right; font-weight:600; white-space:nowrap;">${r.bal_qty != null ? Number(r.bal_qty || 0).toLocaleString() : '—'}</td>
-          <td style="padding:2px 6px; text-align:right; white-space:nowrap;">${overdueCell}</td>
-          <td style="padding:2px 6px; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.plant)}"><span style="background:rgba(255,255,255,0.06); padding:1px 5px; border-radius:3px; font-size:0.65rem; color:#cbd5e1;">${escapeHtml(r.plant)}</span></td>
-          <td style="padding:2px 6px; color:#cbd5e1; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.buyer)}">${escapeHtml(r.buyer)}</td>
-          <td style="padding:2px 6px; color:#94a3b8; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.entered_by)}">${escapeHtml(r.entered_by)}</td>
+          <td style="padding:3px 6px; color:#94a3b8; white-space:nowrap;">${escapeHtml(prDateDisp)}</td>
+          <td style="padding:3px 6px; color:#cbd5e1; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.task_stage)}">${escapeHtml(r.task_stage)}</td>
+          <td style="padding:3px 6px; color:#fbbf24; text-align:right; font-weight:600; white-space:nowrap;">${Number(r.pr_qty || 0).toLocaleString()}</td>
+          <td style="padding:3px 6px; color:${r.po_no !== '—' ? '#cbd5e1' : '#64748b'}; white-space:nowrap; font-family:monospace;">${escapeHtml(r.po_no)}</td>
+          <td style="padding:3px 6px; color:${r.bal_qty != null && r.bal_qty > 0 ? '#38bdf8' : '#64748b'}; text-align:right; font-weight:600; white-space:nowrap;">${r.bal_qty != null ? Number(r.bal_qty || 0).toLocaleString() : '—'}</td>
+          <td style="padding:3px 6px; text-align:right; white-space:nowrap;">${overdueCell}</td>
+          <td style="padding:3px 6px; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.plant)}">
+            <span style="background:${isDiffPlant ? 'rgba(234,179,8,0.18)' : 'rgba(255,255,255,0.06)'}; color:${isDiffPlant ? '#fde047' : '#cbd5e1'}; border:${isDiffPlant ? '1px solid rgba(234,179,8,0.35)' : 'none'}; padding:1px 5px; border-radius:3px; font-size:0.65rem;">
+              ${escapeHtml(r.plant)}
+            </span>
+          </td>
+          <td style="padding:3px 6px; color:#cbd5e1; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.buyer)}">${escapeHtml(r.buyer)}</td>
+          <td style="padding:3px 6px; color:#94a3b8; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(r.entered_by)}">${escapeHtml(r.entered_by)}</td>
         </tr>`;
       }).join('');
 
@@ -8877,29 +8945,55 @@ function openItemIntelligence(itemCode) {
         ? `<tr><td colspan="10" style="padding:4px 6px; color:#64748b; font-style:italic; text-align:center; background:rgba(0,0,0,0.2);">+${xrefTotal - 8} more PR(s) not shown</td></tr>`
         : '';
 
-      return `<div style="margin-top:3px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:5px 11px;">
-        <div style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#fb923c; display:flex; align-items:center; gap:5px; margin-bottom:3px;">
-          <i class="fa-solid fa-arrows-rotate"></i> Other Open PRs — Same Item Code
-          <span style="color:#94a3b8; font-size:0.65rem; font-weight:400; margin-left:4px;">· click PR No. to inspect dossier</span>
-          <span style="margin-left:auto; background:rgba(251,146,60,0.15); color:#fb923c; border:1px solid rgba(251,146,60,0.3); padding:1px 5px; border-radius:4px; font-size:0.65rem;">${xrefTotal} Other PR${xrefTotal > 1 ? 's' : ''}</span>
+      const singleDemandNotice = xrefTotal === 0
+        ? `<tr><td colspan="10" style="padding:6px 10px; color:#4ade80; text-align:center; background:rgba(74,222,128,0.06); font-size:0.70rem; border-top:1px solid rgba(74,222,128,0.2);"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i> <strong>Single Active Demand:</strong> No other open PRs across Suez Steel reference this item code. (100% Demand Concentrated in this Requisition)</td></tr>`
+        : '';
+
+      return `<div style="margin-top:3px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px 11px;">
+        <div style="font-family:'Outfit',sans-serif; font-size:0.75rem; font-weight:800; color:#38bdf8; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <i class="fa-solid fa-arrows-split-up-and-left" style="color:#38bdf8;"></i>
+            <span style="color:#ffffff;">Demand Cross-Reference &amp; Consolidation — Same Item Code</span>
+            <span style="color:#94a3b8; font-size:0.65rem; font-weight:400;">· click any PR to inspect</span>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:6px; font-size:0.66rem;">
+            ${currentPrRowData ? `
+              <span style="background:rgba(56,189,248,0.15); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 6px; border-radius:4px; font-weight:700;">
+                Current PR: <strong>${curQty.toLocaleString()}</strong> ${escapeHtml(uom)}
+              </span>
+            ` : ''}
+            ${xrefTotal > 0 ? `
+              <span style="background:rgba(251,146,60,0.15); color:#fb923c; border:1px solid rgba(251,146,60,0.35); padding:1px 6px; border-radius:4px; font-weight:700;">
+                ${xrefTotal} Other PR${xrefTotal > 1 ? 's' : ''}: <strong>${otherQty.toLocaleString()}</strong> ${escapeHtml(uom)}
+              </span>
+            ` : ''}
+            <span style="background:linear-gradient(135deg, rgba(16,185,129,0.25) 0%, rgba(5,150,105,0.35) 100%); color:#6ee7b7; border:1px solid rgba(52,211,153,0.45); padding:1px 8px; border-radius:4px; font-weight:800;">
+              🌟 Total Open Demand: <strong>${totalOpenDemand.toLocaleString()}</strong> ${escapeHtml(uom)} (${totalPrCount} PR${totalPrCount > 1 ? 's' : ''})
+            </span>
+          </div>
         </div>
-        <div style="overflow-x:auto; max-height:100px; overflow-y:auto; max-width:100%;">
+        <div style="overflow-x:auto; max-height:120px; overflow-y:auto; max-width:100%; border:1px solid rgba(255,255,255,0.06); border-radius:6px;">
           <table style="width:100%; border-collapse:collapse; font-size:0.68rem;">
-            <thead style="position:sticky; top:0; background:rgba(15,23,42,0.95); z-index:1;">
-              <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR No.</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PR Date</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Stage</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">PR Qty</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">PO No.</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Bal. Qty</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:right; white-space:nowrap;">Overdue</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Plant</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Buyer</th>
-                <th style="padding:2px 6px; color:#64748b; font-weight:600; text-align:left; white-space:nowrap;">Entered By</th>
+            <thead style="position:sticky; top:0; background:rgba(15,23,42,0.98); z-index:2;">
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.12);">
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">PR No.</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">PR Date</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">Stage</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:right; white-space:nowrap;">PR Qty</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">PO No.</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:right; white-space:nowrap;">Bal. Qty</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:right; white-space:nowrap;">Overdue</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">Plant</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">Buyer</th>
+                <th style="padding:3px 6px; color:#94a3b8; font-weight:700; text-align:left; white-space:nowrap;">Entered By</th>
               </tr>
             </thead>
-            <tbody>${rows}${moreRow}</tbody>
+            <tbody>
+              ${curRowHtml}
+              ${otherRows}
+              ${singleDemandNotice}
+              ${moreRow}
+            </tbody>
           </table>
         </div>
       </div>`;
