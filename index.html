@@ -9412,10 +9412,45 @@ async function exportZeroStockMatrix() {
       link.click();
       document.body.removeChild(link);
       showToast(`Exported Zero-Stock Matrix: ${fileName}`);
+      return;
+    } catch (err) {
+      console.warn("ExcelJS Zero-Stock export failed, falling back to SheetJS:", err);
+    }
+  }
+
+  // SheetJS fallback
+  try {
+    const exportData = [];
+    zeroTasks.forEach(t => {
+      (t.lines || []).forEach(l => {
+        if (l.is_zero_stock || l.stock === 0) {
+          exportData.push({
+            "Department": t.department || '-',
+            "Buyer": t.buyer,
+            "Project": t.project,
+            "Stage": t.task_stage,
+            "PR No": t.pr_no,
+            "PO No": t.po_no || '-',
+            "Item Code": l.item_code,
+            "Item Description": l.item_desc,
+            "Stock": 0,
+            "Pending Balance Qty": l.bal_qty || 0,
+            "Supplier": t.supplier || '-',
+            "Required Action": t.action_text
+          });
+        }
+      });
+    });
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Zero-Stock Spares");
+    XLSX.writeFile(wb, fileName);
+    showToast(`Exported Zero-Stock Matrix: ${fileName}`);
   } catch(e) {
     alert("Export failed: " + e.message);
   }
 }
+
 
 let currentDelayModalStage = '';
 let currentDelayModalTier = 'ALL';
