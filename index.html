@@ -7851,8 +7851,9 @@ function openPrDossierModal(prNo, poNo, fromDelayModal = false) {
         badges.push(`<span style="background:rgba(56,189,248,0.14); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:600; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Last Contracted Supplier in PO History"><i class="fa-solid fa-building" style="color:#38bdf8; font-size:0.58rem;"></i>Last PO: ${escapeHtml(lastSupp)}</span>`);
       }
     }
-    if (soleSupp && soleSupp !== '—') {
-      badges.push(`<span style="background:rgba(234,179,8,0.18); color:#fde047; border:1px solid rgba(234,179,8,0.45); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:800; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Single-Source / Sole Supplier"><i class="fa-solid fa-lock" style="color:#eab308; font-size:0.58rem;"></i>Sole Supplier: ${escapeHtml(soleSupp)}</span>`);
+    // User preference: Last PO is enough on table rows; Sole Supplier is already clearly detailed in Item Intelligence modal
+    if (soleSupp && soleSupp !== '—' && !lastSupp && !suppDesc && !suppCode) {
+      badges.push(`<span style="background:rgba(56,189,248,0.14); color:#7dd3fc; border:1px solid rgba(56,189,248,0.35); padding:1px 5px; border-radius:4px; font-size:0.65rem; font-weight:600; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;" title="Contracted Supplier in PO History"><i class="fa-solid fa-building" style="color:#38bdf8; font-size:0.58rem;"></i>Last PO: ${escapeHtml(soleSupp)}</span>`);
     }
     const suppBadgesHtml = badges.length > 0 ? `<div style="margin-top:4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">${badges.join('')}</div>` : '';
 
