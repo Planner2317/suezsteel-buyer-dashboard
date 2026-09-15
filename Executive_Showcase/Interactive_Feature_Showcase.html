@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suez Steel — Executive Dashboard Showcase & Feature Catalog</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg-dark: #070d17;
+    --card-bg: rgba(15, 23, 42, 0.85);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --accent-cyan: #38bdf8;
+    --accent-purple: #c084fc;
+    --accent-emerald: #34d399;
+    --accent-amber: #fde047;
+    --accent-rose: #f43f5e;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding: 2rem;
+  }
+  .container { max-width: 1440px; margin: 0 auto; }
+  header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  h1 { font-size: 1.85rem; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+  .subtitle { color: var(--accent-cyan); font-size: 0.95rem; font-weight: 600; margin-top: 4px; }
+  .badge-live {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--accent-cyan);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .badge-live:hover { background: rgba(56, 189, 248, 0.3); }
+  
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .nav-tab {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .nav-tab.active, .nav-tab:hover {
+    background: var(--accent-cyan);
+    color: #070d17;
+    font-weight: 800;
+    border-color: var(--accent-cyan);
+  }
+
+  .feature-section {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 2rem;
+  }
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    border-left: 4px solid var(--accent-cyan);
+    padding-left: 10px;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 1.5rem;
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+  .img-wrapper {
+    background: #020617;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+  }
+  .img-wrapper img {
+    width: 100%;
+    height: auto;
+    max-height: 380px;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+  .card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .pill-metric { background: rgba(52, 211, 153, 0.2); color: var(--accent-emerald); }
+  .pill-rule { background: rgba(192, 132, 252, 0.2); color: var(--accent-purple); }
+  .pill-kpi { background: rgba(253, 224, 71, 0.2); color: var(--accent-amber); }
+  
+  .card-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+  }
+  .rule-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+  }
+  .rule-box strong { color: var(--accent-cyan); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>Suez Steel Co. — Executive Dashboard Showcase</h1>
+      <div class="subtitle"><i class="fa-solid fa-layer-group"></i> Comprehensive Visual Catalog & Business Architecture Guide</div>
+    </div>
+    <a href="https://planner2317.github.io/suezsteel-buyer-dashboard/" target="_blank" class="badge-live">
+      <i class="fa-solid fa-bolt"></i> Launch 24/7 Live Cloud Dashboard
+    </a>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="scrollToSection('sec-overview')">1. Command Center</button>
+    <button class="nav-tab" onclick="scrollToSection('sec-stages')">2. Six-Stage Procurement Flow</button>
+    <button class="nav-tab" onclick="scrollToSection('sec-pills')">3. Specialized Queues</button>
+    <button class="nav-tab" onclick="scrollToSection('sec-dossier')">4. Dossier & Item Intel</button>
+    <button class="nav-tab" onclick="scrollToSection('sec-controls')">5. Enterprise Controls</button>
+    <button class="nav-tab" onclick="scrollToSection('sec-p1-gallery')">6. P1 Critical Gallery (Nano/Pnana/Flow)</button>
+  </div>
+
+  <!-- Section 1 -->
+  <div id="sec-overview" class="feature-section">
+    <div class="section-title"><i class="fa-solid fa-table-columns"></i> 1. Executive Command Center Overview</div>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="01_Command_Center_Overview/01_Executive_Zero_Scroll_Grid.png" alt="Executive Zero Scroll Grid">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Symmetrical 3-Column Zero-Scroll Layout</span>
+            <span class="card-pill pill-kpi">100vh Fit</span>
+          </div>
+          <p class="card-desc">Universal zero-scroll viewport architecture supporting 1366×768 laptops through 1920×1080 desktops without clipping Stage 6.</p>
+          <div class="rule-box"><strong>Design Guarantee:</strong> Strict 100vh lock with dynamic clamp() padding and consolidated single-line SLA tracks.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="01_Command_Center_Overview/02_Sunburst_Donut_3677_Orders.png" alt="Sunburst Donut Chart">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Central Sunburst Donut Chart</span>
+            <span class="card-pill pill-metric">3,677 Orders</span>
+          </div>
+          <p class="card-desc">Symmetrical two-hemisphere visualization: 1,315 PRs (Stages 1-3) on the left, and 2,362 POs (Stages 4-6) on the right.</p>
+          <div class="rule-box"><strong>Interactive Drilldown:</strong> Clicking any segment immediately filters the dashboard to that specific lifecycle cohort.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="01_Command_Center_Overview/03_2Tier_OptionA_Header_Toolbar.png" alt="Option A Header">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Option A: 2-Tier Command Header</span>
+            <span class="card-pill pill-rule">Unified Toolbar</span>
+          </div>
+          <p class="card-desc">Tier 1 houses Brand KPIs & Export actions; Tier 2 hosts the 5 core filters (Dept [D], Buyer [/], Origin [O], Priority, Year).</p>
+          <div class="rule-box"><strong>Productivity:</strong> Full keyboard shortcut bindings for rapid hands-free filtering.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div id="sec-stages" class="feature-section">
+    <div class="section-title"><i class="fa-solid fa-arrows-split-up-and-left"></i> 2. End-to-End Six-Stage Procurement Flow</div>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/04_Stage1_TS_Confirmed.png" alt="Stage 1 TS Confirmed">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 1: TS Confirmed</span>
+            <span class="card-pill pill-metric">245 PRs</span>
+          </div>
+          <p class="card-desc">Technical specification confirmed by plant engineering; ready for formal Purchase Order placement by operational buyers.</p>
+          <div class="rule-box"><strong>KPI Track:</strong> 805 Zero-Stock Lines (70.9%) • Average Delay 42.5d with micro SLA bands.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/05_Stage2_Sourcing_RFQ.png" alt="Stage 2 Sourcing">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 2: Sourcing / RFQ Pipeline</span>
+            <span class="card-pill pill-metric">930 PRs</span>
+          </div>
+          <p class="card-desc">Requisitions actively in the market awaiting vendor quotation submission. Focus of commercial negotiation.</p>
+          <div class="rule-box"><strong>KPI Track:</strong> 2,866 Zero-Stock Lines (74.7%) • Sourcing aging distribution.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/06_Stage3_Offers_Plant_Evaluation.png" alt="Stage 3 Plant Evaluation">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 3: Offers Under Plant Evaluation</span>
+            <span class="card-pill pill-metric">140 PRs</span>
+          </div>
+          <p class="card-desc">Vendor quotations received and submitted to Plant Engineering departments for technical verification.</p>
+          <div class="rule-box"><strong>KPI Track:</strong> 728 Zero-Stock Lines (71.5%) • Avg Plant Eval SLA: 27.9d.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/07_Stage4_PO_Not_Confirmed.png" alt="Stage 4 PO Not Confirmed">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 4: PO Not Confirmed</span>
+            <span class="card-pill pill-metric">459 POs</span>
+          </div>
+          <p class="card-desc">Purchase orders placed in the system awaiting vendor formal confirmation or Supply Chain approval.</p>
+          <div class="rule-box"><strong>KPI Track:</strong> 1,242 Zero-Stock Lines (75.2%) • Avg SC Approval SLA: 46.6d.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/08_Stage5_Overdue_Delivery_Aging.png" alt="Stage 5 Overdue Delivery">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 5: Overdue Delivery</span>
+            <span class="card-pill pill-kpi">1,045 POs</span>
+          </div>
+          <p class="card-desc">Active POs past promised delivery date. Critical for buyer expediting and delivery risk management.</p>
+          <div class="rule-box"><strong>Severity Bands:</strong> 203 (1-30d) • 225 (31-90d) • 652 (>90d late) with received value tracking.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="02_Six_Stage_Procurement_Flow/09_Stage6_OnTrack_Delivery_Progress.png" alt="Stage 6 On Track">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Stage 6: On-Track Delivery</span>
+            <span class="card-pill pill-metric">761 POs</span>
+          </div>
+          <p class="card-desc">Orders progressing on schedule within agreed vendor lead times, split into Foreign imports vs Local supply.</p>
+          <div class="rule-box"><strong>Fulfillment:</strong> 346 Foreign | 454 Local | 84 Partial deliveries tracked live.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div id="sec-pills" class="feature-section">
+    <div class="section-title"><i class="fa-solid fa-bell"></i> 3. Specialized Critical Operation Queues</div>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="03_Specialized_Operational_Pills/10_Unassigned_PRs_Buyer_Routing.png" alt="Unassigned PRs">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Unassigned Requisitions Queue</span>
+            <span class="card-pill pill-kpi">84 PRs</span>
+          </div>
+          <p class="card-desc">Floating pill highlighting requisitions pending procurement team assignment to prevent backlog.</p>
+          <div class="rule-box"><strong>Action Trigger:</strong> Clicking opens immediate routing matrix for procurement managers.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="03_Specialized_Operational_Pills/11_Technical_Inspection_Warehouse_Rule.png" alt="Technical Inspection">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Technical Inspection in Warehouse</span>
+            <span class="card-pill pill-rule">98 Orders</span>
+          </div>
+          <p class="card-desc">Strictly governed by: Qty Inspected > 0 AND Qty Accepted = 0 AND Qty Rejected = 0.</p>
+          <div class="rule-box"><strong>Golden Rule:</strong> Goods have physically arrived at the central warehouse and are awaiting engineering signoff.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div id="sec-dossier" class="feature-section">
+    <div class="section-title"><i class="fa-solid fa-file-invoice"></i> 4. Requisition Dossier & Item Intelligence</div>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="04_Dossier_&_Item_Intelligence/12_PR_PO_Dossier_Lifecycle_Journey.png" alt="PR Dossier Journey">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>9-Step Lifecycle Journey Console</span>
+            <span class="card-pill pill-rule">Full Audit</span>
+          </div>
+          <p class="card-desc">Complete milestone roadmap tracking requisitions from Plant Request through Inspection and Stocking.</p>
+          <div class="rule-box"><strong>Bottleneck Intelligence:</strong> Dynamically isolates which department currently holds the order.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="04_Dossier_&_Item_Intelligence/13_Line_Items_Smart_Supplier_Deduplication.png" alt="Supplier Deduplication">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Smart Supplier Deduplication Pill</span>
+            <span class="card-pill pill-metric">95.4% Deduplicated</span>
+          </div>
+          <p class="card-desc">Eliminated redundant 2-layer stacked badges. Merges PR recommendation with historical PO vendor in 1 sleek pill.</p>
+          <div class="rule-box"><strong>Clean UX:</strong> Price tags removed; pricing and ERV details preserved in Item Intelligence drilldown.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="04_Dossier_&_Item_Intelligence/14_Item_Intelligence_3Year_Trajectory_WMA.png" alt="Item Intelligence">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>3-Year Consumption & WMA Trajectory</span>
+            <span class="card-pill pill-rule">Stock AI</span>
+          </div>
+          <p class="card-desc">36-month consumption history, weighted annualized burn rate, internal/external lead times, and Reorder Point (ROP).</p>
+          <div class="rule-box"><strong>Inventory Safety:</strong> Direct calculation of Stock Cover and replacement valuations (ERV).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div id="sec-controls" class="feature-section">
+    <div class="section-title"><i class="fa-solid fa-sliders"></i> 5. Enterprise Controls & Reporting</div>
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="05_Enterprise_Controls_&_Exports/15_Zero_Stock_Matrix_P1_to_P4.png" alt="Zero Stock Matrix">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Zero-Stock Priority Matrix</span>
+            <span class="card-pill pill-kpi">P1 to P4</span>
+          </div>
+          <p class="card-desc">Automated categorization of out-of-stock items into P1 (Critical demand) through P4 (Dormant zero burn).</p>
+          <div class="rule-box"><strong>Export Engine:</strong> One-click Excel download of all 10,760 zero-stock line items.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="05_Enterprise_Controls_&_Exports/16_Level_4_Stock_Control_Console.png" alt="Level 4 Stock Control">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Level 4 Stock Control Console</span>
+            <span class="card-pill pill-metric">97 PRs</span>
+          </div>
+          <p class="card-desc">Dedicated workflow portal for inventory controllers to authorize or challenge requisitions before buyer issuance.</p>
+          <div class="rule-box"><strong>Governance:</strong> Displays line-by-line stock numbers, 3-year consumption, and owner plants.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <img src="05_Enterprise_Controls_&_Exports/17_MultiDimensional_Filtering_Arabic_Search.png" alt="Multi-Dimensional Search">
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Multi-Dimensional Arabic & Fuzzy Search</span>
+            <span class="card-pill pill-rule">Global Index</span>
+          </div>
+          <p class="card-desc">Real-time instant indexing supporting Arabic requisitioner names, item codes, descriptions, and PO numbers.</p>
+          <div class="rule-box"><strong>Instant Match:</strong> Highlights matched keywords across 3,843 tasks with 0ms latency.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <div id="sec-p1-gallery" class="feature-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:1.25rem;">
+      <div class="section-title" style="border-left-color:var(--accent-rose); margin-bottom:0;">
+        <i class="fa-solid fa-fire-flame-curved" style="color:var(--accent-rose);"></i> 6. P1 Critical Operational Showcase (Zero Stock &amp; Surging Consumption)
+      </div>
+      <a href="P1_Critical_Showcase_Gallery.html" class="badge-live" style="background:rgba(244,63,94,0.15); border-color:rgba(244,63,94,0.4); color:var(--accent-rose);">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Full Interactive Gallery (Nano / Panorama / Flow)
+      </a>
+    </div>
+
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <a href="P1_Critical_Showcase_Gallery.html"><img src="06_P1_Critical_Zero_Stock_Gallery/00_Gallery_Mode_Panorama.png" alt="Panorama Mode"></a>
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Panorama (Pnana) Banners</span>
+            <span class="card-pill pill-kpi">Widescreen Dossier</span>
+          </div>
+          <p class="card-desc">Full widescreen analytical cards featuring 3-year consumption velocity curves (WMA), risk scores, replacement unit pricing, and active requisition consolidation.</p>
+          <div class="rule-box"><strong>Use Case:</strong> Executive briefings, plant director reviews, and comprehensive spend audits.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <a href="P1_Critical_Showcase_Gallery.html"><img src="06_P1_Critical_Zero_Stock_Gallery/00_Gallery_Mode_Nano.png" alt="Nano Mode"></a>
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Nano Cards (Micro Grid)</span>
+            <span class="card-pill pill-metric">Ultra Dense</span>
+          </div>
+          <p class="card-desc">High-density micro-cards optimized for executive dashboards, mobile monitoring, and instant one-click markdown clipboard export.</p>
+          <div class="rule-box"><strong>Use Case:</strong> Daily triage, WhatsApp/Slack updates, and compact summary widgets.</div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="img-wrapper">
+          <a href="P1_Critical_Showcase_Gallery.html"><img src="06_P1_Critical_Zero_Stock_Gallery/00_Gallery_Mode_Flow.png" alt="Process Flow Mode"></a>
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <span>Procurement Lifecycle Journey Flow</span>
+            <span class="card-pill pill-rule">Bottleneck Radar</span>
+          </div>
+          <p class="card-desc">Visual 6-stage lifecycle stepper tracking every critical requisition from TS confirmation through RFQ, evaluation, PO audit, to warehouse receipt, flashing stalled stages.</p>
+          <div class="rule-box"><strong>Use Case:</strong> Eliminating supply bottlenecks, tracking aging delays (+623d max), and expediting lead times.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

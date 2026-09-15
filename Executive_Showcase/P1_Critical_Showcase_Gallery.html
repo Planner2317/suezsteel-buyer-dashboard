@@ -1,0 +1,2462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suez Steel — P1 Critical Items Showcase (Zero-Stock & High Burn Gallery)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg-dark: #070d17;
+    --bg-card: rgba(15, 23, 42, 0.9);
+    --border: rgba(255, 255, 255, 0.1);
+    --cyan: #38bdf8;
+    --emerald: #34d399;
+    --amber: #fde047;
+    --rose: #f43f5e;
+    --purple: #c084fc;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding: 1.5rem 2rem;
+  }
+  .container { max-width: 1700px; margin: 0 auto; }
+
+  /* Top Navigation & Breadcrumb */
+  .top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .back-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    color: var(--cyan);
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { background: rgba(56, 189, 248, 0.2); }
+  .title-group h1 { font-size: 1.7rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .title-group p { color: var(--text-muted); font-size: 0.9rem; }
+  
+  .nav-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-action {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--cyan);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-action:hover { background: var(--cyan); color: #070d17; }
+  .btn-danger {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+    color: var(--rose);
+  }
+  .btn-danger:hover { background: var(--rose); color: #fff; }
+
+  /* Mode Switcher Banner */
+  .mode-toolbar {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .mode-pills { display: flex; gap: 8px; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: 10px; }
+  .mode-pill {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .mode-pill.active {
+    background: var(--cyan);
+    color: #070d17;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+  }
+  .mode-pill:hover:not(.active) { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+  .filter-group { display: flex; align-items: center; gap: 8px; }
+  .filter-chip {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-chip.active, .filter-chip:hover {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: var(--cyan);
+    color: #fff;
+  }
+
+  /* Metric Highlights Strip */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .kpi-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+  .kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  .kpi-icon.rose { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+  .kpi-icon.amber { background: rgba(253, 224, 71, 0.15); color: var(--amber); }
+  .kpi-icon.cyan { background: rgba(56, 189, 248, 0.15); color: var(--cyan); }
+  .kpi-icon.purple { background: rgba(192, 132, 252, 0.15); color: var(--purple); }
+  .kpi-data .label { font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+  .kpi-data .val { font-size: 1.4rem; font-weight: 800; color: #fff; margin-top: 2px; }
+
+  /* ========================================================== */
+  /* MODE 1: NANO CARDS VIEW                                   */
+  /* ========================================================== */
+  .nano-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.25rem;
+  }
+  .nano-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .nano-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .nano-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+    background: var(--rose);
+  }
+  .nano-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .nano-rank {
+    background: rgba(244, 63, 94, 0.2);
+    color: var(--rose);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .nano-code { font-family: monospace; font-size: 0.95rem; font-weight: 700; color: var(--cyan); }
+  .nano-title { font-size: 1rem; font-weight: 700; color: #fff; line-height: 1.3; }
+  .nano-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+  .nano-stat-item .lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+  .nano-stat-item .val { font-size: 0.95rem; font-weight: 800; color: #fff; }
+  .nano-stat-item .val.danger { color: var(--rose); }
+  .nano-stat-item .val.surge { color: var(--amber); }
+
+  .nano-bottleneck {
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(244, 63, 94, 0.1);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    color: #fda4af;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nano-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .nano-btn-copy {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    color: var(--cyan);
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .nano-btn-copy:hover { background: var(--cyan); color: #070d17; }
+
+  /* ========================================================== */
+  /* MODE 2: PANORAMA (PNANA) VIEW                              */
+  /* ========================================================== */
+  .panorama-list { display: flex; flex-direction: column; gap: 2.5rem; }
+  .pnana-banner {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+    display: grid;
+    grid-template-columns: 520px 1fr;
+  }
+  @media (max-width: 1200px) {
+    .pnana-banner { grid-template-columns: 1fr; }
+  }
+  .pnana-img-col {
+    background: #020617;
+    position: relative;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .pnana-img-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+  }
+  .pnana-img-col:hover img { transform: scale(1.02); }
+  .pnana-zoom-hint {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--cyan);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pnana-content-col {
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+  .pnana-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .pnana-badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+  .pnana-title { font-size: 1.35rem; font-weight: 800; color: #fff; }
+  .pnana-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+  
+  .pnana-bars-row {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+  }
+  .pnana-bar-group { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+  .pnana-bar-val { font-size: 0.78rem; font-weight: 700; color: #fff; }
+  .pnana-bar-track {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .pnana-bar-fill { height: 100%; border-radius: 6px; }
+  .pnana-bar-fill.y3 { background: #64748b; }
+  .pnana-bar-fill.y2 { background: var(--cyan); }
+  .pnana-bar-fill.y1 { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+  .pnana-bar-lbl { font-size: 0.72rem; color: var(--text-muted); text-align: center; }
+
+  .pnana-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 900px) {
+    .pnana-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .pnana-metric-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+  .pnana-metric-card .lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+  .pnana-metric-card .val { font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px; }
+
+  .pnana-tasks-box {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+  .pnana-tasks-title { font-weight: 700; color: var(--cyan); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .pnana-action-remedy {
+    background: rgba(244, 63, 94, 0.12);
+    border-left: 3px solid var(--rose);
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: #fecdd3;
+  }
+
+  /* ========================================================== */
+  /* MODE 3: PROCESS FLOW JOURNEY VIEW                         */
+  /* ========================================================== */
+  .flow-list { display: flex; flex-direction: column; gap: 2rem; }
+  .flow-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  }
+  .flow-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .flow-pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+  @media (max-width: 1024px) {
+    .flow-pipeline { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .flow-pipeline { grid-template-columns: 1fr; }
+  }
+  .flow-stage-step {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+  }
+  .flow-stage-step.active-block {
+    background: rgba(244, 63, 94, 0.18);
+    border-color: var(--rose);
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.35);
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(244, 63, 94, 0.25); }
+    50% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
+  }
+  .flow-stage-step.passed {
+    border-color: rgba(52, 211, 153, 0.4);
+    background: rgba(52, 211, 153, 0.06);
+  }
+  .flow-stage-num { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); }
+  .flow-stage-name { font-size: 0.8rem; font-weight: 700; color: #fff; line-height: 1.2; }
+  .flow-stage-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .flow-stage-status.stalled { color: var(--rose); }
+  .flow-stage-status.ok { color: var(--emerald); }
+  .flow-stage-status.pending { color: var(--text-muted); }
+
+  .flow-bottleneck-detail {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border: 1px dashed rgba(244, 63, 94, 0.4);
+  }
+  .flow-bottleneck-detail .b-left { display: flex; align-items: center; gap: 10px; }
+  .flow-bottleneck-detail .b-tag {
+    background: var(--rose);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .flow-bottleneck-detail .b-text { font-size: 0.85rem; color: #fecdd3; font-weight: 600; }
+  .flow-bottleneck-detail .b-owner { font-size: 0.82rem; color: var(--cyan); font-weight: 700; }
+
+  /* Modal Zoom */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    max-width: 95vw;
+    max-height: 95vh;
+    background: #020617;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-box img { max-width: 100%; max-height: 85vh; object-fit: contain; }
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  .modal-close:hover { background: var(--rose); }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #059669;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    z-index: 10000;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <div class="nav-left">
+      <a href="Interactive_Feature_Showcase.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Feature Showcase</a>
+      <a href="../output/buyer_dashboard.html" class="back-btn" target="_blank"><i class="fa-solid fa-gauge-high"></i> Live Command Center</a>
+      <div class="title-group">
+        <h1>Suez Steel Co. — P1 Critical Items Showcase Gallery</h1>
+        <p>Operational Intelligence for <strong>Zero Stock</strong> &amp; <strong>Surging Consumption</strong> Materials across Plants</p>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-action" onclick="copyExecutiveSummary()"><i class="fa-solid fa-copy"></i> Copy Exec Markdown</button>
+      <button class="btn-action" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Briefing</button>
+    </div>
+  </div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip">
+    <div class="kpi-box">
+      <div class="kpi-icon rose"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="kpi-data">
+        <div class="label">P1 Zero-Stock Tracked</div>
+        <div class="val">8 Critical Materials</div>
+      </div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-icon amber"><i class="fa-solid fa-fire-flame-curved"></i></div>
+      <div class="kpi-data">
+        <div class="label">Combined Annual Burn (WMA)</div>
+        <div class="val">13.6M+ Units/yr</div>
+      </div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-icon cyan"><i class="fa-solid fa-boxes-stacked"></i></div>
+      <div class="kpi-data">
+        <div class="label">Open Demand in Pipeline</div>
+        <div class="val">13.8M Units (24 PRs/POs)</div>
+      </div>
+    </div>
+    <div class="kpi-box">
+      <div class="kpi-icon purple"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div class="kpi-data">
+        <div class="label">Max Bottleneck Aging</div>
+        <div class="val">+623 Days Overdue</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode Switcher Toolbar -->
+  <div class="mode-toolbar">
+    <div class="mode-pills">
+      <button class="mode-pill active" id="btnModePanorama" onclick="switchMode('panorama')">
+        <i class="fa-solid fa-panorama"></i> Panorama (Pnana) Banners
+      </button>
+      <button class="mode-pill" id="btnModeNano" onclick="switchMode('nano')">
+        <i class="fa-solid fa-microchip"></i> Nano Cards (Micro Grid)
+      </button>
+      <button class="mode-pill" id="btnModeFlow" onclick="switchMode('flow')">
+        <i class="fa-solid fa-timeline"></i> Process Flow Journey
+      </button>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-group">
+      <span style="font-size:0.8rem; color:var(--text-muted); margin-right:4px;">Plant:</span>
+      <button class="filter-chip active" onclick="filterPlant('ALL')">All (8)</button>
+      <button class="filter-chip" onclick="filterPlant('OP11')">OP11 Oxygen</button>
+      <button class="filter-chip" onclick="filterPlant('OP19')">OP19 Pellet</button>
+      <button class="filter-chip" onclick="filterPlant('SMP')">SMP1/SMP2</button>
+      <button class="filter-chip" onclick="filterPlant('OP10')">OP10 Utilities</button>
+    </div>
+  </div>
+
+  <!-- VIEW 1: PANORAMA (PNANA) LIST -->
+  <div id="viewPanorama" class="panorama-list">
+
+    <!-- Item 1: O0100100001 -->
+    <div class="pnana-banner" data-plant="OP11">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/01_P1_Liquid_Oxygen_O0100100001.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/01_P1_Liquid_Oxygen_O0100100001.png" alt="O0100100001 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#1 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP11 Oxygen Plant</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                
+              </div>
+              <div class="pnana-title">Liquid Oxygen (Bulk LOX)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">O0100100001</strong> · OP11 (99.86%), OP08 (.14%) · Warehouse: O1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('O0100100001', 'Liquid Oxygen (Bulk LOX)', '12957727.0', 'Liter', 'Abu Laila Factory for Industrial and Medical Gases')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 12,957,727.0 Liter/yr (1,079,810.6/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">5,316,800</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:31%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">11,034,551</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:65%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">16,786,820</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 Liter (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Abu Laila Factory for Industrial and Medical Gases">Abu Laila Factory for Industrial and Medical Gases</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">4.63 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">10 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 3 of 10</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #168152</strong> · <span style="color:var(--text-muted);">Sourcing / RFQ</span></div>
+          <div style="color:var(--cyan);">T11- Amr Adel</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #168152</strong> · <span style="color:var(--text-muted);">Sourcing / RFQ</span></div>
+          <div style="color:var(--cyan);">T11- Amr Adel</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #163191 / PO #3980/2026</strong> · <span style="color:var(--text-muted);">Draft PO Approval</span></div>
+          <div style="color:var(--cyan);">T11- Amr Adel</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Expedite SC approval on PO #8352 & #8353 (Delta & Abu Laila). Follow up overdue delivery on PO #745 (+211d).
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 2: M0100300001 -->
+    <div class="pnana-banner" data-plant="OP19">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/02_P1_Iron_Ore_Pellet_Feed_M0100300001.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/02_P1_Iron_Ore_Pellet_Feed_M0100300001.png" alt="M0100300001 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#2 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP19 Pelletizing Plant</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                
+              </div>
+              <div class="pnana-title">Iron Ore Pellet Feed (High Grade)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">M0100300001</strong> · OP19 (100%) · Warehouse: M1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('M0100300001', 'Iron Ore Pellet Feed (High Grade)', '428172.37', 'Ton', 'Cargill International Trading PTE LTD')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 428,172.4 Ton/yr (35,681.0/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">548,433</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">490,723</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:89%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 Ton (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Cargill International Trading PTE LTD">Cargill International Trading PTE LTD</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">42.58 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 1 of 1</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #165877 / PO #6475/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T84- Amr Mossad Aly</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Overcome import transit delay on PO #6475 (+42d) with Cargill International. Expedite port clearance.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 3: O0400100332 -->
+    <div class="pnana-banner" data-plant="OP10">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/03_P1_Water_Chemical_Nalco_O0400100332.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/03_P1_Water_Chemical_Nalco_O0400100332.png" alt="O0400100332 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#3 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP10 Central Utilities & OP19</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                <span style="background:rgba(253,224,71,0.15); color:var(--amber); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-lock"></i> SOLE SOURCE</span>
+              </div>
+              <div class="pnana-title">Water Treatment Chemical N-WT-1009</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">O0400100332</strong> · OP10 (91.14%), OP19 (8.26%) · Warehouse: O1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('O0400100332', 'Water Treatment Chemical N-WT-1009', '119925.0', 'KG', 'Nalco egypt for chemicals')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 119,925.0 KG/yr (9,993.8/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">97,170</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:74%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">115,620</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:88%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">130,380</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 KG (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Nalco egypt for chemicals">Nalco egypt for chemicals</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">173.81 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">4 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 3 of 4</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #133791 / PO #6374/2024</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">توفيق محمد توفيق عبد الكريم</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #155457 / PO #9702/2025</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T98- Mabrouk Younis</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #139781 / PO #610/2025</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T53- Tawfiq Mohamed</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Escalate 4 overdue POs with Nalco Egypt (oldest +623d overdue). Issue executive warning or alternative supplier qualification.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 4: M0100100006 -->
+    <div class="pnana-banner" data-plant="SMP">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/04_P1_Scrap_Steel_Shredded_M0100100006.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/04_P1_Scrap_Steel_Shredded_M0100100006.png" alt="M0100100006 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#4 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP02 SMP1 & OP05 SMP2</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                <span style="background:rgba(253,224,71,0.15); color:var(--amber); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-lock"></i> SOLE SOURCE</span>
+              </div>
+              <div class="pnana-title">Scrap Steel Shredded (Metallic Charge)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">M0100100006</strong> · OP02 (76.23%), OP05 (23.77%) · Warehouse: M1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('M0100100006', 'Scrap Steel Shredded (Metallic Charge)', '81553.96', 'Ton', 'American Iron and Metal')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 81,554.0 Ton/yr (6,796.2/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">37,101</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:26%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">138,374</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 Ton (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="American Iron and Metal">American Iron and Metal</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">22,575.21 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 1 of 1</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #142152 / PO #1560/2025</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T84- Amr Mossad Aly</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Resolve overdue delivery on PO #1560 (+538d) with National Metal. Sourcing new domestic and imported scrap allocations.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 5: O.3200.5370.0009 -->
+    <div class="pnana-banner" data-plant="OP19">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/05_P1_Organic_Binder_O320053700009.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/05_P1_Organic_Binder_O320053700009.png" alt="O.3200.5370.0009 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#5 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP19 Pelletizing Plant</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                
+              </div>
+              <div class="pnana-title">Organic Binder Anionic Polyacrylamide (Floform 2068H)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">O.3200.5370.0009</strong> · OP19 (100%) · Warehouse: O1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('O.3200.5370.0009', 'Organic Binder Anionic Polyacrylamide (Floform 2068H)', '40401.0', 'KG', 'Nalco egypt for chemicals')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 40,401.0 KG/yr (3,366.8/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">80,802</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 KG (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Nalco egypt for chemicals">Nalco egypt for chemicals</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">0.00 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">3 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 3 of 3</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #163604 / PO #5199/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T98- Mabrouk Younis</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #163604 / PO #5199/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T98- Mabrouk Younis</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #163576 / PO #5093/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">T85- Abdelrahman Hafez</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Expedite pending balance of 27,198 KG on PO #5199 (+58d overdue) from Nalco Egypt.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 6: M0200100002 -->
+    <div class="pnana-banner" data-plant="SMP">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/06_P1_Ferro_Manganese_M0200100002.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/06_P1_Ferro_Manganese_M0200100002.png" alt="M0200100002 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#6 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP05 SMP2 & OP02 SMP1</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                
+              </div>
+              <div class="pnana-title">Ferro Manganese High Carbon (FeMn HC)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">M0200100002</strong> · OP05 (65.76%), OP02 (34.24%) · Warehouse: M1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('M0200100002', 'Ferro Manganese High Carbon (FeMn HC)', '7424.78', 'Ton', 'Al Madina Steel Group')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 7,424.8 Ton/yr (618.7/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">14,115</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">5,395</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:38%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">6,548</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:46%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 Ton (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Al Madina Steel Group">Al Madina Steel Group</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">82,229.35 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">5 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 3 of 5</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #162024 / PO #3015/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">Ahmed Attef Salem</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #160655 / PO #1862/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">Ahmed Attef Salem</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #156398 / PO #1876/2026</strong> · <span style="color:var(--text-muted);">Supplier Overdue</span></div>
+          <div style="color:var(--cyan);">Ahmed Attef Salem</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Push deliveries on PO #3015 (+143d) with Al Madina and PO #1862/#1876 with foreign suppliers Mortex & Oremet.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 7: H0401603147 -->
+    <div class="pnana-banner" data-plant="OP19">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/07_P1_Grinding_Ball_Media_H0401603147.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/07_P1_Grinding_Ball_Media_H0401603147.png" alt="H0401603147 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#7 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP19 Pelletizing Plant</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                <span style="background:rgba(253,224,71,0.15); color:var(--amber); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-lock"></i> SOLE SOURCE</span>
+              </div>
+              <div class="pnana-title">Grinding Ball Media 50mm CH14 (Forged Steel)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">H0401603147</strong> · OP19 (100%) · Warehouse: H1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('H0401603147', 'Grinding Ball Media 50mm CH14 (Forged Steel)', '3302.5', 'KG', 'United Company For Foundries')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 3,302.5 KG/yr (275.2/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">6,605</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 KG (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="United Company For Foundries">United Company For Foundries</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">73.22 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 1 of 1</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #166911</strong> · <span style="color:var(--text-muted);">Sourcing / RFQ</span></div>
+          <div style="color:var(--cyan);">T84- Amr Mossad Aly</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Accelerate RFQ sourcing stage on PR #166911 (32 days pending quotes) with United Foundries.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Item 8: S.3020.S204.0007 -->
+    <div class="pnana-banner" data-plant="SMP">
+      <div class="pnana-img-col" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/08_P1_Rossi_Gear_Kit_S3020S2040007.png')">
+        <img src="06_P1_Critical_Zero_Stock_Gallery/08_P1_Rossi_Gear_Kit_S3020S2040007.png" alt="S.3020.S204.0007 Dossier">
+        <div class="pnana-zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Expand Dossier (1080p)</div>
+      </div>
+      <div class="pnana-content-col">
+        <div>
+          <div class="pnana-header-top">
+            <div>
+              <div class="pnana-badges">
+                <span style="background:rgba(244,63,94,0.2); color:var(--rose); border:1px solid rgba(244,63,94,0.4); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:800;">#8 P1 CRITICAL</span>
+                <span style="background:rgba(56,189,248,0.15); color:var(--cyan); border:1px solid rgba(56,189,248,0.3); padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;">OP05 SMP2 & IP22 Revamp</span>
+                <span style="background:rgba(244,63,94,0.15); color:#fda4af; padding:3px 8px; border-radius:6px; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ZERO STOCK (0.0 M)</span>
+                
+              </div>
+              <div class="pnana-title">Mounting Kit for Rossi-Gear Motor (3kW–9.2kW)</div>
+              <div class="pnana-desc"><strong style="color:var(--cyan);">S.3020.S204.0007</strong> · OP05 (70%), IP22 (30%) · Warehouse: S1</div>
+            </div>
+            <button class="nano-btn-copy" onclick="copyItemText('S.3020.S204.0007', 'Mounting Kit for Rossi-Gear Motor (3kW–9.2kW)', '5.5', 'Pieces', 'Ashtechs')"><i class="fa-solid fa-copy"></i> Copy Card</button>
+          </div>
+
+          <!-- 3-Year Consumption Trajectory -->
+          <div style="margin-top:1rem;">
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between;">
+              <span>3-Year Consumption Velocity Trajectory</span>
+              <span style="color:var(--amber);"><i class="fa-solid fa-bolt"></i> WMA: 5.5 Pieces/yr (0.5/mo)</span>
+            </div>
+            <div class="pnana-bars-row">
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">6</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y3" style="width:66%;"></div></div>
+                <div class="pnana-bar-lbl">2023–2024 (Baseline)</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val">0</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y2" style="width:0%;"></div></div>
+                <div class="pnana-bar-lbl">2024–2025</div>
+              </div>
+              <div class="pnana-bar-group">
+                <div class="pnana-bar-val" style="color:var(--rose);">9</div>
+                <div class="pnana-bar-track"><div class="pnana-bar-fill y1" style="width:100%;"></div></div>
+                <div class="pnana-bar-lbl">2025–2026 (+Surging)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="pnana-metrics-grid">
+          <div class="pnana-metric-card">
+            <div class="lbl">Current Stock Balance</div>
+            <div class="val" style="color:var(--rose);">0 Pieces (Stockout)</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Last Supplier</div>
+            <div class="val" style="font-size:0.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Ashtechs">Ashtechs</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Est. Replacement Unit</div>
+            <div class="val">18,661.36 EGP</div>
+          </div>
+          <div class="pnana-metric-card">
+            <div class="lbl">Active Demand Pipeline</div>
+            <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+          </div>
+        </div>
+
+        <!-- Active Tasks Snapshot -->
+        <div class="pnana-tasks-box">
+          <div class="pnana-tasks-title">
+            <span><i class="fa-solid fa-list-check"></i> Active Requisitions &amp; Bottlenecks</span>
+            <span style="color:var(--text-muted); font-size:0.75rem;">Showing top 1 of 1</span>
+          </div>
+          
+        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+          <div><strong style="color:#fff;">PR #167462</strong> · <span style="color:var(--text-muted);">Unassigned PRs</span></div>
+          <div style="color:var(--cyan);">Unassigned PRs</div>
+        </div>
+        
+        </div>
+
+        <!-- Action / Remedy -->
+        <div class="pnana-action-remedy">
+          <strong><i class="fa-solid fa-bullseye"></i> Executive Action Required:</strong> Immediately assign PR #167462 (unassigned for 9d) to a mechanical buyer to source from Ashtechs.
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- VIEW 2: NANO CARDS GRID -->
+  <div id="viewNano" class="nano-grid" style="display:none;">
+
+    <!-- Nano Card 1 -->
+    <div class="nano-card" data-plant="OP11">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#1 P1</span>
+          <span class="nano-code">O0100100001</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP11 Oxygen Plant</span>
+      </div>
+      <div class="nano-title">Liquid Oxygen (Bulk LOX)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 Liter</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">12,957,727 Liter</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">1,079,811 Liter/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">10 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Buyer: RFQ Sourcing Days So Far (1d)">Buyer: RFQ Sourcing Days So Far (1d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> T11- Amr Adel</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/01_P1_Liquid_Oxygen_O0100100001.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('O0100100001', 'Liquid Oxygen (Bulk LOX)', '12957727.0', 'Liter', 'Abu Laila Factory for Industrial and Medical Gases')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 2 -->
+    <div class="nano-card" data-plant="OP19">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#2 P1</span>
+          <span class="nano-code">M0100300001</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP19 Pelletizing Plant</span>
+      </div>
+      <div class="nano-title">Iron Ore Pellet Feed (High Grade)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">428,172 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">35,681 Ton/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Supplier: Delivery Overdue (+42d)">Supplier: Delivery Overdue (+42d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> T84- Amr Mossad Aly</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/02_P1_Iron_Ore_Pellet_Feed_M0100300001.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('M0100300001', 'Iron Ore Pellet Feed (High Grade)', '428172.37', 'Ton', 'Cargill International Trading PTE LTD')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 3 -->
+    <div class="nano-card" data-plant="OP10">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#3 P1</span>
+          <span class="nano-code">O0400100332</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP10 Central Utilities </span>
+      </div>
+      <div class="nano-title">Water Treatment Chemical N-WT-1009</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">119,925 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">9,994 KG/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">4 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Supplier Delivery: Partial Delivery Completed (23825 Accepted | 775 Units Balance Pending +623d)">Supplier Delivery: Partial Delivery Completed (23825 Accepted | 775 Units Balance Pending +623d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> توفيق محمد توفيق عبد الكريم</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/03_P1_Water_Chemical_Nalco_O0400100332.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('O0400100332', 'Water Treatment Chemical N-WT-1009', '119925.0', 'KG', 'Nalco egypt for chemicals')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 4 -->
+    <div class="nano-card" data-plant="SMP">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#4 P1</span>
+          <span class="nano-code">M0100100006</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP02 SMP1 </span>
+      </div>
+      <div class="nano-title">Scrap Steel Shredded (Metallic Charge)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">81,554 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">6,796 Ton/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Supplier Delivery: Partial Delivery Completed (213.37 Accepted | 386.63 Units Balance Pending +538d)">Supplier Delivery: Partial Delivery Completed (213.37 Accepted | 386.63 Units Balance Pending +538d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> T84- Amr Mossad Aly</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/04_P1_Scrap_Steel_Shredded_M0100100006.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('M0100100006', 'Scrap Steel Shredded (Metallic Charge)', '81553.96', 'Ton', 'American Iron and Metal')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 5 -->
+    <div class="nano-card" data-plant="OP19">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#5 P1</span>
+          <span class="nano-code">O.3200.5370.0009</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP19 Pelletizing Plant</span>
+      </div>
+      <div class="nano-title">Organic Binder Anionic Polyacrylamide (Floform 2068H)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">40,401 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">3,367 KG/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">3 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Supplier Delivery: Partial Delivery Completed (56802 Accepted | 27198 Units Balance Pending +58d)">Supplier Delivery: Partial Delivery Completed (56802 Accepted | 27198 Units Balance Pending +58d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> T98- Mabrouk Younis</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/05_P1_Organic_Binder_O320053700009.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('O.3200.5370.0009', 'Organic Binder Anionic Polyacrylamide (Floform 2068H)', '40401.0', 'KG', 'Nalco egypt for chemicals')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 6 -->
+    <div class="nano-card" data-plant="SMP">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#6 P1</span>
+          <span class="nano-code">M0200100002</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP05 SMP2 </span>
+      </div>
+      <div class="nano-title">Ferro Manganese High Carbon (FeMn HC)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">7,425 Ton</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">619 Ton/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">5 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Supplier Delivery: Partial Delivery Completed (892.78 Accepted | 107.22 Units Balance Pending +143d)">Supplier Delivery: Partial Delivery Completed (892.78 Accepted | 107.22 Units Balance Pending +143d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> Ahmed Attef Salem</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/06_P1_Ferro_Manganese_M0200100002.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('M0200100002', 'Ferro Manganese High Carbon (FeMn HC)', '7424.78', 'Ton', 'Al Madina Steel Group')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 7 -->
+    <div class="nano-card" data-plant="OP19">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#7 P1</span>
+          <span class="nano-code">H0401603147</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP19 Pelletizing Plant</span>
+      </div>
+      <div class="nano-title">Grinding Ball Media 50mm CH14 (Forged Steel)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">3,302 KG</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">275 KG/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Buyer: RFQ Sourcing Days So Far (32d)">Buyer: RFQ Sourcing Days So Far (32d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> T84- Amr Mossad Aly</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/07_P1_Grinding_Ball_Media_H0401603147.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('H0401603147', 'Grinding Ball Media 50mm CH14 (Forged Steel)', '3302.5', 'KG', 'United Company For Foundries')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Nano Card 8 -->
+    <div class="nano-card" data-plant="SMP">
+      <div class="nano-header">
+        <div>
+          <span class="nano-rank">#8 P1</span>
+          <span class="nano-code">S.3020.S204.0007</span>
+        </div>
+        <span style="font-size:0.75rem; color:var(--text-muted);">OP05 SMP2 </span>
+      </div>
+      <div class="nano-title">Mounting Kit for Rossi-Gear Motor (3kW–9.2kW)</div>
+      
+      <div class="nano-stats">
+        <div class="nano-stat-item">
+          <div class="lbl">Stock Balance</div>
+          <div class="val danger">0 Pieces</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Annual Burn (WMA)</div>
+          <div class="val surge">6 Pieces</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Monthly Velocity</div>
+          <div class="val">0 Pieces/mo</div>
+        </div>
+        <div class="nano-stat-item">
+          <div class="lbl">Active Demand</div>
+          <div class="val" style="color:var(--cyan);">1 Orders Open</div>
+        </div>
+      </div>
+
+      <div class="nano-bottleneck">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="Management: Buyer Assignment Backlog (9d)">Management: Buyer Assignment Backlog (9d)</div>
+      </div>
+
+      <div class="nano-footer">
+        <div><i class="fa-solid fa-user-tag"></i> Unassigned PRs</div>
+        <div style="display:flex; gap:6px;">
+          <button class="nano-btn-copy" onclick="openModal('06_P1_Critical_Zero_Stock_Gallery/08_P1_Rossi_Gear_Kit_S3020S2040007.png')"><i class="fa-solid fa-expand"></i> View</button>
+          <button class="nano-btn-copy" onclick="copyItemText('S.3020.S204.0007', 'Mounting Kit for Rossi-Gear Motor (3kW–9.2kW)', '5.5', 'Pieces', 'Ashtechs')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- VIEW 3: PROCESS FLOW JOURNEY -->
+  <div id="viewFlow" class="flow-list" style="display:none;">
+
+    <!-- Flow Card 1 -->
+    <div class="flow-card" data-plant="OP11">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#1 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">O0100100001</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP11 Oxygen Plant</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Liquid Oxygen (Bulk LOX)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">12,957,727 Liter/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #168152  · Buyer: RFQ Sourcing Days So Far (1d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Abu Laila Factory for Industrial and Medical Gases</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: T11- Amr Adel</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 2 -->
+    <div class="flow-card" data-plant="OP19">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#2 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">M0100300001</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP19 Pelletizing Plant</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Iron Ore Pellet Feed (High Grade)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">428,172 Ton/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #165877 (PO #6475/2026) · Supplier: Delivery Overdue (+42d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Cargill International Trading PTE LTD</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: T84- Amr Mossad Aly</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 3 -->
+    <div class="flow-card" data-plant="OP10">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#3 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">O0400100332</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP10 Central Utilities & OP19</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Water Treatment Chemical N-WT-1009</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">119,925 KG/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #133791 (PO #6374/2024) · Supplier Delivery: Partial Delivery Completed (23825 Accepted | 775 Units Balance Pending +623d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Nalco egypt for chemicals</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: توفيق محمد توفيق عبد الكريم</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 4 -->
+    <div class="flow-card" data-plant="SMP">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#4 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">M0100100006</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP02 SMP1 & OP05 SMP2</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Scrap Steel Shredded (Metallic Charge)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">81,554 Ton/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #142152 (PO #1560/2025) · Supplier Delivery: Partial Delivery Completed (213.37 Accepted | 386.63 Units Balance Pending +538d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">American Iron and Metal</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: T84- Amr Mossad Aly</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 5 -->
+    <div class="flow-card" data-plant="OP19">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#5 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">O.3200.5370.0009</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP19 Pelletizing Plant</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Organic Binder Anionic Polyacrylamide (Floform 2068H)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">40,401 KG/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #163604 (PO #5199/2026) · Supplier Delivery: Partial Delivery Completed (56802 Accepted | 27198 Units Balance Pending +58d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Nalco egypt for chemicals</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: T98- Mabrouk Younis</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 6 -->
+    <div class="flow-card" data-plant="SMP">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#6 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">M0200100002</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP05 SMP2 & OP02 SMP1</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Ferro Manganese High Carbon (FeMn HC)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">7,425 Ton/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #162024 (PO #3015/2026) · Supplier Delivery: Partial Delivery Completed (892.78 Accepted | 107.22 Units Balance Pending +143d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Al Madina Steel Group</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: Ahmed Attef Salem</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 7 -->
+    <div class="flow-card" data-plant="OP19">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#7 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">H0401603147</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP19 Pelletizing Plant</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Grinding Ball Media 50mm CH14 (Forged Steel)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">3,302 KG/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step passed">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status ok"><i class="fa-solid fa-check"></i> Passed</span>
+        </div>
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #166911  · Buyer: RFQ Sourcing Days So Far (32d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">United Company For Foundries</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: T84- Amr Mossad Aly</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Flow Card 8 -->
+    <div class="flow-card" data-plant="SMP">
+      <div class="flow-card-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="nano-rank">#8 P1 FLOW</span>
+            <span style="font-family:monospace; color:var(--cyan); font-weight:700;">S.3020.S204.0007</span>
+            <span style="background:rgba(56,189,248,0.15); color:var(--cyan); padding:2px 8px; border-radius:4px; font-size:0.75rem;">OP05 SMP2 & IP22 Revamp</span>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:#fff; margin-top:4px;">Mounting Kit for Rossi-Gear Motor (3kW–9.2kW)</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted);">Annual Burn Velocity</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--amber);">6 Pieces/yr</div>
+        </div>
+      </div>
+
+      <!-- 6-Stage Visual Stepper -->
+      <div class="flow-pipeline">
+        
+        <div class="flow-stage-step active-block">
+          <div class="flow-stage-num">Stage 1</div>
+          <div class="flow-stage-name">TS Confirmed</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Ready to Issue PO</div>
+          <span class="flow-stage-status stalled"><i class="fa-solid fa-circle-exclamation"></i> Stalled</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 2</div>
+          <div class="flow-stage-name">Sourcing / RFQ</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Market Bidding</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 3</div>
+          <div class="flow-stage-name">Plant Evaluation</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Tech Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 4</div>
+          <div class="flow-stage-name">Draft PO Approval</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">SC Sign-off</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 5</div>
+          <div class="flow-stage-name">Supplier Overdue</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Delivery in Transit</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+        <div class="flow-stage-step">
+          <div class="flow-stage-num">Stage 6</div>
+          <div class="flow-stage-name">Warehouse & Inspect</div>
+          <div style="font-size:0.68rem; color:var(--text-muted);">Final Acceptance</div>
+          <span class="flow-stage-status pending"><i class="fa-solid fa-circle"></i> Pending</span>
+        </div>
+        
+      </div>
+
+      <!-- Bottleneck Intelligence Box -->
+      <div class="flow-bottleneck-detail">
+        <div class="b-left">
+          <span class="b-tag"><i class="fa-solid fa-triangle-exclamation"></i> Bottleneck</span>
+          <div>
+            <div class="b-text">PR #167462  · Management: Buyer Assignment Backlog (9d)</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Contracted Supplier: <strong style="color:#fff;">Ashtechs</strong></div>
+          </div>
+        </div>
+        <div>
+          <div class="b-owner"><i class="fa-solid fa-user-check"></i> Lead Buyer: Unassigned PRs</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Modal Zoom Window -->
+<div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+    <img id="modalImg" src="" alt="Full Dossier">
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Copied to clipboard!</span></div>
+
+<script>
+  function switchMode(mode) {
+    document.querySelectorAll('.mode-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('viewPanorama').style.display = 'none';
+    document.getElementById('viewNano').style.display = 'none';
+    document.getElementById('viewFlow').style.display = 'none';
+
+    if (mode === 'panorama') {
+      document.getElementById('btnModePanorama').classList.add('active');
+      document.getElementById('viewPanorama').style.display = 'flex';
+    } else if (mode === 'nano') {
+      document.getElementById('btnModeNano').classList.add('active');
+      document.getElementById('viewNano').style.display = 'grid';
+    } else if (mode === 'flow') {
+      document.getElementById('btnModeFlow').classList.add('active');
+      document.getElementById('viewFlow').style.display = 'flex';
+    }
+  }
+
+  function filterPlant(plant) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const cards = document.querySelectorAll('.pnana-banner, .nano-card, .flow-card');
+    cards.forEach(c => {
+      const p = c.getAttribute('data-plant');
+      if (plant === 'ALL' || p === plant) {
+        c.style.display = '';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+
+  function openModal(imgSrc) {
+    document.getElementById('modalImg').src = imgSrc;
+    document.getElementById('imageModal').classList.add('open');
+  }
+
+  function closeModal(e) {
+    if (e.target.id === 'imageModal') {
+      document.getElementById('imageModal').classList.remove('open');
+    }
+  }
+
+  function closeModalDirect() {
+    document.getElementById('imageModal').classList.remove('open');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').innerText = msg;
+    t.style.display = 'flex';
+    setTimeout(() => { t.style.display = 'none'; }, 2500);
+  }
+
+  function copyItemText(code, title, wma, unit, supp) {
+    const text = `**[P1 CRITICAL] ${code} — ${title}**\n- Stock: **0 ${unit} (Stockout)**\n- Annual Burn (WMA): **${parseFloat(wma).toLocaleString()} ${unit}/yr**\n- Supplier: **${supp}**\n- Link: [Open Item Intelligence](https://planner2317.github.io/suezsteel-buyer-dashboard/?item=${code})`;
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`Copied Markdown for ${code}!`);
+    });
+  }
+
+  function copyExecutiveSummary() {
+    const summary = `# Suez Steel Co. — Executive Briefing: Top 8 P1 Zero-Stock Critical Items\n\n` +
+      `| # | Item Code | Description | Plant | Stock | Annual Burn (WMA) | Bottleneck Stage | Responsible Buyer |\n` +
+      `|---|---|---|---|---|---|---|---|\n` +
+      `| 1 | O0100100001 | Liquid Oxygen | OP11 | 0 Liter | 12,957,727 Liter/yr | Sourcing / RFQ & PO Approval | Amr Adel |\n` +
+      `| 2 | M0100300001 | Iron Ore Pellet Feed | OP19 | 0 Ton | 428,172 Ton/yr | Supplier Overdue (+42d) | Amr Mossad |\n` +
+      `| 3 | O0400100332 | Water Chemical N-WT-1009 | OP10/OP19 | 0 KG | 119,925 KG/yr | Supplier Overdue (+623d) | Mabrouk Younis |\n` +
+      `| 4 | M0100100006 | Scrap Steel Shredded | SMP1/SMP2 | 0 Ton | 81,554 Ton/yr | Supplier Overdue (+538d) | Amr Mossad |\n` +
+      `| 5 | O.3200.5370.0009 | Organic Binder Floform | OP19 | 0 KG | 40,401 KG/yr | Supplier Overdue (+58d) | Mabrouk Younis |\n` +
+      `| 6 | M0200100002 | Ferro Manganese HC | SMP1/SMP2 | 0 Ton | 7,425 Ton/yr | Supplier Overdue (+143d) | Ahmed Attef |\n` +
+      `| 7 | H0401603147 | Grinding Ball Media 50mm | OP19 | 0 KG | 3,302 KG/yr | Sourcing / RFQ (+32d) | Amr Mossad |\n` +
+      `| 8 | S.3020.S204.0007 | Rossi Gear Kit | SMP2 | 0 Pcs | 5.5 Pcs/yr | Unassigned PRs (+9d) | Unassigned |\n\n` +
+      `*Report extracted from Suez Steel Enterprise Follow-Up Command Center on ${new Date().toLocaleDateString()}*`;
+
+    navigator.clipboard.writeText(summary).then(() => {
+      showToast('Executive summary copied to clipboard!');
+    });
+  }
+</script>
+</body>
+</html>
