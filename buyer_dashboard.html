@@ -3250,10 +3250,10 @@
       <!-- UP-RIGHT: CRITICAL ACTIONS & VIEW MODES -->
       <div style="display:inline-flex; align-items:center; gap:8px;">
         <!-- Unified Zero-Stock Filter & Integrated Excel Export Capsule -->
-        <div id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" style="cursor:pointer;" title="Zero-Stock counts LINE ITEMS: 12,444 individual item rows across all PRs currently have 0 warehouse stock. Click capsule to filter dashboard, or click the Excel icon to download.">
+        <div id="btnZeroStockToggle" onclick="toggleZeroStockFilter()" class="btn-zero-stock-toggle" style="cursor:pointer;" title="Zero-Stock counts LINE ITEMS: 10,674 individual item rows across all PRs currently have 0 warehouse stock. Click capsule to filter dashboard, or click the Excel icon to download.">
           <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i>
           <span>Zero-Stock</span>
-          <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">12,444 Lines (86.0%)</span>
+          <span class="zero-toggle-chip" id="zeroStockToggleCountChip" style="background:rgba(239,68,68,0.25); color:#fca5a5; padding:1px 6px; border-radius:4px; font-weight:800; font-size:0.68rem; margin-left:2px;">10,674 Lines (72.9%)</span>
           <span id="btnZeroStockExport" onclick="event.stopPropagation(); exportZeroStockMatrix();" class="zero-inline-export" title="Export Zero-Stock spares matrix to Excel">
             <i class="fa-solid fa-file-excel"></i>
           </span>
@@ -3269,7 +3269,7 @@
         <!-- L4 Stock Control Quick Card -->
         <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Inspect PRs awaiting Level 4 Stock Control">
           <span class="l4-dot"></span>
-          <span><strong style="color:#ffffff;">119 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
+          <span><strong style="color:#ffffff;">114 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
           <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect</span>
         </div>
       </div>
@@ -3365,7 +3365,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-users-viewfinder"></i> <span id="comboSelectedCountText">All 78 Buyers Selected</span>
+                <i class="fa-solid fa-users-viewfinder"></i> <span id="comboSelectedCountText">All 74 Buyers Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllBuyers(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3387,7 +3387,7 @@
           <!-- Hidden Native Fallback Select -->
           <select id="buyerSelector" onchange="onBuyerChange(this.value)" style="display:none;">
             <option value="ALL">🌟 ALL BUYERS &amp; TEAM (Full Department View)</option>
-            <option value="1- Local Purchasing">1- Local Purchasing</option><option value="1111- amr mossad">1111- amr mossad</option><option value="21- Moustafa Ali">21- Moustafa Ali</option><option value="40- Ibraheem ezzat">40- Ibraheem ezzat</option><option value="46- Ehab Shawkey">46- Ehab Shawkey</option><option value="84- Mohamed Sobhy">84- Mohamed Sobhy</option><option value="91- Omar Ahmed">91- Omar Ahmed</option><option value="Abdallah Abohabaga">Abdallah Abohabaga</option><option value="Ahmed Attef Salem">Ahmed Attef Salem</option><option value="Ahmed Mohamed Ibrahim">Ahmed Mohamed Ibrahim</option><option value="Amr Adel Nasr El-dien">Amr Adel Nasr El-dien</option><option value="Amr Ahmed Mohamed">Amr Ahmed Mohamed</option><option value="Ehab Bakr">Ehab Bakr</option><option value="Ibrahim Ezzat">Ibrahim Ezzat</option><option value="Mohamed Fawaz">Mohamed Fawaz</option><option value="Mohamed Hossam">Mohamed Hossam</option><option value="Mohamed Mostafa">Mohamed Mostafa</option><option value="PGR1- Moustafa Ali">PGR1- Moustafa Ali</option><option value="PGR11- Ahmed Essam">PGR11- Ahmed Essam</option><option value="PGR12- Haitham Rady">PGR12- Haitham Rady</option><option value="PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim">PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR13- Ahmed Mohamed Ibrahim">PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR2- Mohamed Sabry">PGR2- Mohamed Sabry</option><option value="PGR3- Ahmed mashal">PGR3- Ahmed mashal</option><option value="PGR5">PGR5</option><option value="PGR6- Mohamed Fawaz">PGR6- Mohamed Fawaz</option><option value="PGR7- Emad Elalfy">PGR7- Emad Elalfy</option><option value="PGR8- Nourhan Hassan">PGR8- Nourhan Hassan</option><option value="PGR9- Mina Yousry">PGR9- Mina Yousry</option><option value="T100- Amr Abdelrahman">T100- Amr Abdelrahman</option><option value="T101- Abdelrahman Essam">T101- Abdelrahman Essam</option><option value="T102- Ahmed Ibrahem">T102- Ahmed Ibrahem</option><option value="T103- Dalia Haraz">T103- Dalia Haraz</option><option value="T104- Mahmoud Hamdy">T104- Mahmoud Hamdy</option><option value="T105- Mohamed Shaban">T105- Mohamed Shaban</option><option value="T107- Karim Osama">T107- Karim Osama</option><option value="T11- Amr Adel">T11- Amr Adel</option><option value="T13- Mohamed Shaban">T13- Mohamed Shaban</option><option value="T14- Ahmed Elsayed">T14- Ahmed Elsayed</option><option value="T32- Ahmed Ali">T32- Ahmed Ali</option><option value="T33- Marwan Ellithy">T33- Marwan Ellithy</option><option value="T42- Ahmed Farag">T42- Ahmed Farag</option><option value="T43- Ahmed Elbadry">T43- Ahmed Elbadry</option><option value="T53- Tawfiq Mohamed">T53- Tawfiq Mohamed</option><option value="T61- Amr Youssef">T61- Amr Youssef</option><option value="T62- Mohamed Samir">T62- Mohamed Samir</option><option value="T64- Ali Moussa">T64- Ali Moussa</option><option value="T71- Mohamed Galal">T71- Mohamed Galal</option><option value="T73- Manar Magdy">T73- Manar Magdy</option><option value="T74- Ahmed Karam">T74- Ahmed Karam</option><option value="T81- Ahmed Attef">T81- Ahmed Attef</option><option value="T83- Omar Ahmed Ragab">T83- Omar Ahmed Ragab</option><option value="T84- Amr Mossad Aly">T84- Amr Mossad Aly</option><option value="T85- Abdelrahman Hafez">T85- Abdelrahman Hafez</option><option value="T88- Mohamed Abdelmonem">T88- Mohamed Abdelmonem</option><option value="T89- Hanaa Hamidi">T89- Hanaa Hamidi</option><option value="T91- Ahmed Emad">T91- Ahmed Emad</option><option value="T92- Fathi Mohamed">T92- Fathi Mohamed</option><option value="T93- Abdallah Saad">T93- Abdallah Saad</option><option value="T94- Mostafa Hamdy">T94- Mostafa Hamdy</option><option value="T96- Mahmoud Ibrahim">T96- Mahmoud Ibrahim</option><option value="T97- Mohamed Mohsen">T97- Mohamed Mohsen</option><option value="T98- Mabrouk Younis">T98- Mabrouk Younis</option><option value="T99- Omar Zaabalawy">T99- Omar Zaabalawy</option><option value="Tawfiq Mohamed">Tawfiq Mohamed</option><option value="Walid Gamal">Walid Gamal</option><option value="mina yousry">mina yousry</option><option value="mohamed sabry">mohamed sabry</option><option value="أحمد عماد الدين محمد عبد اللطيف">أحمد عماد الدين محمد عبد اللطيف</option><option value="أحمد محمد البدري محمد">أحمد محمد البدري محمد</option><option value="أمير جمال عبد الباسط محمد">أمير جمال عبد الباسط محمد</option><option value="توفيق محمد توفيق عبد الكريم">توفيق محمد توفيق عبد الكريم</option><option value="سيف الدين حسام عزت ضيف">سيف الدين حسام عزت ضيف</option><option value="عبد الرحمن ابراهيم عبد الرحمن حافظ">عبد الرحمن ابراهيم عبد الرحمن حافظ</option><option value="كريم اسامة محمد مرسي">كريم اسامة محمد مرسي</option><option value="محمد صبحي عمر راضي">محمد صبحي عمر راضي</option><option value="مروان محمد الشحات الليثي سالم">مروان محمد الشحات الليثي سالم</option><option value="منار مجدي رمضان السيد">منار مجدي رمضان السيد</option>
+            <option value="1- Local Purchasing">1- Local Purchasing</option><option value="1111- amr mossad">1111- amr mossad</option><option value="21- Moustafa Ali">21- Moustafa Ali</option><option value="40- Ibraheem ezzat">40- Ibraheem ezzat</option><option value="46- Ehab Shawkey">46- Ehab Shawkey</option><option value="84- Mohamed Sobhy">84- Mohamed Sobhy</option><option value="91- Omar Ahmed">91- Omar Ahmed</option><option value="Abdallah Abohabaga">Abdallah Abohabaga</option><option value="Ahmed Attef Salem">Ahmed Attef Salem</option><option value="Ahmed Mohamed Ibrahim">Ahmed Mohamed Ibrahim</option><option value="Amr Adel Nasr El-dien">Amr Adel Nasr El-dien</option><option value="Amr Ahmed Mohamed">Amr Ahmed Mohamed</option><option value="Ehab Bakr">Ehab Bakr</option><option value="Ibrahim Ezzat">Ibrahim Ezzat</option><option value="Mohamed Fawaz">Mohamed Fawaz</option><option value="Mohamed Hossam">Mohamed Hossam</option><option value="Mohamed Mostafa">Mohamed Mostafa</option><option value="PGR1- Moustafa Ali">PGR1- Moustafa Ali</option><option value="PGR11- Ahmed Essam">PGR11- Ahmed Essam</option><option value="PGR12- Haitham Rady">PGR12- Haitham Rady</option><option value="PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim">PGR12- Haitham Rady, PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR13- Ahmed Mohamed Ibrahim">PGR13- Ahmed Mohamed Ibrahim</option><option value="PGR2- Mohamed Sabry">PGR2- Mohamed Sabry</option><option value="PGR3- Ahmed mashal">PGR3- Ahmed mashal</option><option value="PGR5">PGR5</option><option value="PGR6- Mohamed Fawaz">PGR6- Mohamed Fawaz</option><option value="PGR7- Emad Elalfy">PGR7- Emad Elalfy</option><option value="PGR8- Nourhan Hassan">PGR8- Nourhan Hassan</option><option value="PGR9- Mina Yousry">PGR9- Mina Yousry</option><option value="T100- Amr Abdelrahman">T100- Amr Abdelrahman</option><option value="T101- Abdelrahman Essam">T101- Abdelrahman Essam</option><option value="T102- Ahmed Ibrahem">T102- Ahmed Ibrahem</option><option value="T103- Dalia Haraz">T103- Dalia Haraz</option><option value="T104- Mahmoud Hamdy">T104- Mahmoud Hamdy</option><option value="T105- Mohamed Shaban">T105- Mohamed Shaban</option><option value="T107- Karim Osama">T107- Karim Osama</option><option value="T108- Nader Tarek">T108- Nader Tarek</option><option value="T11- Amr Adel">T11- Amr Adel</option><option value="T13- Mohamed Shaban">T13- Mohamed Shaban</option><option value="T14- Ahmed Elsayed">T14- Ahmed Elsayed</option><option value="T32- Ahmed Ali">T32- Ahmed Ali</option><option value="T33- Marwan Ellithy">T33- Marwan Ellithy</option><option value="T42- Ahmed Farag">T42- Ahmed Farag</option><option value="T43- Ahmed Elbadry">T43- Ahmed Elbadry</option><option value="T53- Tawfiq Mohamed">T53- Tawfiq Mohamed</option><option value="T61- Amr Youssef">T61- Amr Youssef</option><option value="T62- Mohamed Samir">T62- Mohamed Samir</option><option value="T64- Ali Moussa">T64- Ali Moussa</option><option value="T71- Mohamed Galal">T71- Mohamed Galal</option><option value="T73- Manar Magdy">T73- Manar Magdy</option><option value="T74- Ahmed Karam">T74- Ahmed Karam</option><option value="T81- Ahmed Attef">T81- Ahmed Attef</option><option value="T83- Omar Ahmed Ragab">T83- Omar Ahmed Ragab</option><option value="T84- Amr Mossad Aly">T84- Amr Mossad Aly</option><option value="T85- Abdelrahman Hafez">T85- Abdelrahman Hafez</option><option value="T88- Mohamed Abdelmonem">T88- Mohamed Abdelmonem</option><option value="T89- Hanaa Hamidi">T89- Hanaa Hamidi</option><option value="T91- Ahmed Emad">T91- Ahmed Emad</option><option value="T92- Fathi Mohamed">T92- Fathi Mohamed</option><option value="T93- Abdallah Saad">T93- Abdallah Saad</option><option value="T94- Mostafa Hamdy">T94- Mostafa Hamdy</option><option value="T96- Mahmoud Ibrahim">T96- Mahmoud Ibrahim</option><option value="T97- Mohamed Mohsen">T97- Mohamed Mohsen</option><option value="T98- Mabrouk Younis">T98- Mabrouk Younis</option><option value="T99- Omar Zaabalawy">T99- Omar Zaabalawy</option><option value="Tawfiq Mohamed">Tawfiq Mohamed</option><option value="Walid Gamal">Walid Gamal</option><option value="mina yousry">mina yousry</option><option value="mohamed sabry">mohamed sabry</option><option value="أمير جمال عبد الباسط محمد">أمير جمال عبد الباسط محمد</option><option value="توفيق محمد توفيق عبد الكريم">توفيق محمد توفيق عبد الكريم</option><option value="سيف الدين حسام عزت ضيف">سيف الدين حسام عزت ضيف</option><option value="مبروك محمد يونس محمد">مبروك محمد يونس محمد</option><option value="محمد صبحي عمر راضي">محمد صبحي عمر راضي</option>
           </select>
         </div>
 
@@ -3443,9 +3443,9 @@
             </label>
             <select id="prioritySelector" class="header-priority-dropdown" onchange="onPriorityDropdownChange(this.value)">
               <option value="ALL">All Priorities</option>
-              <option value="P1" id="p1Opt">🔴 P1 Critical (860)</option>
-              <option value="P2" id="p2Opt">🟠 P2 Active (936)</option>
-              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (404)</option>
+              <option value="P1" id="p1Opt">🔴 P1 Critical (1,492)</option>
+              <option value="P2" id="p2Opt">🟠 P2 Active (1,655)</option>
+              <option value="P3" id="p3Opt">🟡 P3 Near-Zero (755)</option>
             </select>
           </div>
           <span class="hdr-info-icon" tabindex="0">ⓘ
@@ -3466,7 +3466,7 @@
             <span>Year:</span>
           </label>
           <select id="yearSelector" class="header-year-dropdown" onchange="onYearFilterChange(this.value)">
-            <option value="ALL">🌟 All Years (3792 Tasks)</option><option value="2026">📅 2026 (2604 Tasks)</option><option value="2025">📅 2025 (1037 Tasks)</option><option value="2024">📅 2024 (151 Tasks)</option>
+            <option value="ALL">🌟 All Years (3847 Tasks)</option><option value="2026">📅 2026 (2694 Tasks)</option><option value="2025">📅 2025 (1009 Tasks)</option><option value="2024">📅 2024 (144 Tasks)</option>
           </select>
         </div>
       </div>
@@ -3524,7 +3524,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 28 Projects Selected</span>
+                <i class="fa-solid fa-layer-group"></i> <span id="projectSelectedCountText">All 23 Projects Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllProjects(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3578,7 +3578,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 254 Selected</span>
+                <i class="fa-solid fa-user-pen" style="color:#c084fc;"></i> <span id="enteredBySelectedCountText">All 249 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllEnteredBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3632,7 +3632,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 285 Selected</span>
+                <i class="fa-solid fa-user-tag" style="color:#f472b6;"></i> <span id="requestedBySelectedCountText">All 280 Selected</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllRequestedBy(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3738,7 +3738,7 @@
             <!-- Multi-Select Action Toolbar -->
             <div class="combobox-multiselect-bar">
               <div class="combo-multi-stats">
-                <i class="fa-solid fa-truck-ramp-box" style="color:#34d399;"></i> <span id="supplierSelectedCountText">All 1278 Suppliers Active</span>
+                <i class="fa-solid fa-truck-ramp-box" style="color:#34d399;"></i> <span id="supplierSelectedCountText">All 1390 Suppliers Active</span>
               </div>
               <div class="combo-multi-actions">
                 <button class="btn-multi-action" onclick="selectAllSuppliers(true, event)"><i class="fa-solid fa-check-double"></i> Select All</button>
@@ -3805,7 +3805,7 @@
                 🔴 TS Confirmed (Ready to Issue PO)
               </div>
               <div id="st1-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1,009 out of 1,160 item lines in this stage (87.0%) currently have 0 stock across 226 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1,009 Zero-Stock Lines (87.0% &bull; 226 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="821 out of 1,127 item lines in this stage (72.8%) currently have 0 stock across 211 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 821 Zero-Stock Lines (72.8% &bull; 211 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3840,7 +3840,7 @@
                 🟣 Sourcing / RFQ (Waiting Offers)
               </div>
               <div id="st2-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="3,116 out of 3,398 item lines in this stage (91.7%) currently have 0 stock across 879 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 3,116 Zero-Stock Lines (91.7% &bull; 879 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,542 out of 3,497 item lines in this stage (72.7%) currently have 0 stock across 843 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,542 Zero-Stock Lines (72.7% &bull; 843 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3850,19 +3850,19 @@
           </div>
 
           <!-- RFQ Activity Engagement Progress Track -->
-          <div class="rfq-track-wrap" style="margin-top:5px; margin-bottom:5px; padding:3px 7px; background:rgba(255,255,255,0.03); border:1px solid rgba(168,85,247,0.22); border-radius:6px; cursor:pointer;" onclick="event.stopPropagation(); openDelayModal('Sourcing / RFQ', 'ALL', 'ALL', 'PENDING')" title="Click to inspect 397 PRs pending RFQ dispatch">
+          <div class="rfq-track-wrap" style="margin-top:5px; margin-bottom:5px; padding:3px 7px; background:rgba(255,255,255,0.03); border:1px solid rgba(168,85,247,0.22); border-radius:6px; cursor:pointer;" onclick="event.stopPropagation(); openDelayModal('Sourcing / RFQ', 'ALL', 'ALL', 'PENDING')" title="Click to inspect 421 PRs pending RFQ dispatch">
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; margin-bottom:2px;">
               <span style="font-weight:700; color:#c084fc; display:inline-flex; align-items:center; gap:4px;">
                 <i class="fa-solid fa-paper-plane" style="color:#a78bfa; font-size:0.62rem;"></i>
-                <span id="st2-rfq-badge-text">RFQ: 57.7% Sent</span>
+                <span id="st2-rfq-badge-text">RFQ: 57.6% Sent</span>
               </span>
               <span style="font-size:0.63rem; color:var(--text-sub);" id="st2-rfq-breakdown">
-                <span style="color:#34d399; font-weight:700;">541 Sent</span> &bull; <span style="color:#fca5a5; font-weight:700;">397 Pending</span>
+                <span style="color:#34d399; font-weight:700;">573 Sent</span> &bull; <span style="color:#fca5a5; font-weight:700;">421 Pending</span>
               </span>
             </div>
             <div class="sla-bar-segmented" style="height:5px; border-radius:3px; overflow:hidden; background:rgba(255,255,255,0.08); display:flex;">
-              <div id="st2-rfq-bar-sent" style="width:57.7%; background:linear-gradient(90deg, #10b981, #34d399); transition:width 0.3s ease;" title="541 PRs with RFQ Sent (57.7%)"></div>
-              <div id="st2-rfq-bar-pending" style="width:42.3%; background:linear-gradient(90deg, #f87171, #ef4444); transition:width 0.3s ease;" title="397 PRs Pending RFQ (42.3%)"></div>
+              <div id="st2-rfq-bar-sent" style="width:57.6%; background:linear-gradient(90deg, #10b981, #34d399); transition:width 0.3s ease;" title="573 PRs with RFQ Sent (57.6%)"></div>
+              <div id="st2-rfq-bar-pending" style="width:42.4%; background:linear-gradient(90deg, #f87171, #ef4444); transition:width 0.3s ease;" title="421 PRs Pending RFQ (42.4%)"></div>
             </div>
           </div>
           
@@ -3892,7 +3892,7 @@
                 🟡 Offers Under Plant Evaluation
               </div>
               <div id="st3-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="866 out of 993 item lines in this stage (87.2%) currently have 0 stock across 127 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 866 Zero-Stock Lines (87.2% &bull; 127 PRs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="700 out of 982 item lines in this stage (71.3%) currently have 0 stock across 115 PRs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 700 Zero-Stock Lines (71.3% &bull; 115 PRs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3928,7 +3928,7 @@
         <div style="position:absolute; top:10px; left:12px; z-index:20;">
           <div id="unassignedQuickCard" class="unassigned-quick-card" onclick="openDelayModal('Unassigned PRs')" title="Click to inspect unassigned requisitions" style="margin:0;">
             <span class="unassigned-dot"></span>
-            <span><strong style="color:#ffffff;">64 Unassigned PRs</strong> &bull; All PRs Assigned</span>
+            <span><strong style="color:#ffffff;">81 Unassigned PRs</strong> &bull; All PRs Assigned</span>
             <span class="unassigned-btn"><i class="fa-solid fa-circle-check"></i> Clean</span>
           </div>
         </div>
@@ -3937,7 +3937,7 @@
         <div style="position:absolute; bottom:10px; right:12px; z-index:20;">
           <div id="inspectionQuickCard" class="inspection-quick-card" onclick="openDelayModal('Under Technical Inspection')" title="Click to inspect shipments under plant technical inspection" style="margin:0;">
             <span class="inspection-dot"></span>
-            <span><strong style="color:#ffffff;">100 Under Technical Inspection</strong> &bull; In Warehouse (Decision Pending)</span>
+            <span><strong style="color:#ffffff;">116 Under Technical Inspection</strong> &bull; In Warehouse (Decision Pending)</span>
             <span class="inspection-btn"><i class="fa-solid fa-microscope"></i> Inspect</span>
           </div>
         </div>
@@ -3962,7 +3962,7 @@
                 🔵 PO not Confirmed
               </div>
               <div id="st4-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1,494 out of 1,666 item lines in this stage (89.7%) currently have 0 stock across 415 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1,494 Zero-Stock Lines (89.7% &bull; 415 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="1,265 out of 1,660 item lines in this stage (76.2%) currently have 0 stock across 367 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 1,265 Zero-Stock Lines (76.2% &bull; 367 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -3997,7 +3997,7 @@
                 🟠 Overdue Delivery
               </div>
               <div id="st5-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,897 out of 3,535 item lines in this stage (82.0%) currently have 0 stock across 762 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,897 Zero-Stock Lines (82.0% &bull; 762 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,626 out of 3,576 item lines in this stage (73.4%) currently have 0 stock across 654 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,626 Zero-Stock Lines (73.4% &bull; 654 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
@@ -4041,7 +4041,7 @@
                 🟢 On-Track Delivery
               </div>
               <div id="st6-zero-badge" style="margin-top:2px;">
-                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,347 out of 2,836 item lines in this stage (82.8%) currently have 0 stock across 625 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,347 Zero-Stock Lines (82.8% &bull; 625 POs)</span>
+                <span class="zero-stock-badge-stage" style="background:rgba(239,68,68,0.22); color:#fca5a5; border:1px solid rgba(239,68,68,0.45); padding:2px 7px; border-radius:5px; font-weight:800; font-size:0.68rem; display:inline-flex; align-items:center; gap:4px;" title="2,034 out of 2,797 item lines in this stage (72.7%) currently have 0 stock across 571 POs"><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> 2,034 Zero-Stock Lines (72.7% &bull; 571 POs)</span>
               </div>
             </div>
             <div style="text-align:right;">
