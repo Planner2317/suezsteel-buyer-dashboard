@@ -3269,7 +3269,7 @@
         <!-- L4 Stock Control Quick Card -->
         <div id="l4QuickCard" class="l4-quick-card" onclick="openL4Modal()" title="Inspect PRs awaiting Level 4 Stock Control">
           <span class="l4-dot"></span>
-          <span><strong style="color:#ffffff;">114 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
+          <span><strong style="color:#ffffff;">55 PRs</strong> &bull; <span style="color:#c084fc; font-weight:700;">L4 Stock</span></span>
           <span class="l4-btn"><i class="fa-solid fa-list-check"></i> Inspect</span>
         </div>
       </div>
@@ -11680,122 +11680,191 @@ async function exportItemConsolidationExcel(itemCode) {
 
   // 1. Retrieve Stock Intel Benchmark
   const sIntel = (typeof STOCK_INTEL_MAP !== 'undefined' && STOCK_INTEL_MAP[itemCode]) ? STOCK_INTEL_MAP[itemCode] : {};
-  let itemDesc = sIntel.item_desc || '';
+  let itemDesc = sIntel.item_desc || sIntel.desc || '';
   let uom = sIntel.uom || sIntel.unit || 'PC';
   let curStock = sIntel.total_stock !== undefined ? sIntel.total_stock : (sIntel.stock !== undefined ? sIntel.stock : 0);
   let wmaVal = Number(sIntel.wma_annual || 0);
-  let lastPoPrice = sIntel.last_po_price != null ? Number(sIntel.last_po_price) : null;
-  let lastPoCurr = sIntel.last_po_curr || 'EGP';
-  let lastPoVendor = sIntel.last_po_vendor || '—';
+  let lastPoPrice = sIntel.last_po_price != null ? Number(sIntel.last_po_price) : (sIntel.po_price_egp != null ? Number(sIntel.po_price_egp) : null);
+  let lastPoCurr = sIntel.last_po_curr || sIntel.po_curr || 'EGP';
+  let lastPoVendor = sIntel.last_po_vendor || sIntel.supplier || '—';
   let lastPoNo = sIntel.last_po_no || '—';
-  let lastPoDate = sIntel.last_po_date || '—';
+  let lastPoDate = sIntel.last_po_date || sIntel.po_date || '—';
+  let controller = sIntel.controller || 'Non-MRP';
 
-  // 2. Identify Current Benchmark PR
-  let curPrNo = null;
-  let currentPrObj = null;
-  if (typeof currentDossierTask !== 'undefined' && currentDossierTask && currentDossierTask.pr_no) {
-    curPrNo = String(currentDossierTask.pr_no).trim();
-    let curLinePrQty = 0;
-    let curLineBalQty = 0;
-    if (currentDossierTask.lines) {
-      const lMatch = currentDossierTask.lines.find(l => l.item_code === itemCode);
-      if (lMatch) {
-        curLinePrQty = Number(lMatch.pr_qty || 0);
-        curLineBalQty = lMatch.bal_qty != null ? Number(lMatch.bal_qty) : curLinePrQty;
-        if (!itemDesc && lMatch.item_desc) itemDesc = lMatch.item_desc;
-        if (!uom && (lMatch.uom || lMatch.unit)) uom = lMatch.uom || lMatch.unit;
-      }
-    }
-    currentPrObj = {
-      isCurrent: true,
-      pr_no: currentDossierTask.pr_no,
-      line_no: '1',
-      po_no: currentDossierTask.po_no || '—',
-      pr_date: currentDossierTask.pr_date || '—',
-      plant: currentDossierTask.department || '—',
-      project: currentDossierTask.project || '—',
-      buyer: currentDossierTask.buyer || '—',
-      entered_by: currentDossierTask.entered_by || currentDossierTask.requested_by || '—',
-      task_stage: currentDossierTask.task_stage || '—',
-      pr_qty: curLinePrQty,
-      bal_qty: curLineBalQty,
-      overdue: currentDossierTask.overdue_days || 0
-    };
-  }
-
-  // 3. Scan ALL_TASKS for matching PR lines
   const prRows = [];
-  const addedPrKeys = new Set();
-  if (currentPrObj) {
-    prRows.push(currentPrObj);
-    addedPrKeys.add(String(currentPrObj.pr_no).trim());
-  }
+  let totalSrvValSum = 0;
+  let totalPoQtySum = 0;
+  let totalSrvQtySum = 0;
 
-  (typeof ALL_TASKS !== 'undefined' ? ALL_TASKS : []).forEach(t => {
-    const tPrNo = String(t.pr_no).trim();
-    if (curPrNo && tPrNo === curPrNo) return;
+  // If full 2026 PR lifecycle records are available in Stock Intel
+  if (sIntel.prs_2026 && sIntel.prs_2026.length > 0) {
+    sIntel.prs_2026.forEach(r => {
+      const rawSt = (r.status || '').toLowerCase();
+      const poNo = r.po_no || '—';
+      const reqQ = Number(r.req_qty || 0);
+      const poQ = Number(r.po_qty || 0);
+      const srvQ = Number(r.srv_qty || 0);
+      const srvV = Number(r.srv_val || 0);
+      totalSrvValSum += srvV;
+      totalPoQtySum += poQ;
+      totalSrvQtySum += srvQ;
 
-    (t.lines || []).forEach(l => {
-      if (l.item_code === itemCode) {
-        if (!itemDesc && l.item_desc) itemDesc = l.item_desc;
-        if (!uom && (l.uom || l.unit)) uom = l.uom || l.unit;
-        prRows.push({
-          isCurrent: false,
-          pr_no: t.pr_no,
-          line_no: l.line_no || '1',
-          po_no: t.po_no || '—',
-          pr_date: t.pr_date || '—',
-          plant: t.department || '—',
-          project: t.project || '—',
-          buyer: t.buyer || '—',
-          entered_by: t.entered_by || t.requested_by || '—',
-          task_stage: t.task_stage || '—',
-          pr_qty: Number(l.pr_qty || 0),
-          bal_qty: l.bal_qty != null ? Number(l.bal_qty) : Number(l.pr_qty || 0),
-          overdue: t.overdue_days || 0
-        });
-        addedPrKeys.add(tPrNo);
+      let roleState = "★ SOURCING PIPELINE";
+      let stageDesc = "Under Sourcing / RFQ";
+      let pendBal = reqQ;
+
+      if (rawSt === 'closed' && (poNo === '—' || poQ === 0) && srvQ === 0) {
+        roleState = "✖ CANCELLED (NO PO)";
+        stageDesc = "Closed by System/User (No PO)";
+        pendBal = 0;
+      } else if ((srvQ >= reqQ && srvQ > 0) || (poNo !== '—' && srvQ >= poQ && srvQ > 0 && rawSt === 'closed')) {
+        roleState = "✔ 100% DELIVERED";
+        stageDesc = "Delivered & Accepted in Store";
+        pendBal = 0;
+      } else if (srvQ > 0 && srvQ < reqQ) {
+        roleState = "⏳ PARTIAL DELIVERY";
+        stageDesc = `Partial Receipt (${srvQ} Delivered)`;
+        pendBal = Math.max(0, reqQ - srvQ);
+      } else if (rawSt.includes('return')) {
+        roleState = "↩ RETURNED";
+        stageDesc = "Returned to Requisitioner";
+        pendBal = 0;
+      } else if (poNo !== '—' && srvQ === 0) {
+        roleState = "★ ACTIVE PO PIPELINE";
+        stageDesc = "PO Placed (Awaiting Delivery)";
+        pendBal = poQ > 0 ? poQ : reqQ;
       }
-    });
-  });
 
-  // 4. Scan L4_TASKS for pre-commercial PR lines
-  (typeof L4_TASKS !== 'undefined' ? L4_TASKS : []).forEach(lt => {
-    const ltPrNo = String(lt.pr_no).trim();
-    if (curPrNo && ltPrNo === curPrNo) return;
-    if (lt.item_code === itemCode) {
-      if (!itemDesc && lt.desc) itemDesc = lt.desc;
-      if (!uom && lt.unit) uom = lt.unit;
       prRows.push({
-        isCurrent: false,
-        pr_no: lt.pr_no,
-        line_no: lt.line_no || '1',
-        po_no: '—',
-        pr_date: lt.pr_date || '—',
-        plant: lt.department || lt.project || '—',
-        project: lt.project || '—',
-        buyer: lt.buyer || 'Pre-Commercial',
-        entered_by: lt.entered_by || lt.requested_by || '—',
-        task_stage: lt.task_stage || (lt.pre_comm_stage === 'PLANT' ? 'Pending Plant Approval' : 'Pending Stock Control'),
-        pr_qty: Number(lt.qty || 0),
-        bal_qty: lt.bal_qty != null ? Number(lt.bal_qty) : Number(lt.qty || 0),
-        overdue: lt.stage_delay || lt.age_days || 0
+        role_state: roleState,
+        pr_no: r.pr_no,
+        status: r.status || '—',
+        line_no: r.line_no || '1',
+        pr_date: r.pr_date || '—',
+        task_stage: stageDesc,
+        pr_qty: reqQ,
+        po_qty: poQ,
+        srv_qty: srvQ,
+        bal_qty: pendBal,
+        srv_val: srvV,
+        po_no: poNo,
+        plant: r.plant || '—',
+        buyer: r.buyer || 'Unassigned',
+        entered_by: r.entered_by || '—',
+        team: r.team || 'Plant / Others',
+        is_mrp: !!r.is_mrp,
+        supplier: r.supplier || '—'
       });
-      addedPrKeys.add(ltPrNo);
+    });
+  } else {
+    // Fallback: Scan ALL_TASKS and L4_TASKS
+    let curPrNo = null;
+    let currentPrObj = null;
+    if (typeof currentDossierTask !== 'undefined' && currentDossierTask && currentDossierTask.pr_no) {
+      curPrNo = String(currentDossierTask.pr_no).trim();
+      let curLinePrQty = 0;
+      let curLineBalQty = 0;
+      if (currentDossierTask.lines) {
+        currentDossierTask.lines.forEach(l => {
+          if (l.item_code === itemCode) {
+            curLinePrQty += Number(l.pr_qty || 0);
+            curLineBalQty += (l.bal_qty != null ? Number(l.bal_qty) : Number(l.pr_qty || 0));
+          }
+        });
+      } else {
+        curLinePrQty = Number(currentDossierTask.pr_qty || 0);
+        curLineBalQty = (currentDossierTask.bal_qty != null ? Number(currentDossierTask.bal_qty) : curLinePrQty);
+      }
+
+      currentPrObj = {
+        role_state: '★ CURRENT PR (Active)',
+        pr_no: currentDossierTask.pr_no,
+        status: currentDossierTask.status || 'Open',
+        line_no: currentDossierTask.line_no || '1',
+        po_no: currentDossierTask.po_no || '—',
+        pr_date: currentDossierTask.pr_date || '—',
+        plant: currentDossierTask.department || '—',
+        buyer: currentDossierTask.buyer || '—',
+        entered_by: currentDossierTask.entered_by || currentDossierTask.requested_by || '—',
+        team: 'Plant / Others',
+        is_mrp: false,
+        task_stage: currentDossierTask.task_stage || '—',
+        pr_qty: curLinePrQty,
+        po_qty: currentDossierTask.po_no ? curLinePrQty : 0,
+        srv_qty: 0,
+        bal_qty: curLineBalQty,
+        srv_val: 0,
+        supplier: '—'
+      };
     }
-  });
+
+    const addedPrKeys = new Set();
+    if (currentPrObj) {
+      prRows.push(currentPrObj);
+      addedPrKeys.add(String(currentPrObj.pr_no).trim());
+    }
+
+    (typeof ALL_TASKS !== 'undefined' ? ALL_TASKS : []).forEach(t => {
+      const tPrNo = String(t.pr_no).trim();
+      if (curPrNo && tPrNo === curPrNo) return;
+
+      (t.lines || []).forEach(l => {
+        if (l.item_code === itemCode) {
+          if (!itemDesc && l.item_desc) itemDesc = l.item_desc;
+          if (!uom && (l.uom || l.unit)) uom = l.uom || l.unit;
+          const pQ = Number(l.pr_qty || 0);
+          const bQ = l.bal_qty != null ? Number(l.bal_qty) : pQ;
+          prRows.push({
+            role_state: '★ ACTIVE PIPELINE',
+            pr_no: t.pr_no,
+            status: t.status || 'Open',
+            line_no: l.line_no || '1',
+            po_no: t.po_no || '—',
+            pr_date: t.pr_date || '—',
+            plant: t.department || '—',
+            buyer: t.buyer || '—',
+            entered_by: t.entered_by || t.requested_by || '—',
+            team: 'Plant / Others',
+            is_mrp: false,
+            task_stage: t.task_stage || '—',
+            pr_qty: pQ,
+            po_qty: t.po_no ? pQ : 0,
+            srv_qty: 0,
+            bal_qty: bQ,
+            srv_val: 0,
+            supplier: '—'
+          });
+          addedPrKeys.add(tPrNo);
+        }
+      });
+    });
+  }
 
   if (prRows.length === 0) {
-    alert("No open requisitions found for item: " + itemCode);
+    alert("No requisition records found for item: " + itemCode);
     return;
   }
 
   // Calculate totals
   const totalPrQty = prRows.reduce((sum, r) => sum + r.pr_qty, 0);
+  const totalPoQty = prRows.reduce((sum, r) => sum + r.po_qty, 0);
+  const totalSrvQty = prRows.reduce((sum, r) => sum + r.srv_qty, 0);
   const totalBalQty = prRows.reduce((sum, r) => sum + r.bal_qty, 0);
+  const totalSrvVal = prRows.reduce((sum, r) => sum + (r.srv_val || 0), 0);
   const distinctPrCount = new Set(prRows.map(r => String(r.pr_no).trim())).size;
   const distinctPlants = Array.from(new Set(prRows.map(r => r.plant).filter(p => p && p !== '—')));
   const distinctBuyers = Array.from(new Set(prRows.map(r => r.buyer).filter(b => b && b !== '—')));
+  const distinctPos = Array.from(new Set(prRows.map(r => r.po_no).filter(p => p && p !== '—')));
+  const distinctCreators = Array.from(new Set(prRows.map(r => r.entered_by).filter(p => p && p !== '—')));
+  const mrpCount = prRows.filter(r => r.is_mrp).length;
+  let teamSummary = "100% Others (Not MRP)";
+  if (mrpCount === prRows.length && prRows.length > 0) {
+    teamSummary = "100% MRP Team";
+  } else if (mrpCount > 0) {
+    const pct = Math.round((mrpCount / prRows.length) * 100);
+    teamSummary = `${pct}% MRP / ${100 - pct}% Others`;
+  }
+
   const todayStr = new Date().toISOString().split('T')[0];
   const safeCode = itemCode.replace(/[^a-zA-Z0-9]/g, '_');
   const fileName = `SuezSteel_Consolidated_Demand_${safeCode}_${todayStr}.xlsx`;
@@ -11806,21 +11875,21 @@ async function exportItemConsolidationExcel(itemCode) {
       wb.creator = 'Suez Steel Plant Procurement';
       wb.created = new Date();
 
-      const ws = wb.addWorksheet('Consolidated Demand', { views: [{ showGridLines: true }] });
+      const ws = wb.addWorksheet('Lifecycle & Consolidation', { views: [{ showGridLines: true }] });
 
       // Title Banner
-      ws.mergeCells('A1:M1');
+      ws.mergeCells('A1:R1');
       const tCell = ws.getCell('A1');
-      tCell.value = `SUEZ STEEL CO. — STRATEGIC ITEM DEMAND CONSOLIDATION (${distinctPrCount} Open PRs)`;
+      tCell.value = `SUEZ STEEL CO. — STRATEGIC ITEM DEMAND CONSOLIDATION & LIFECYCLE AUDIT (${distinctPrCount} PRs in 2026)`;
       tCell.font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FFFFFFFF' } };
       tCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F172A' } };
       tCell.alignment = { vertical: 'middle', horizontal: 'center' };
       ws.getRow(1).height = 28;
 
       // Sub-Banner
-      ws.mergeCells('A2:M2');
+      ws.mergeCells('A2:R2');
       const subCell = ws.getCell('A2');
-      subCell.value = `Item Code: ${itemCode} | Description: ${itemDesc} | Total Demand: ${totalPrQty.toLocaleString()} ${uom} across ${distinctPrCount} Requisition(s) | Export Date: ${todayStr}`;
+      subCell.value = `Item Code: ${itemCode} | Description: ${itemDesc} | Controller: ${controller} | Total 2026 Demand: ${totalPrQty.toLocaleString()} ${uom} across ${distinctPrCount} PR(s) | Export Date: ${todayStr}`;
       subCell.font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: 'FF94A3B8' } };
       subCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E293B' } };
       subCell.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -11835,16 +11904,16 @@ async function exportItemConsolidationExcel(itemCode) {
       kpiH1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF065F46' } };
       kpiH1.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      ws.mergeCells('E4:H4');
+      ws.mergeCells('E4:I4');
       const kpiH2 = ws.getCell('E4');
-      kpiH2.value = '💰 COMMERCIAL & LAST PO BENCHMARK';
+      kpiH2.value = '💰 COMMERCIAL & SRV FINANCIAL VALUE';
       kpiH2.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFFFFFFF' } };
       kpiH2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0369A1' } };
       kpiH2.alignment = { vertical: 'middle', horizontal: 'center' };
 
-      ws.mergeCells('I4:M4');
-      const kpiH3 = ws.getCell('I4');
-      kpiH3.value = '🎯 SOURCING SYNERGY RECOMMENDATION';
+      ws.mergeCells('J4:R4');
+      const kpiH3 = ws.getCell('J4');
+      kpiH3.value = '🎯 SOURCING SYNERGY & LIFECYCLE RECOMMENDATION';
       kpiH3.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FFFFFFFF' } };
       kpiH3.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3730A3' } };
       kpiH3.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -11854,35 +11923,28 @@ async function exportItemConsolidationExcel(itemCode) {
       ws.getCell('A5').value = 'Current Warehouse Stock:';
       ws.getCell('A5').font = { bold: true, size: 9 };
       ws.getCell('B5').value = `${curStock.toLocaleString()} ${uom}`;
+      ws.getCell('B5').font = { size: 9 };
       ws.getCell('C5').value = 'Stock Status:';
       ws.getCell('C5').font = { bold: true, size: 9 };
-      ws.getCell('D5').value = curStock === 0 ? 'CRITICAL ZERO-STOCK' : 'AVAILABLE';
-      ws.getCell('D5').font = { bold: true, color: { argb: curStock === 0 ? 'FFEF4444' : 'FF10B981' } };
+      ws.getCell('D5').value = curStock === 0 ? 'CRITICAL ZERO' : 'AVAILABLE';
+      ws.getCell('D5').font = { bold: true, size: 9, color: { argb: curStock === 0 ? 'FFDC2626' : 'FF16A34A' } };
 
-      ws.getCell('E5').value = 'Last PO Price:';
+      ws.getCell('E5').value = 'Total 2026 SRV Value:';
       ws.getCell('E5').font = { bold: true, size: 9 };
-      ws.getCell('F5').value = lastPoPrice != null ? `${lastPoPrice.toLocaleString()} ${lastPoCurr}` : '—';
-      ws.getCell('G5').value = 'Last Supplier:';
+      ws.getCell('F5').value = `${totalSrvVal.toLocaleString(undefined, {maximumFractionDigits: 2})} EGP`;
+      ws.getCell('F5').font = { bold: true, size: 9.5, color: { argb: 'FF0369A1' } };
+      ws.getCell('G5').value = 'Last PO Price:';
       ws.getCell('G5').font = { bold: true, size: 9 };
-      ws.getCell('H5').value = lastPoVendor;
-
-      ws.mergeCells('I5:M6');
-      const synCell = ws.getCell('I5');
-      if (distinctPrCount >= 2) {
-        synCell.value = `🌟 HIGH CONSOLIDATION OPPORTUNITY: Aggregating ${distinctPrCount} open PRs across ${distinctPlants.length} plant(s) yields ${totalPrQty.toLocaleString()} ${uom}. Recommend combining into a single RFQ / Tender to negotiate volume discounts and streamline logistics.`;
-        synCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0FDF4' } };
-        synCell.font = { size: 9, bold: true, color: { argb: 'FF166534' } };
-      } else {
-        synCell.value = `Single active PR (${totalPrQty.toLocaleString()} ${uom}). Proceed with standard procurement process.`;
-        synCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
-        synCell.font = { size: 9, italic: true, color: { argb: 'FF475569' } };
-      }
-      synCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+      ws.getCell('H5').value = lastPoPrice != null ? `${lastPoPrice.toLocaleString(undefined, {maximumFractionDigits: 2})} ${lastPoCurr}` : '—';
+      ws.getCell('H5').font = { size: 9 };
+      ws.getCell('I5').value = 'Last Supplier:';
+      ws.getCell('I5').font = { bold: true, size: 9 };
 
       // Row 6: KPI Data 2
       ws.getCell('A6').value = 'Annual Consumption (WMA):';
       ws.getCell('A6').font = { bold: true, size: 9 };
-      ws.getCell('B6').value = wmaVal > 0 ? `${Math.round(wmaVal).toLocaleString()} / yr` : '0 / yr';
+      ws.getCell('B6').value = wmaVal > 0 ? `${wmaVal.toLocaleString()} / yr` : '0 / yr';
+      ws.getCell('B6').font = { size: 9 };
       ws.getCell('C6').value = 'Stock Coverage:';
       ws.getCell('C6').font = { bold: true, size: 9 };
       const coverageMo = (wmaVal > 0 && curStock > 0) ? (curStock / (wmaVal / 12)).toFixed(1) + ' Mo' : (curStock === 0 ? '0 Mo (Exhausted)' : '—');
@@ -11890,19 +11952,36 @@ async function exportItemConsolidationExcel(itemCode) {
 
       ws.getCell('E6').value = 'Last PO Reference:';
       ws.getCell('E6').font = { bold: true, size: 9 };
-      ws.getCell('F6').value = lastPoNo;
+      ws.getCell('F6').value = String(lastPoNo);
       ws.getCell('G6').value = 'Last PO Date:';
       ws.getCell('G6').font = { bold: true, size: 9 };
-      ws.getCell('H6').value = lastPoDate;
+      ws.getCell('H6').value = String(lastPoDate);
+      ws.getCell('I6').value = String(lastPoVendor);
+
+      // Synergy Box (J5:R6)
+      ws.mergeCells('J5:R6');
+      const synCell = ws.getCell('J5');
+      if (totalBalQty > 0 && totalSrvQty > 0) {
+        synCell.value = `🌟 PARTIAL ACTIVE REPLENISHMENT: ${totalSrvQty.toLocaleString()} ${uom} accepted in warehouse (${totalSrvVal.toLocaleString(undefined, {maximumFractionDigits: 2})} EGP), while ${totalBalQty.toLocaleString()} ${uom} remain open in pipeline across ${distinctPlants.length} plant(s). Ensure expediting to avoid stockout.`;
+      } else if (totalBalQty > 0 && totalSrvQty === 0) {
+        synCell.value = `⚡ PIPELINE IN TRANSIT / SOURCING: ${totalBalQty.toLocaleString()} ${uom} requested across ${distinctPrCount} PR(s). Recommend consolidating into single tender to maximize volume discounts and streamline supplier delivery.`;
+      } else if (totalSrvQty >= totalPrQty && totalPrQty > 0) {
+        synCell.value = `✔ 100% DELIVERED & SECURED: All 2026 requested volume (${totalSrvQty.toLocaleString()} ${uom}) successfully delivered and booked into stores with total value of ${totalSrvVal.toLocaleString(undefined, {maximumFractionDigits: 2})} EGP.`;
+      } else {
+        synCell.value = `Audit Status: ${distinctPrCount} PR transactions in 2026. Review line details below for complete status history.`;
+      }
+      synCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0FDF4' } };
+      synCell.font = { size: 9, bold: true, color: { argb: 'FF166534' } };
+      synCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
 
       // Table Header (Row 8)
       const tableHeaders = [
-        'Requisition Role', 'PR No.', 'Line', 'PR Date', 'Task Stage / Status',
-        'PR Qty', 'Pending Bal Qty', 'Unit', 'PO No.', 'Plant / Facility',
-        'Assigned Buyer', 'Requisitioner / Entered By', 'Delay / Overdue (d)'
+        'Requisition Role / State', 'PR No.', 'status', 'Line', 'PR Date', 'Task Stage / Status',
+        'PR Qty', 'PO Qty', 'Accepted (SRV Qty)', 'Pending Bal Qty', 'SRV Value (EGP)',
+        'Unit', 'PO No.', 'Plant / Facility', 'Assigned Buyer', 'Requisitioner / Entered By', 'Team', 'Contracted Supplier'
       ];
       const hRow = ws.addRow(tableHeaders);
-      hRow.height = 22;
+      hRow.height = 24;
       hRow.eachCell(c => {
         c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
         c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };
@@ -11910,74 +11989,109 @@ async function exportItemConsolidationExcel(itemCode) {
       });
 
       // Data Rows
-      prRows.forEach(r => {
+      prRows.forEach((r, idx) => {
         let prDateDisp = r.pr_date;
         if (prDateDisp && prDateDisp.length >= 10) prDateDisp = prDateDisp.substring(0, 10);
+        const isStrike = r.role_state && (r.role_state.includes('CANCELLED') || r.role_state.includes('RETURNED'));
+
         const row = ws.addRow([
-          r.isCurrent ? '★ CURRENT PR (Active)' : 'OPEN SIBLING PR',
+          r.role_state || '★ ACTIVE PIPELINE',
           r.pr_no,
+          r.status || '—',
           r.line_no,
           prDateDisp,
           r.task_stage,
           r.pr_qty,
+          r.po_qty,
+          r.srv_qty,
           r.bal_qty,
+          r.srv_val,
           uom,
           r.po_no || '—',
           r.plant,
           r.buyer,
           r.entered_by,
-          r.overdue > 0 ? r.overdue : 0
+          r.team,
+          r.supplier || '—'
         ]);
         row.height = 20;
 
-        if (r.isCurrent) {
-          row.eachCell(c => {
-            c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2FE' } };
-            c.font = { name: 'Calibri', size: 9.5, bold: true, color: { argb: 'FF0369A1' } };
-          });
+        const isEven = idx % 2 === 0;
+        row.eachCell((c, colNum) => {
+          c.font = { name: 'Calibri', size: 9, strike: isStrike, color: { argb: isStrike ? 'FF94A3B8' : 'FF1E293B' } };
+          if (!isEven) c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8FAFC' } };
+          c.border = {
+            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            right: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+          };
+          if ([2, 3, 4, 5, 12, 13, 17].includes(colNum)) c.alignment = { vertical: 'middle', horizontal: 'center' };
+          if ([7, 8, 9, 10, 11].includes(colNum)) {
+            c.alignment = { vertical: 'middle', horizontal: 'right' };
+            c.numFmt = '#,##0.00';
+          }
+        });
+
+        // Role State Color
+        const roleCell = row.getCell(1);
+        roleCell.font = { name: 'Calibri', size: 9, bold: !isStrike, strike: isStrike };
+        if (r.role_state && r.role_state.includes('DELIVERED')) {
+          roleCell.font.color = { argb: 'FF15803D' };
+        } else if (r.role_state && r.role_state.includes('PARTIAL')) {
+          roleCell.font.color = { argb: 'FFD97706' };
+        } else if (r.role_state && r.role_state.includes('PIPELINE')) {
+          roleCell.font.color = { argb: 'FF2563EB' };
+        } else if (r.role_state && r.role_state.includes('RETURN')) {
+          roleCell.font.color = { argb: 'FFDC2626' };
         } else {
-          row.eachCell(c => {
-            c.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF1E293B' } };
-          });
+          roleCell.font.color = { argb: 'FF64748B' };
         }
-        row.getCell(6).alignment = { horizontal: 'right' };
-        row.getCell(7).alignment = { horizontal: 'right' };
-        row.getCell(13).alignment = { horizontal: 'right' };
       });
 
       // Total Summary Row
       const totRow = ws.addRow([
-        'TOTAL CONSOLIDATED DEMAND', '', '', '', `${distinctPrCount} PR(s)`,
-        totalPrQty, totalBalQty, uom, '', `${distinctPlants.length} Plant(s)`,
-        `${distinctBuyers.length} Buyer(s)`, '', ''
+        'TOTAL CONSOLIDATED 2026 DEMAND', '', '', '', '', `${distinctPrCount} PR(s)`,
+        totalPrQty, totalPoQty, totalSrvQty, totalBalQty, totalSrvVal,
+        uom, `${distinctPos.length} PO(s)`, `${distinctPlants.length} Plant(s)`,
+        `${distinctBuyers.length} Buyer(s)`, `${distinctCreators.length} Persons`, teamSummary, 'Consolidated Audit'
       ]);
       totRow.height = 24;
-      totRow.eachCell(c => {
-        c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF065F46' } };
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1FAE5' } };
+      totRow.eachCell((c, colNum) => {
+        c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF166534' } };
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };
         c.border = {
-          top: { style: 'thin', color: { argb: 'FF059669' } },
-          bottom: { style: 'double', color: { argb: 'FF059669' } }
+          top: { style: 'thin', color: { argb: 'FF16A34A' } },
+          bottom: { style: 'double', color: { argb: 'FF16A34A' } },
+          left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+          right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
         };
+        if ([7, 8, 9, 10, 11].includes(colNum)) {
+          c.alignment = { vertical: 'middle', horizontal: 'right' };
+          c.numFmt = '#,##0.00';
+        } else {
+          c.alignment = { vertical: 'middle', horizontal: 'center' };
+        }
       });
-      totRow.getCell(6).alignment = { horizontal: 'right' };
-      totRow.getCell(7).alignment = { horizontal: 'right' };
 
-      // Column Widths
       ws.columns = [
-        { width: 22 }, // Requisition Role
-        { width: 14 }, // PR No
-        { width: 8 },  // Line
+        { width: 24 }, // Role
+        { width: 13 }, // PR No
+        { width: 12 }, // Status
+        { width: 7 },  // Line
         { width: 13 }, // PR Date
-        { width: 26 }, // Stage
-        { width: 14 }, // PR Qty
+        { width: 28 }, // Stage
+        { width: 13 }, // PR Qty
+        { width: 13 }, // PO Qty
+        { width: 16 }, // SRV Qty
         { width: 16 }, // Bal Qty
+        { width: 16 }, // SRV Val
         { width: 8 },  // Unit
         { width: 14 }, // PO No
         { width: 24 }, // Plant
-        { width: 22 }, // Buyer
+        { width: 20 }, // Buyer
         { width: 26 }, // Entered By
-        { width: 16 }  // Overdue
+        { width: 26 }  // Supplier
       ];
 
       const buffer = await wb.xlsx.writeBuffer();
